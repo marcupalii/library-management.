@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.united.css') }}" >
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    <title>Flask Example</title>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button class="navbar-toggle" data-target="#myNavbar" data-toggle="collapse" type="button">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('home')}}">Home</a></li>
+                <li><a href="{{ url_for('about')}}">About Page</a></li>
+                {% if session.get("current_type", None) == "user" %}
+                <li><a href="{{ url_for('account')}}">Account</a></li>
+                {% endif%}
+                {% if session.get("current_type", None) == "admin" %}
+                <li><a href="{{ url_for('admin') }}">Bibliotecar Dashboard</a></li>
+                {% endif %}
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                {% if session.get("current_user", None) == None %}
+                <form action="/login" class="navbar-form navbar-right" method="post">
+                    <div class="form-group">
+                        <input class="form-control" name="name" placeholder="User Name" type="text">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" name="pw" placeholder="Password" type="password">
+                    </div>
+                    <button class="btn btn-success" type="submit">Log In</button>
+                </form>
+                {% else %}
+                <li>
+                    <a><b>{{ session.get("current_user") }}</b></a>
+                </li>
+                <li>
+                    <a href="/logout"><b><u>Logout</u></b></a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<div class="container">
+    <h1>{% block page_title %}{% endblock %}</h1>
+    <p>{% block body %}{% endblock %}</p>
+
+</div>
+</body>
+</html>
