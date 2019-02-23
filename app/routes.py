@@ -1,6 +1,10 @@
-from flask import render_template, request, session, url_for, redirect, abort
+from threading import Thread
+
+from flask import render_template, request, session, url_for, redirect, abort, current_app
 from app import app
-from app.models import User
+from app.models import User, Wishlist, EntryWishlist, Book
+from helpers import _wishlist_delete_entry,_add_book_to_wishlist
+
 import hashlib
 
 @app.errorhandler(401)
@@ -22,10 +26,24 @@ def FUN_404(error):
 def FUN_405(error):
     return render_template("page_405.html"), 405
 
+#
+# def send_async_email(app, msg):
+#     n, p = msg
+#     with app.app_context():
+#         while True:
+#             _user = User.query.filter_by(username=n).first()
+#             print(_user)
+#
+# def send_email(name,passw):
+#     msg = (name,passw)
+#     Thread(target=send_async_email,
+#            args=(current_app._get_current_object(), msg)).start()
+
 
 @app.route("/")
 @app.route('/home')
 def home():
+
     return render_template("home.html")
 
 
@@ -36,16 +54,16 @@ def about():
 
 @app.route("/login", methods=['GET','POST'])
 def login():
+
     user_name_submitted = request.form.get("name")
     pass_submitted = request.form.get("pw")
     _user = User.query.filter_by(username=user_name_submitted).first()
-    print(_user)
     if _user:
         if _user.password == hashlib.sha512(pass_submitted.encode()).hexdigest():
             session["current_user"] = _user.username
             session["current_type"] = _user.type
-
-            print(session.get("current_type"),session.get("current_type"))
+            # send_email(_user.username,_user.type)
+            # print(session.get("current_type"),session.get("current_type"))
             return render_template("account.html")
 
     return render_template("about.html")
@@ -58,9 +76,54 @@ def logout():
     return render_template("about.html")
 
 
+def getWishlist(user_id):
+    _wishLists = Wishlist.query.filter_by(id_user=user_id)
+    res = []
+    if _wishLists:
+        print(_wishLists)
+        for _wishList in _wishLists:
+            _entryWishList = _wishList.entrywishlist
+            if _entryWishList:
+                _book = Book.query.filter_by(id=_entryWishList.id_book).first()
+                if _book:
+                    res.append([_entryWishList.rank,_book.name,_book.type,_entryWishList.period,_entryWishList.id_wishlist])
+
+    return [sorted(res,key=lambda l: l[0])]
+
+
+@app.route("/wishlist_delete_entry/<entry_id>",methods=["GET"])
+def wishlist_delete_entry(entry_id):
+    _user = User.query.filter_by(username=session.get("current_user",None)).first()
+    if _user:
+        _wishlist = Wishlist.query.filter_by(id=entry_id).first()
+        if _wishlist.id_user == _user.id:
+            _wishlist_delete_entry(entry_id,_wishlist.entrywishlist,_user.id)
+        else:
+            return abort(401)
+    return redirect(url_for("account"))
+
+
+@app.route("/add_book_to_wishlist",methods=["POST"])
+def add_book_to_wishlist():
+    _name = request.form.get("name")
+    _period = request.form.get("period")
+    _rank = request.form.get("rank")
+    _book = Book.query.filter_by(name=_name).first()
+    if _book:
+        _add_book_to_wishlist(_book,session.get("current_user",None),_period,_rank)
+    else:
+        return abort(401)
+
+    return redirect(url_for("account"))
+
 @app.route("/account")
 def account():
-    return render_template("account.html")
+    _user_curr = session.get("current_user", None)
+    _wishlist = []
+    if _user_curr:
+        _user = User.query.filter_by(username=_user_curr).first()
+        _wishlist = getWishlist(_user.id)
+    return render_template("account.html", wishlist=_wishlist)
 
 
 @app.route("/admin")
