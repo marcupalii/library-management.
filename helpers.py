@@ -1,10 +1,9 @@
 from app import db
 from app.models import User, Wishlist, EntryWishlist, Book
-
+import time
 
 def _decrement_rank(rank,user_id):
     _wishlists = Wishlist.query.filter_by(id_user=user_id)
-
     for _wishlist in _wishlists:
         _entrywishlist = _wishlist.entrywishlist
 

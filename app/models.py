@@ -1,4 +1,4 @@
-# print('importing module %s' % __name__)
+print('importing models... %s' % __name__)
 from app import db
 import hashlib
 db.metadata.clear()
@@ -75,10 +75,10 @@ if __name__ == "__main__":
     # db.drop_all()
     # db.create_all()
     # admin = User(username='admin', email='admin@example.com',type='admin',password=hashlib.sha512("admin".encode()).hexdigest(),trust_coeff=0)
-    # user = User(username='user', email='guest@example.com',type="user",password=hashlib.sha512("user".encode()).hexdigest(),trust_coeff=0)
-    # book1 = Book(name="book1", type="type1", count=1)
-    # book2 = Book(name="book2", type="type1", count=1)
-    # book3 = Book(name="book3", type="type2", count=1)
+    user = User(username='user1', email='guest1@example.com',type="user",password=hashlib.sha512("user".encode()).hexdigest(),trust_coeff=0)
+    book1 = Book(name="book4", type="type1", count=1)
+    book2 = Book(name="book5", type="type2", count=1)
+    book3 = Book(name="book6", type="type2", count=1)
     #
     #
     # wishlist1 = Wishlist(id_user=2)
@@ -89,10 +89,10 @@ if __name__ == "__main__":
     #
     #
     # db.session.add(admin)
-    # db.session.add(user)
-    # db.session.add(book1)
-    # db.session.add(book2)
-    # db.session.add(book3)
+    db.session.add(user)
+    db.session.add(book1)
+    db.session.add(book2)
+    db.session.add(book3)
     #
     #
     # db.session.add(entrylist1)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     # db.session.add(wishlist2)
     #
     #
-    # db.session.commit()
+    db.session.commit()
 
 
     print(User.query.all())

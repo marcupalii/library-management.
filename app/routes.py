@@ -125,6 +125,18 @@ def account():
         _wishlist = getWishlist(_user.id)
     return render_template("account.html", wishlist=_wishlist)
 
+# @app.route("/return_book",methods=["POST"])
+# def return_book():
+#     _user_name = request.form.get("user")
+#     _book_name = request.form.get("book")
+#
+#     _user_curr = session.get("current_user", None)
+#     if _user_curr:
+#         _user = User.query.filter_by(username=_user_curr).first()
+#         if _user.type =="admin":
+#
+#         else:
+#             return abort(401)
 
 @app.route("/admin")
 def admin():
