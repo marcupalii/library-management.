@@ -1,4 +1,4 @@
-print('importing run... %s' % __name__)
+# print('importing run... %s' % __name__)
 from app import app
 
 if __name__ == '__main__':

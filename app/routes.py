@@ -1,9 +1,8 @@
-from threading import Thread
 
 from flask import render_template, request, session, url_for, redirect, abort, current_app
 from app import app
-from app.models import User, Wishlist, EntryWishlist, Book
-from helpers import _wishlist_delete_entry,_add_book_to_wishlist
+from app.models import User, Wishlist, EntryWishlist, Book, NextBook
+from helpers import _wishlist_delete_entry,_add_book_to_wishlist, getNextBook
 
 import hashlib
 
@@ -103,6 +102,35 @@ def wishlist_delete_entry(entry_id):
     return redirect(url_for("account"))
 
 
+@app.route("/deny_book/<entry_id>", methods=["GET"])
+def deny_book(entry_id):
+    _user = User.query.filter_by(username=session.get("current_user", None)).first()
+    if _user:
+        pass
+
+    return redirect(url_for("account"))
+
+
+@app.route("/accept_book/<entry_id>", methods=["GET"])
+def accept_book(entry_id):
+    _user = User.query.filter_by(username=session.get("current_user",None)).first()
+    if _user:
+        # _next_book = NextBook.query.filter_by(id=entry_id).first()
+        # if _next_book.id_user == _user.id:
+        #     _wishlists = Wishlist.query.filter_by(id_user=_user.id)
+        #     for _wishlist in _wishlists:
+        #         if _wishlist:
+        #             _entrywishlist = _wishlist.entrywishlist
+        #             if _entrywishlist.id_book == _next_book.id_book and _entrywishlist.period == _next_book.period:
+        #                 _next_book.status = "Accepted"
+        #             else:
+        #                 _next_book.status = "None"
+        # else:
+        #     return abort(401)
+        pass
+    return redirect(url_for("account"))
+
+
 @app.route("/add_book_to_wishlist",methods=["POST"])
 def add_book_to_wishlist():
     _name = request.form.get("name")
@@ -116,14 +144,27 @@ def add_book_to_wishlist():
 
     return redirect(url_for("account"))
 
+
+
+
 @app.route("/account")
 def account():
     _user_curr = session.get("current_user", None)
     _wishlist = []
+    _nextbook = []
     if _user_curr:
         _user = User.query.filter_by(username=_user_curr).first()
-        _wishlist = getWishlist(_user.id)
-    return render_template("account.html", wishlist=_wishlist)
+        _wishlist = getWishlist(_user.id)   # +=  ????
+
+        res_nextbook = getNextBook(_user.id)
+        if res_nextbook:
+            _book = Book.query.filter_by(id=res_nextbook.id_book)
+            _nextbook.append(_book.name)
+            _nextbook.append(_book.type)
+            _nextbook.append(res_nextbook.period)
+            _nextbook.append(res_nextbook.id)
+
+    return render_template("account.html", wishlist=_wishlist, nextbook=_nextbook)
 
 # @app.route("/return_book",methods=["POST"])
 # def return_book():

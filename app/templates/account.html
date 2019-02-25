@@ -51,4 +51,33 @@
             {% endfor %}
         </table>
     </div>
+
+    <div class="col-lg-9">
+        <h3>Accept next book</h3>
+
+        <table class="table small">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Period</th>
+                <th>Accept</th>
+                <th>Deny</th>
+            </tr>
+            </thead>
+
+            {% for _nextbook in nextbook %}
+                {% for entry in _nextbook %}
+                    <tr>
+                        <th> {{ entry[0] }} </th>
+                        <td> {{ entry[1] }} </td>
+                        <td> {{ entry[2] }} </td>
+                        <td><a href="/accept_book/{{ entry[3] }}">Y</a></td>
+                        <td><a href="/deny_book/{{ entry[3] }}">Y</a></td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+
 {% endblock %}

@@ -1,5 +1,5 @@
 
-print('importing init... %s' % __name__)
+# print('importing init... %s' % __name__)
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import threading
