@@ -7,7 +7,7 @@
         <h3>Add Book to wishlist</h3>
 
         <form class="content-section row" action="/add_book_to_wishlist" method='post'>
-            <div class="form-group col-lg-8" >
+            <div class="form-group col-lg-8">
                 <label for="name">Book`s name</label>
                 <input type="text" class="form-control" name="name">
             </div>
@@ -65,18 +65,15 @@
                 <th>Deny</th>
             </tr>
             </thead>
-
-            {% for _nextbook in nextbook %}
-                {% for entry in _nextbook %}
-                    <tr>
-                        <th> {{ entry[0] }} </th>
-                        <td> {{ entry[1] }} </td>
-                        <td> {{ entry[2] }} </td>
-                        <td><a href="/accept_book/{{ entry[3] }}">Y</a></td>
-                        <td><a href="/deny_book/{{ entry[3] }}">Y</a></td>
-                    </tr>
-                {% endfor %}
-            {% endfor %}
+            {% if nextbook %}
+                <tr>
+                    <th> {{ nextbook[0] }} </th>
+                    <td> {{ nextbook[1] }} </td>
+                    <td> {{ nextbook[2] }} </td>
+                    <td><a href="/accept_book/{{ nextbook[3] }}">Y</a></td>
+                    <td><a href="/deny_book/{{ nextbook[3] }}">Y</a></td>
+                </tr>
+            {% endif %}
         </table>
     </div>
 

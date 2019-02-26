@@ -8,7 +8,8 @@ from helpers import _wishlist_delete_entry,_add_book_to_wishlist, getNextBook
 import hashlib
 @app.before_first_request
 def start_thread_function():
-    routine_thread.start()
+    if not routine_thread.is_alive():
+        routine_thread.start()
 
 @app.errorhandler(401)
 def FUN_401(error):
@@ -162,7 +163,7 @@ def account():
 
         res_nextbook = getNextBook(_user.id)
         if res_nextbook:
-            _book = Book.query.filter_by(id=res_nextbook.id_book)
+            _book = Book.query.filter_by(id=res_nextbook.id_book).first()
             _nextbook.append(_book.name)
             _nextbook.append(_book.type)
             _nextbook.append(res_nextbook.period)

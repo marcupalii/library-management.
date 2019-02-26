@@ -12,7 +12,7 @@ def write_result_of_matching():
     from app import db
 
     for match in posible_match:
-        _next_book = NextBook.query.filter_by(id_user=int(match[0]))
+        _next_book = NextBook.query.filter_by(id_user=int(match[0])).first()
 
         _next_book.id_book = int(match[1][0])
         _next_book.period = match[1][1]
@@ -24,7 +24,7 @@ def write_result_of_matching():
     posible_match = []
 
     for unmatch in users_cannot_be_matched:
-        _next_book = NextBook.query.filter_by(id_user=int(unmatch[0]))
+        _next_book = NextBook.query.filter_by(id_user=int(unmatch[0])).first()
         _next_book.id_book = int(unmatch[1][0])
         _next_book.period = unmatch[1][1]
         _next_book.status = "None"
@@ -143,7 +143,7 @@ def routine():
     write_result_of_matching()
 
 
-def schedule_stable_match():
+def schedule_routine():
     schedule.every(20).seconds.do(routine)
     time.sleep(5)
     while True:
