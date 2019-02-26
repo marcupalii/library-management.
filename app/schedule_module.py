@@ -18,6 +18,7 @@ def write_result_of_matching():
         _next_book.period = match[1][1]
         _next_book.status = "Checking"
         print("_next_book", _next_book.id_book,_next_book.period,_next_book.status)
+        # db.session.flush()
         db.session.commit()
 
     posible_match = []
@@ -143,7 +144,7 @@ def routine():
 
 
 def schedule_stable_match():
-    schedule.every(1).seconds.do(routine)
+    schedule.every(20).seconds.do(routine)
     time.sleep(5)
     while True:
         schedule.run_pending()

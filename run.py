@@ -1,8 +1,8 @@
 # print('importing run... %s' % __name__)
-from app import app, routine_thread
+from app import app
 
 if __name__ == '__main__':
-    routine_thread.start()
+
     app.run()
 
 

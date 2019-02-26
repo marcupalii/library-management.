@@ -1,10 +1,14 @@
 
 from flask import render_template, request, session, url_for, redirect, abort, current_app
-from app import app
+from app import app,routine_thread
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook
 from helpers import _wishlist_delete_entry,_add_book_to_wishlist, getNextBook
 
+
 import hashlib
+@app.before_first_request
+def start_thread_function():
+    routine_thread.start()
 
 @app.errorhandler(401)
 def FUN_401(error):
