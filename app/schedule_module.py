@@ -1,11 +1,11 @@
 # print('importing schedule... %s' % __name__)
-import threading
 import time
 import schedule
 posible_match = []
 users_without_books = []
 users_cannot_be_matched = []
-T = time.time()
+
+
 def write_result_of_matching():
     global posible_match, users_cannot_be_matched
     from app.models import NextBook
@@ -18,8 +18,7 @@ def write_result_of_matching():
         _next_book.period = match[1][1]
         _next_book.status = "Checking"
         print("_next_book", _next_book.id_book,_next_book.period,_next_book.status)
-        print(time.time()-T)
-        print(db.session.commit())
+        db.session.commit()
 
     posible_match = []
 
@@ -99,13 +98,9 @@ def stable_matching(users_with_wishlist,trust_coeffs,book_count):
         for user in users_with_wishlist:
             begin_matching(user,users_with_wishlist[user],trust_coeffs,book_count)
 
-    write_result_of_matching()
-    # print("posible_match",posible_match)
-    # print("users_without_books",users_without_books)
-    # print("users_cannot_be_matched",users_cannot_be_matched)
 
 def update_state():
-    from app.models import User, Wishlist, EntryWishlist, Book, NextBook
+    from app.models import User, Wishlist, Book, NextBook
 
     users_with_wishlist = {}
     trust_coeffs = {}
@@ -134,27 +129,22 @@ def update_state():
             if _book.id not in book_count.keys():
                 book_count.update({str(_book.id):_book.count})
 
+    return (users_with_wishlist,trust_coeffs,book_count)
+
+
+T = time.time()
+
+
+def routine():
+    print(time.time()-T)
+    users_with_wishlist,trust_coeffs,book_count = update_state()
     stable_matching(users_with_wishlist,trust_coeffs,book_count)
+    write_result_of_matching()
 
 
-
-
-def schedule_stable_match(_time):
-    schedule.every(20).seconds.do(update_state)
+def schedule_stable_match():
+    schedule.every(1).seconds.do(routine)
     time.sleep(5)
-    # while True:
-    #     interval = (time.time() - _time) % 10
-    #     if interval >= 9:
-    #         if DONE:
-    #             DONE = False
-    #             print(interval,DONE)
-    #
-    #             # worker = threading.Thread(target=update_state())
-    #             # worker.start()
-    #             # worker.join()
-    #
-    #             update_state()
-    #             print("\nDONE")
     while True:
         schedule.run_pending()
         time.sleep(1)
