@@ -18,7 +18,6 @@ def write_result_of_matching():
         _next_book.period = match[1][1]
         _next_book.status = "Checking"
         print("_next_book", _next_book.id_book,_next_book.period,_next_book.status)
-        # db.session.flush()
         db.session.commit()
 
     posible_match = []
@@ -35,17 +34,13 @@ def write_result_of_matching():
 
 def begin_matching(user, user_with_wishList, book_return_coefficient, quantity_per_book):
     global users_without_books
-    # print("DEALING WITH %s " %(user))
 
     for wish in user_with_wishList:
 
         taken_match = []
         taken_match = list(filter(lambda pair: str(pair[1][0]).strip() == str(wish[0]).strip(), posible_match))
 
-        # print("wish", wish)
-        # print("posible_match:", posible_match)
-        # print("taken_match:", taken_match)
-        if (len(taken_match) == 0):
+        if len(taken_match) == 0:
             posible_match.append([user, wish])
 
             users_without_books.remove(user)
@@ -83,18 +78,13 @@ def begin_matching(user, user_with_wishList, book_return_coefficient, quantity_p
 def stable_matching(users_with_wishlist,trust_coeffs,book_count):
 
     global users_without_books
-    # print("users_with_wishlist", users_with_wishlist)
+
     users_without_books = [key for key in users_with_wishlist.keys()]
     for key in users_with_wishlist.keys():
         temp = users_with_wishlist[key]
         users_with_wishlist[key] = []
         users_with_wishlist[key] += [el for el in sorted(temp, key=lambda el: el[2])]
 
-    print("users_with_wishlist",users_with_wishlist)
-    print("trust_coeffs",trust_coeffs)
-    print("book_count",book_count)
-
-    # print(users_with_wishlist)
     while len(users_without_books) > 0:
         for user in users_with_wishlist:
             begin_matching(user,users_with_wishlist[user],trust_coeffs,book_count)
@@ -108,6 +98,7 @@ def update_state():
     book_count = {}
 
     _wishlists = Wishlist.query.all()
+
 
     for _wishlist in _wishlists:
         _next_book = NextBook.query.filter_by(id_user=_wishlist.id_user).first()
@@ -144,8 +135,8 @@ def routine():
 
 
 def schedule_routine():
-    schedule.every(20).seconds.do(routine)
     time.sleep(5)
+    schedule.every(20).seconds.do(routine)
     while True:
         schedule.run_pending()
         time.sleep(1)

@@ -3,7 +3,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import threading
-import time
 from app.schedule_module import schedule_routine
 
 

@@ -3,9 +3,8 @@ from flask import render_template, request, session, url_for, redirect, abort, c
 from app import app,routine_thread
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook
 from helpers import _wishlist_delete_entry,_add_book_to_wishlist, getNextBook
-
-
 import hashlib
+
 @app.before_first_request
 def start_thread_function():
     if not routine_thread.is_alive():
@@ -66,9 +65,11 @@ def login():
         if _user.password == hashlib.sha512(pass_submitted.encode()).hexdigest():
             session["current_user"] = _user.username
             session["current_type"] = _user.type
-            # send_email(_user.username,_user.type)
-            # print(session.get("current_type"),session.get("current_type"))
-            return render_template("account.html")
+            if _user.type == "admin":
+                return redirect(url_for("admin"))
+            else:
+                return redirect(url_for("account"))
+
 
     return render_template("about.html")
 

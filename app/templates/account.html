@@ -42,10 +42,10 @@
                 {% for entry in _wishlist %}
                     <tr>
                         <th> {{ entry[0] }} </th>
-                        <td> {{ entry[1] }} </td>
-                        <td> {{ entry[2] }} </td>
-                        <td> {{ entry[3] }} </td>
-                        <td><a href="/wishlist_delete_entry/{{ entry[4] }}">Delete</a></td>
+                        <th> {{ entry[1] }} </th>
+                        <th> {{ entry[2] }} </th>
+                        <th> {{ entry[3] }} </th>
+                        <th><a href="/wishlist_delete_entry/{{ entry[4] }}">Delete</a></th>
                     </tr>
                 {% endfor %}
             {% endfor %}
@@ -67,7 +67,7 @@
             </thead>
             {% if nextbook %}
                 <tr>
-                    <th> {{ nextbook[0] }} </th>
+                    <td> {{ nextbook[0] }} </td>
                     <td> {{ nextbook[1] }} </td>
                     <td> {{ nextbook[2] }} </td>
                     <td><a href="/accept_book/{{ nextbook[3] }}">Y</a></td>
