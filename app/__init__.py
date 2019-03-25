@@ -10,12 +10,12 @@ def create_app():
     new_app.config.from_object(DevelopmentConfig)
     new_db = SQLAlchemy(new_app)
     new_routine_thread = threading.Thread(target=schedule_routine)
-    return (new_app, new_db, new_routine_thread)
+    return new_app, new_db, new_routine_thread
 
 
 app, db, routine_thread = create_app()
-# cand execut models ca main module comm importul de mai jos,import circular
-from app import r
+# cand execut models importul trebuie comm
+from app import routes
 
 
 

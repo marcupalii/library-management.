@@ -1,8 +1,8 @@
 
 from flask import render_template, request, session, url_for, redirect, abort, current_app
-from app import app,routine_thread
-from app.models import User, Wishlist, EntryWishlist, Book, NextBook
-from helpers import _wishlist_delete_entry,_add_book_to_wishlist, getNextBook
+from app import app, routine_thread
+from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries
+from app import db
 import hashlib
 
 @app.before_first_request
@@ -29,24 +29,9 @@ def FUN_404(error):
 def FUN_405(error):
     return render_template("page_405.html"), 405
 
-#
-# def send_async_email(app, msg):
-#     n, p = msg
-#     with app.app_context():
-#         while True:
-#             _user = User.query.filter_by(username=n).first()
-#             print(_user)
-#
-# def send_email(name,passw):
-#     msg = (name,passw)
-#     Thread(target=send_async_email,
-#            args=(current_app._get_current_object(), msg)).start()
-
-
 @app.route("/")
 @app.route('/home')
 def home():
-
     return render_template("home.html")
 
 
@@ -58,12 +43,15 @@ def about():
 @app.route("/login", methods=['GET','POST'])
 def login():
 
-    user_name_submitted = request.form.get("name")
+    email_submitted = request.form.get("email")
     pass_submitted = request.form.get("pw")
-    _user = User.query.filter_by(username=user_name_submitted).first()
+    _user = User.query.filter_by(email=email_submitted).first()
     if _user:
         if _user.password == hashlib.sha512(pass_submitted.encode()).hexdigest():
-            session["current_user"] = _user.username
+            session["current_first_name"] = _user.first_name
+            session["current_last_name"] = _user.last_name
+            session["current_email"] = _user.email
+
             session["current_type"] = _user.type
             if _user.type == "admin":
                 return redirect(url_for("admin"))
@@ -76,114 +64,157 @@ def login():
 
 @app.route("/logout")
 def logout():
-    session.pop("current_user", None)
+    session.pop("current_first_name", None)
+    session.pop("current_last_name", None)
+    session.pop("current_email", None)
     session.pop("current_type", None)
     return render_template("about.html")
 
 
-def getWishlist(user_id):
-    _wishLists = Wishlist.query.filter_by(id_user=user_id)
-    res = []
-    if _wishLists:
-        print(_wishLists)
-        for _wishList in _wishLists:
-            _entryWishList = _wishList.entrywishlist
-            if _entryWishList:
-                _book = Book.query.filter_by(id=_entryWishList.id_book).first()
-                if _book:
-                    res.append([_entryWishList.rank,_book.name,_book.type,_entryWishList.period,_entryWishList.id_wishlist])
-
-    return [sorted(res,key=lambda l: l[0])]
-
-
 @app.route("/wishlist_delete_entry/<entry_id>",methods=["GET"])
 def wishlist_delete_entry(entry_id):
-    _user = User.query.filter_by(username=session.get("current_user",None)).first()
+    _user = User.query.filter_by(email=session.get("current_email",None)).first()
     if _user:
-        _wishlist = Wishlist.query.filter_by(id=entry_id).first()
-        if _wishlist.id_user == _user.id:
-            _wishlist_delete_entry(entry_id,_wishlist.entrywishlist,_user.id)
+        _entry = EntryWishlist.query.filter_by(id=entry_id).first()
+        if _entry:
+            rank = _entry.rank
+            db.session.delete(_entry)
+            db.session.commit()
+
+            _wishlist = _user.wishlist
+            _entryes = _wishlist.entry_wishlists
+
+            for _entry in _entryes:
+
+                if _entry.rank >= rank:
+                    _entry.rank -= 1
+                    db.session.commit()
+
         else:
             return abort(401)
     return redirect(url_for("account"))
 
 
-@app.route("/deny_book/<entry_id>", methods=["GET"])
-def deny_book(entry_id):
-    _user = User.query.filter_by(username=session.get("current_user", None)).first()
-    if _user:
-        pass
-
-    return redirect(url_for("account"))
-
-
-@app.route("/accept_book/<entry_id>", methods=["GET"])
-def accept_book(entry_id):
-    _user = User.query.filter_by(username=session.get("current_user",None)).first()
-    if _user:
-        # _next_book = NextBook.query.filter_by(id=entry_id).first()
-        # if _next_book.id_user == _user.id:
-        #     _wishlists = Wishlist.query.filter_by(id_user=_user.id)
-        #     for _wishlist in _wishlists:
-        #         if _wishlist:
-        #             _entrywishlist = _wishlist.entrywishlist
-        #             if _entrywishlist.id_book == _next_book.id_book and _entrywishlist.period == _next_book.period:
-        #                 _next_book.status = "Accepted"
-        #             else:
-        #                 _next_book.status = "None"
-        # else:
-        #     return abort(401)
-        pass
-    return redirect(url_for("account"))
+# @app.route("/deny_book/<entry_id>", methods=["GET"])
+# def deny_book(entry_id):
+#     _user = User.query.filter_by(username=session.get("current_user", None)).first()
+#     if _user:
+#         pass
+#
+#     return redirect(url_for("account"))
+#
+#
+# @app.route("/accept_book/<entry_id>", methods=["GET"])
+# def accept_book(entry_id):
+#     _user = User.query.filter_by(email=session.get("current_email",None)).first()
+#     if _user:
+#         pass
+#
+#     return redirect(url_for("account"))
 
 
 @app.route("/add_book_to_wishlist",methods=["POST"])
 def add_book_to_wishlist():
     _name = request.form.get("name")
     _period = request.form.get("period")
-    _rank = request.form.get("rank")
+    _rank = int(request.form.get("rank"))
     _book = Book.query.filter_by(name=_name).first()
     if _book:
-        _add_book_to_wishlist(_book,session.get("current_user",None),_period,_rank)
+
+        _user = User.query.filter_by(email=session.get("current_email",None)).first()
+        _wishlist = _user.wishlist
+
+        _entrywishlist = _wishlist.entry_wishlists
+        for _entry in _entrywishlist:
+
+            if _entry.rank >= _rank:
+                _entry.rank += 1
+                db.session.commit()
+
+
+        _new_entry = EntryWishlist(wishlist=_wishlist, id_book=_book.id, rank=_rank, period=_period)
+
+        db.session.add(_new_entry)
+        db.session.commit()
+
+
     else:
         return abort(401)
 
     return redirect(url_for("account"))
 
 
-
-
 @app.route("/account")
 def account():
-    _user_curr = session.get("current_user", None)
+    _email = session.get("current_email", None)
     _wishlist = []
     _nextbook = []
-    if _user_curr:
-        _user = User.query.filter_by(username=_user_curr).first()
-        _wishlist = getWishlist(_user.id)   # +=  ????
+    rank = -1
+    if _email:
+        _user = User.query.filter_by(email=_email).first()
 
-        res_nextbook = getNextBook(_user.id)
-        if res_nextbook:
-            _book = Book.query.filter_by(id=res_nextbook.id_book).first()
+        wishList = _user.wishlist
+        _next_book = _user.next_book
+
+        response = []
+
+        if _next_book.status == "Checking":
+            _entry = EntryWishlist.query.filter_by(
+                id_wishlist=wishList.id,
+                id_book=_next_book.id_book,
+                period=_next_book.period
+            ).first()
+            if _entry:
+                rank = _entry.rank
+                _next_book.status = "Pending"
+                db.session.delete(_entry)
+                db.session.commit()
+
+                _book = Book.query.filter_by(id=_next_book.id_book).first()
+                _nextbook.append(_book.name)
+                _nextbook.append(_book.type)
+                _nextbook.append(_next_book.period)
+                _nextbook.append(_next_book.id)
+            else:
+
+                _next_book.status = "None"
+                _next_book.period = 0
+
+                _book = Book.query.filter_by(id=_next_book.id_book).first()
+                _book.count_free_books += 1
+
+                _series_book = BookSeries.query.filter_by(id=_next_book.id_series_book).first()
+                _series_book.status = "available"
+                db.session.commit()
+
+        elif _next_book.status == "Pending":
+        # check if the book is acepting within 5 hours
+            _book = Book.query.filter_by(id=_next_book.id_book).first()
             _nextbook.append(_book.name)
             _nextbook.append(_book.type)
-            _nextbook.append(res_nextbook.period)
-            _nextbook.append(res_nextbook.id)
+            _nextbook.append(_next_book.period)
+            _nextbook.append(_next_book.id_series_book)
+
+
+
+        _entry_wishlist = wishList.entry_wishlists
+
+        for _entry in _entry_wishlist:
+            if rank != -1 and _entry.rank > rank:
+
+                _entry.rank -= 1
+                db.session.commit()
+            _book = Book.query.filter_by(id=_entry.id_book).first()
+            response.append([_entry.rank, _book.name, _book.type, _entry.period, _entry.id])
+
+
+        # _next_book.status= ["None","Pending","NoNeed","Checking"]
+        # next_nook need id_book field sau series_book_field
+
+        _wishlist = [sorted(response, key=lambda l: l[0])].copy()
 
     return render_template("account.html", wishlist=_wishlist, nextbook=_nextbook)
 
-# @app.route("/return_book",methods=["POST"])
-# def return_book():
-#     _user_name = request.form.get("user")
-#     _book_name = request.form.get("book")
-#
-#     _user_curr = session.get("current_user", None)
-#     if _user_curr:
-#         _user = User.query.filter_by(username=_user_curr).first()
-#         if _user.type =="admin":
-#
-#         else:
-#             return abort(401)
 
 @app.route("/admin")
 def admin():
