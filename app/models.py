@@ -2,10 +2,10 @@
 from app import db
 import hashlib
 import datetime
+from flask_login import UserMixin
 db.metadata.clear()
 
-
-class User(db.Model):
+class User(UserMixin,db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 

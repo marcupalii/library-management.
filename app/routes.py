@@ -1,9 +1,16 @@
 
-from flask import render_template, request, session, url_for, redirect, abort, current_app
-from app import app, routine_thread
+from flask import render_template, request, url_for, redirect, abort
+from app import app, routine_thread, login_manager
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries
 from app import db
 import hashlib
+from app.forms import LoginForm
+from flask_login import login_user, login_required, logout_user, current_user
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 @app.before_first_request
 def start_thread_function():
@@ -40,40 +47,17 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/login", methods=['GET','POST'])
-def login():
-
-    email_submitted = request.form.get("email")
-    pass_submitted = request.form.get("pw")
-    _user = User.query.filter_by(email=email_submitted).first()
-    if _user:
-        if _user.password == hashlib.sha512(pass_submitted.encode()).hexdigest():
-            session["current_first_name"] = _user.first_name
-            session["current_last_name"] = _user.last_name
-            session["current_email"] = _user.email
-
-            session["current_type"] = _user.type
-            if _user.type == "admin":
-                return redirect(url_for("admin"))
-            else:
-                return redirect(url_for("account"))
-
-
-    return render_template("about.html")
-
-
 @app.route("/logout")
+@login_required
 def logout():
-    session.pop("current_first_name", None)
-    session.pop("current_last_name", None)
-    session.pop("current_email", None)
-    session.pop("current_type", None)
+    logout_user()
     return render_template("about.html")
 
 
 @app.route("/wishlist_delete_entry/<entry_id>",methods=["GET"])
+@login_required
 def wishlist_delete_entry(entry_id):
-    _user = User.query.filter_by(email=session.get("current_email",None)).first()
+    _user = User.query.filter_by(email=current_user.email).first()
     if _user:
         _entry = EntryWishlist.query.filter_by(id=entry_id).first()
         if _entry:
@@ -95,25 +79,9 @@ def wishlist_delete_entry(entry_id):
     return redirect(url_for("account"))
 
 
-# @app.route("/deny_book/<entry_id>", methods=["GET"])
-# def deny_book(entry_id):
-#     _user = User.query.filter_by(username=session.get("current_user", None)).first()
-#     if _user:
-#         pass
-#
-#     return redirect(url_for("account"))
-#
-#
-# @app.route("/accept_book/<entry_id>", methods=["GET"])
-# def accept_book(entry_id):
-#     _user = User.query.filter_by(email=session.get("current_email",None)).first()
-#     if _user:
-#         pass
-#
-#     return redirect(url_for("account"))
-
 
 @app.route("/add_book_to_wishlist",methods=["POST"])
+@login_required
 def add_book_to_wishlist():
     _name = request.form.get("name")
     _period = request.form.get("period")
@@ -121,7 +89,7 @@ def add_book_to_wishlist():
     _book = Book.query.filter_by(name=_name).first()
     if _book:
 
-        _user = User.query.filter_by(email=session.get("current_email",None)).first()
+        _user = User.query.filter_by(email=current_user.email).first()
         _wishlist = _user.wishlist
 
         _entrywishlist = _wishlist.entry_wishlists
@@ -145,8 +113,9 @@ def add_book_to_wishlist():
 
 
 @app.route("/account")
+@login_required
 def account():
-    _email = session.get("current_email", None)
+    _email = current_user.email
     _wishlist = []
     _nextbook = []
     rank = -1
@@ -174,7 +143,9 @@ def account():
                 _nextbook.append(_book.name)
                 _nextbook.append(_book.type)
                 _nextbook.append(_next_book.period)
-                _nextbook.append(_next_book.id)
+                _nextbook.append(_next_book.status)
+                _nextbook.append(_next_book.id_series_book)
+
             else:
 
                 _next_book.status = "None"
@@ -193,6 +164,7 @@ def account():
             _nextbook.append(_book.name)
             _nextbook.append(_book.type)
             _nextbook.append(_next_book.period)
+            _nextbook.append(_next_book.status)
             _nextbook.append(_next_book.id_series_book)
 
 
@@ -216,6 +188,34 @@ def account():
     return render_template("account.html", wishlist=_wishlist, nextbook=_nextbook)
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        if current_user.type == "admin":
+            return redirect(url_for('admin'))
+        else:
+            return redirect(url_for('account'))
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            if user.password == hashlib.sha512(form.password.data.encode()).hexdigest():
+                print("remember me =",form.remember.data)
+                login_user(user, remember=form.remember.data)
+
+                if user.type == "admin":
+                    return redirect(url_for("admin"))
+                else:
+                    return redirect(url_for("account"))
+
+        return '<h1>Invalid username or password</h1>'
+
+    return render_template('login.html', form=form)
+
+
 @app.route("/admin")
+@login_required
 def admin():
     return render_template("admin.html")

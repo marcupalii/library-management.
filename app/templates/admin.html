@@ -1,20 +1,14 @@
 {% extends "layout.html" %}
+
+{% block styles %}
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+
 {% block page_title %}Admin dashboard {% endblock %}
 {% block body %}
     {{ super() }}
-{#    <div class="col-lg-6">#}
-{#        <h3>Returned Book</h3>#}
-{#        <form class="content-section row" action="/return_book" method='post'>#}
-{#            <div class="form-group col-lg-8" >#}
-{#                <label for="book">Book`s name</label>#}
-{#                <input type="text" class="form-control" name="book">#}
-{#            </div>#}
-{#            <div class="form-group col-lg-8">#}
-{#                <label for="user">Period</label>#}
-{#                <input type="text" class="form-control" name="user">#}
-{#            </div>#}
-{#            <br><br>#}
-{#            <button type="submit" class="btn" class="col-">Submit</button>#}
-{#        </form>#}
-{#    </div>#}
 {% endblock %}

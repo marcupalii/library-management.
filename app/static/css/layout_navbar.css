@@ -1,0 +1,8 @@
+.navbar {
+    min-height: 40px;
+    border: 1px solid transparent;
+}
+
+#navar-right{
+    margin-right:10px;
+}

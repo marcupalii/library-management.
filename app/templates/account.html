@@ -1,4 +1,13 @@
 {% extends "layout.html" %}
+
+{% block styles %}
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+
 {% block page_title %}Account Page {% endblock %}
 {% block body %}
     {{ super() }}
@@ -61,6 +70,7 @@
                 <th>Name</th>
                 <th>Type</th>
                 <th>Period</th>
+                <th>Status</th>
                 <th>Accept</th>
                 <th>Deny</th>
             </tr>
@@ -70,8 +80,9 @@
                     <td> {{ nextbook[0] }} </td>
                     <td> {{ nextbook[1] }} </td>
                     <td> {{ nextbook[2] }} </td>
-                    <td><a href="/accept_book/{{ nextbook[3] }}">Y</a></td>
-                    <td><a href="/deny_book/{{ nextbook[3] }}">Y</a></td>
+                    <td> {{ nextbook[3] }} </td>
+                    <td><a href="/accept_book/{{ nextbook[4] }}">Y</a></td>
+                    <td><a href="/deny_book/{{ nextbook[4] }}">Y</a></td>
                 </tr>
             {% endif %}
         </table>

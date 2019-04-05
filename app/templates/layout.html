@@ -1,67 +1,158 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.united.css') }}" >
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+{% extends "bootstrap/base.html" %}
 
-    <title>Flask Example</title>
-</head>
-<body>
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button class="navbar-toggle" data-target="#myNavbar" data-toggle="collapse" type="button">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
+{% block styles %}
 
-        <div class="collapse navbar-collapse" id="myNavbar">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('home')}}">Home</a></li>
-                <li><a href="{{ url_for('about')}}">About Page</a></li>
-                {% if session.get("current_type", None) == "user" %}
-                <li><a href="{{ url_for('account')}}">Account</a></li>
-                {% endif%}
-                {% if session.get("current_type", None) == "admin" %}
-                <li><a href="{{ url_for('admin') }}">Bibliotecar Dashboard</a></li>
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/layout_navbar.css') }}">
+
+    {% if current_user.is_authenticated %}
+        {% if current_user.type == "user_not_implemented" %}
+
+            <link rel="stylesheet" type="text/css"
+                  href="{{ url_for('.static', filename='css/layout_notification.css') }}">
+            <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/layout_sidebar.css') }}">
+        {% endif %}
+    {% endif %}
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block scripts %}
+
+    <script
+            src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    {% if current_user.is_authenticated %}
+        {% if current_user.type == "user_not_implemented" %}
+            <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
+            <script src="{{ url_for('.static', filename='js/layout_notification.js') }}"></script>
+            <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+    <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+        <button type="button" class="pull-left btn btn-default d-md-none" data-toggle="offcanvas" data-target="#sidebar"
+                aria-expanded="false" aria-controls="sidebar">
+            <i class="fa fa-chevron-down"></i>
+        </button>
+        <a class="navbar-brand" href="#">Library Management</a>
+        <button class="navbar-toggler" id="navbar-button" type="button" data-toggle="collapse"
+                data-target="#ReverseNavbar"
+                aria-controls="ReverseNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="ReverseNavbar">
+            <ul class="navbar-nav ml-auto" id="navar-right">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.type == "user_not_implemented" %}
+                        <li class="nav-item dropdown">
+
+                            <button class="btn dropdown-toggle" id="notifications-dropdown"
+                                    type="button" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span class="hide" id="hide-user-id">{{ id_user }}</span>
+                                <i id="notificationsIcon" class="fa fa-bell-o" aria-hidden="true"></i>
+                                <span id="notificationsBadge" class="badge badge-danger">
+                                <i class="fa fa-spinner fa-pulse fa-fw" aria-hidden="true"></i>
+                            </span>
+                            </button>
+
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notifications-dropdown">
+                                <h6 class="dropdown-header">Notifications</h6>
+
+                                <a id="notificationsLoader" class="dropdown-item dropdown-notification" href="#">
+                                    <p class="notification-solo text-center">
+                                        <i id="notificationsIcon" class="fa fa-spinner fa-pulse fa-fw"
+                                           aria-hidden="true">
+                                        </i>Se incarca notificari noi...</p>
+                                </a>
+
+                                <div id="notificationsContainer" class="notifications-container"></div>
+
+
+                                <a id="notificationNone" class="dropdown-item dropdown-notification" href="#">
+                                    <p class="notification-solo text-center">Nu exista notificari noi</p>
+                                </a>
+
+                                <a class="dropdown-item dropdown-notification-all" href="#">Vezi toate notificarile</a>
+
+                            </div>
+
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                               aria-expanded="false">
+                                <i class="fa fa-user"></i> Profile </a>
+                            <div class="dropdown-menu" aria-labelledby="ReverseNavbar">
+                                <a class="dropdown-item" href="#">My account</a>
+                                <a class="dropdown-item" href="#">Log out</a>
+                            </div>
+                        </li>
+                    {% endif %}
                 {% endif %}
-            </ul>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('about') }}">
+                        <i class="fa fa-home"></i>About Page<span class="sr-only">(current)</span>
+                    </a>
+                </li>
 
-            <ul class="nav navbar-nav navbar-right">
-                {% if session.get("current_type", None) == None %}
-                <form action="/login" class="navbar-form navbar-right" method="post">
-                    <div class="form-group">
-                        <input class="form-control" name="email" placeholder="Email" type="text">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" name="pw" placeholder="Password" type="password">
-                    </div>
-                    <button class="btn btn-success" type="submit">Log In</button>
-                </form>
+
+                {% if current_user.is_anonymous %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="fa fa-home"></i>Login<span class="sr-only"></span>
+                        </a>
+                    </li>
+
                 {% else %}
-                <li>
-                    <a><b>{{ session.get("current_first_name") }},{{ session.get("current_last_name") }}</b></a>
+                    {% if current_user.type == "user" %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ url_for('account') }}">
+                                <i class="fa fa-home"></i>Account<span class="sr-only"></span>
+                            </a>
+                        </li>
+                    {% endif %}
 
-                </li>
-                <li>
-                    <a href="/logout"><b><u>Logout</u></b></a>
-                </li>
+                    {% if current_user.type == "admin" %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ url_for('admin') }}">
+                                <i class="fa fa-home"></i>Bibliotecar Dashboard<span class="sr-only"></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li>
+                        <a><b>{{ current_user.first_name }},{{ current_user.last_name }}</b></a>
+
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/logout">
+                            <i class="fa fa-home"></i>Logout<span class="sr-only"></span>
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
+
         </div>
+    </nav>
 
-    </div>
-</nav>
-
-<div class="container">
-    <h1>{% block page_title %}{% endblock %}</h1>
-    <p>{% block body %}{% endblock %}</p>
-
-</div>
-</body>
-</html>
+{% endblock %}

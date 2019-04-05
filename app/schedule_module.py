@@ -16,7 +16,7 @@ def write_result_of_matching():
         _next_book = NextBook.query.filter_by(id_user=match[0]).first()
         print("==",match[1][0],"==",type(match[1][0]))
         print("BookSeries.query.all()",BookSeries.query.all())
-        _book_series = BookSeries.query.filter_by(book_id=match[1][0], status="available").first()
+        _book_series = BookSeries.query.filter_by(book_id=match[1][0], status="").first()
         _book_series.status = "taken"
         db.session.commit()
 
