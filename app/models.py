@@ -137,7 +137,7 @@ class ReservedBook(db.Model):
 if __name__ == "__main__":
     db.create_all()
 
-    #  ----------------------       ONE TO MANY model   ------------------------------------
+    # ----------------------       ONE TO MANY model   ------------------------------------
     book1 = Book(name="book1", type="type1", count_total=2, count_free_books=2)
     book2 = Book(name="book2", type="type3", count_total=2, count_free_books=2)
 
@@ -197,4 +197,4 @@ if __name__ == "__main__":
     print(NextBook.query.all())
     print(NextBook.query.filter_by(id=1,id_user=1).first())
     # DROP SCHEMA public CASCADE;
-    # CREATE SCHEMA public;
+    #     # CREATE SCHEMA public;
