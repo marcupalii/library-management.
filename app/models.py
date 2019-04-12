@@ -1,4 +1,4 @@
-# print('importing models... %s' % __name__)
+
 from app import db
 import hashlib
 import datetime
@@ -197,4 +197,4 @@ if __name__ == "__main__":
     print(NextBook.query.all())
     print(NextBook.query.filter_by(id=1,id_user=1).first())
     # DROP SCHEMA public CASCADE;
-    #     # CREATE SCHEMA public;
+    # CREATE SCHEMA public;

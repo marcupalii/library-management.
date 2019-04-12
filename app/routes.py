@@ -1,6 +1,6 @@
 
 from flask import render_template, request, url_for, redirect, abort
-from app import app, routine_thread, login_manager
+from app import app, login_manager
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries
 from app import db
 import hashlib
@@ -11,11 +11,6 @@ from flask_login import login_user, login_required, logout_user, current_user
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-@app.before_first_request
-def start_thread_function():
-    if not routine_thread.is_alive():
-        routine_thread.start()
 
 @app.errorhandler(401)
 def FUN_401(error):

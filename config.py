@@ -15,22 +15,13 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-
-class ProductionConfig(Config):
-    DEBUG = False
-
-
-class StagingConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
+    CELERY_TIMEZONE = 'Europe/Bucharest'
+    ENABLE_UTC = True
 
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
-
-
-class TestingConfig(Config):
-    TESTING = True
+    CELERY_BROKER_URL = 'amqp://localhost//',
+    CELERY_RESULT_BACKEND = 'db+postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
