@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+
+{% block page_title %}Wishlist{% endblock %}
+
+
+{% block navbar %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    {{ super() }}
+    <div class="container-fluid h-100">
+
+        <div class="row h-100">
+            <div class="order-1 row-offcanvas-left">
+
+                <div id="sidebar-fixed">
+                    <div class="sidebar-offcanvas" id="sidebar">
+                        <div class="list-group">
+                            <a class="nav-link" href="{{ url_for('account') }}">
+                                <i class="fa fa-home"></i>Home<span class="sr-only"></span>
+                            </a>
+
+                            <a class="nav-link" href="{{ url_for('wishlist') }}">
+                                <i class="fa fa-home"></i>Wishlist<span class="sr-only"></span>
+                            </a>
+
+                            <a class="nav-link" href="{{ url_for('notifications') }}">
+                                <i class="fa fa-home"></i>Notifications<span class="sr-only"></span>
+                            </a>
+
+                            <a class="nav-link" href="{{ url_for('books_log') }}">
+                                <i class="fa fa-home"></i>Books log<span class="sr-only"></span>
+                            </a>
+
+                            <a class="nav-link" href="{{ url_for('books_reservation') }}">
+                                <i class="fa fa-home"></i>Books reservation<span class="sr-only"></span>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col order-2 flex-grow-1 content">
+
+                <div class="col-lg-6">
+                    <h3>Add Book to wishlist</h3>
+
+                    <form class="content-section row" action="/add_book_to_wishlist" method='post'>
+                        <div class="form-group col-lg-8">
+                            <label for="name">Book`s name</label>
+                            <input type="text" class="form-control" name="name">
+                        </div>
+                        <div class="form-group col-lg-8">
+                            <label for="period">Period</label>
+                            <input type="number" class="form-control" name="period">
+                        </div>
+                        <div class="form-group col-lg-8">
+                            <label for="rank">Rank</label>
+                            <input type="number" class="form-control" name="rank">
+                        </div>
+                        <br><br>
+                        <button type="submit" class="btn">Submit</button>
+                    </form>
+                </div>
+
+                <div class="col-lg-9">
+                    <h3>Wishlist</h3>
+
+                    <table class="table small">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Period</th>
+                            <th>Created_At</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+
+                        {% for _wishlist in wishlist %}
+                            {% for entry in _wishlist %}
+                                <tr>
+                                    <th> {{ entry[0] }} </th>
+                                    <th> {{ entry[1] }} </th>
+                                    <th> {{ entry[2] }} </th>
+                                    <th> {{ entry[3] }} </th>
+                                    <th> {{ entry[4] }} </th>
+                                    <th><a href="/wishlist_delete_entry/{{ entry[5] }}">Delete</a></th>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                </div>
+
+            </div>
+            <hr>
+        </div>
+    </div>
+{% endblock %}

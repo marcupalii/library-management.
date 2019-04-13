@@ -1,7 +1,7 @@
 
 from flask import render_template, request, url_for, redirect, abort
 from app import app, login_manager
-from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries
+from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications
 from app import db
 import hashlib
 from app.forms import LoginForm
@@ -106,81 +106,118 @@ def add_book_to_wishlist():
 
     return redirect(url_for("account"))
 
+@app.route("/notifications")
+@login_required
+def notifications():
+    _email = current_user.email
+    response = []
+    if _email:
+        _user = User.query.filter_by(email=_email).first()
+
+        _notifications = Notifications.query.filter_by(id_user=_user.id).order_by(Notifications.created_at.desc()).all()
+
+        if _notifications:
+            for notification in _notifications:
+                response += [
+                    notification.id,
+                    notification.content,
+                    notification.status,
+                    notifications.created_at
+                ]
+
+
+        return render_template("notifications.html", notifications=response,id_user=current_user.id)
+
+
+@app.route("/wishlist")
+@login_required
+def wishlist():
+    _email = current_user.email
+    response = []
+    if _email:
+        _user = User.query.filter_by(email=_email).first()
+
+        _entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=_user.wishlist.id).order_by(EntryWishlist.rank.asc()).all()
+
+        if _entry_wishlist:
+            for entry in _entry_wishlist:
+                _book = Book.query.filter_by(id=entry.id_book).first()
+                response += [
+                    entry.rank,
+                    _book.name,
+                    _book.type,
+                    entry.period,
+                    entry.created_at,
+                    entry.id
+                ]
+
+        return render_template("wishlist.html", wishlist=response,id_user=current_user.id)
+
+@app.route("/books_log")
+@login_required
+def books_log():
+    return render_template("books_log.html")
+
+
+@app.route("/books_reservation")
+@login_required
+def books_reservation():
+    return render_template("books_reservation.html")
+
+
+
+
+from flask import jsonify
+
+
+notifications = {
+    '1': {
+        'href_': "o referinta",
+        'text_': "1:Ti s-a acordat carte plm vine rapid si ia-o",
+        'date_': "intro zi cu soare",
+    },
+    '2': {
+        'href_': "o referinta",
+        'text_': "2:Ti s-a acordat carte plm vine rapid si ia-o",
+        'date_': "intro zi cu soare",
+    },
+    '3': {
+        'href_': "o referinta",
+        'text_': "2:Ti s-a acordat carte plm vine rapid si ia-o",
+        'date_': "intro zi cu soare",
+    }
+}
+
+@app.route("/mark_notification_read/",methods=['POST'])
+def mark_notification_read():
+    global notifications
+    if request.method == "POST":
+        id = request.data.decode()
+        print(id)
+        notifications.pop(id.split("=")[1],None)
+    return render_template("layout.html",id_user=current_user.id)
+
+
+@app.route("/get_notification/<user_id>/",methods=['GET'])
+@login_required
+def get_notification(user_id):
+    if int(user_id) == current_user.id:
+        return jsonify({key:notifications[key] for key in notifications.keys()})
+
 
 @app.route("/account")
 @login_required
 def account():
     _email = current_user.email
-    _wishlist = []
-    _nextbook = []
-    rank = -1
+
     if _email:
         _user = User.query.filter_by(email=_email).first()
 
-        wishList = _user.wishlist
-        _next_book = _user.next_book
 
-        response = []
+        return render_template("account.html", id_user=_user.id)
 
-        if _next_book.status == "Checking":
-            _entry = EntryWishlist.query.filter_by(
-                id_wishlist=wishList.id,
-                id_book=_next_book.id_book,
-                period=_next_book.period
-            ).first()
-            if _entry:
-                rank = _entry.rank
-                _next_book.status = "Pending"
-                db.session.delete(_entry)
-                db.session.commit()
-
-                _book = Book.query.filter_by(id=_next_book.id_book).first()
-                _nextbook.append(_book.name)
-                _nextbook.append(_book.type)
-                _nextbook.append(_next_book.period)
-                _nextbook.append(_next_book.status)
-                _nextbook.append(_next_book.id_series_book)
-
-            else:
-
-                _next_book.status = "None"
-                _next_book.period = 0
-
-                _book = Book.query.filter_by(id=_next_book.id_book).first()
-                _book.count_free_books += 1
-
-                _series_book = BookSeries.query.filter_by(id=_next_book.id_series_book).first()
-                _series_book.status = "available"
-                db.session.commit()
-
-        elif _next_book.status == "Pending":
-        # check if the book is acepting within 5 hours
-            _book = Book.query.filter_by(id=_next_book.id_book).first()
-            _nextbook.append(_book.name)
-            _nextbook.append(_book.type)
-            _nextbook.append(_next_book.period)
-            _nextbook.append(_next_book.status)
-            _nextbook.append(_next_book.id_series_book)
-
-
-
-        _entry_wishlist = wishList.entry_wishlists
-
-        for _entry in _entry_wishlist:
-            if rank != -1 and _entry.rank > rank:
-
-                _entry.rank -= 1
-                db.session.commit()
-            _book = Book.query.filter_by(id=_entry.id_book).first()
-            response.append([_entry.rank, _book.name, _book.type, _entry.period, _entry.id])
-
-
-        # _next_book.status= ["None","Pending","NoNeed","Checking"]
-        # next_nook need id_book field sau series_book_field
-
-        _wishlist = [sorted(response, key=lambda l: l[0])].copy()
-
-    return render_template("account.html", wishlist=_wishlist, nextbook=_nextbook)
+    else:
+        return redirect(url_for('about'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -208,6 +245,7 @@ def login():
         return '<h1>Invalid username or password</h1>'
 
     return render_template('login.html', form=form)
+
 
 
 @app.route("/admin")

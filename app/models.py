@@ -132,69 +132,78 @@ class ReservedBook(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 
+class Notifications(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
+    content = db.Column(db.String(200), nullable=False)
+    status = db.Column(db.String(10),nullable=False)
 
 if __name__ == "__main__":
-    db.create_all()
-
-    # ----------------------       ONE TO MANY model   ------------------------------------
-    book1 = Book(name="book1", type="type1", count_total=2, count_free_books=2)
-    book2 = Book(name="book2", type="type3", count_total=2, count_free_books=2)
-
-    db.session.add(book1)
-    db.session.add(book2)
-    db.session.commit()
-
-    book_series1 = BookSeries(book=book1, series="310SL1", status="available")
-    book_series2 = BookSeries(book=book1, series="310SL2", status="available")
-
-    book_series3 = BookSeries(book=book2, series="311SL1", status="available")
-    book_series4 = BookSeries(book=book2, series="311SL2", status="available")
-
-    db.session.add(book_series1)
-    db.session.add(book_series2)
-    db.session.add(book_series3)
-    db.session.add(book_series4)
-    db.session.commit()
-    #  ---------------------- ------------- ------------------------------------
-
-
-
-    admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
-                 password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
-
-
-    db.session.add(admin)
-    db.session.commit()
-    wishlist = Wishlist(user=admin)
-    db.session.add(wishlist)
-    db.session.commit()
-
-    next_book2 = NextBook(user=admin, period=0, status="None")
-    db.session.add(next_book2)
-    db.session.commit()
-
-
-
-    user = User(first_name='first name', last_name='last name', address="Main str nr 26", email='user@gmail.com', type='user',
-                 password=hashlib.sha512("user".encode()).hexdigest(), trust_coeff=0)
-
-    db.session.add(user)
-    db.session.commit()
-    wishlist1 = Wishlist(user=user)
-    db.session.add(wishlist1)
-    db.session.commit()
-
-    next_book1 = NextBook(user=user, period=0, status="None")
-    db.session.add(next_book1)
-    db.session.commit()
-
-    print(User.query.all())
+    # db.create_all()
+    #
+    # # ----------------------       ONE TO MANY model   ------------------------------------
+    # book1 = Book(name="book1", type="type1", count_total=2, count_free_books=2)
+    # book2 = Book(name="book2", type="type3", count_total=2, count_free_books=2)
+    #
+    # db.session.add(book1)
+    # db.session.add(book2)
+    # db.session.commit()
+    #
+    # book_series1 = BookSeries(book=book1, series="310SL1", status="available")
+    # book_series2 = BookSeries(book=book1, series="310SL2", status="available")
+    #
+    # book_series3 = BookSeries(book=book2, series="311SL1", status="available")
+    # book_series4 = BookSeries(book=book2, series="311SL2", status="available")
+    #
+    # db.session.add(book_series1)
+    # db.session.add(book_series2)
+    # db.session.add(book_series3)
+    # db.session.add(book_series4)
+    # db.session.commit()
+    # #  ---------------------- ------------- ------------------------------------
+    #
+    #
+    #
+    # admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
+    #              password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
+    #
+    #
+    # db.session.add(admin)
+    # db.session.commit()
+    # wishlist = Wishlist(user=admin)
+    # db.session.add(wishlist)
+    # db.session.commit()
+    #
+    # next_book2 = NextBook(user=admin, period=0, status="None")
+    # db.session.add(next_book2)
+    # db.session.commit()
+    #
+    #
+    #
+    # user = User(first_name='first name', last_name='last name', address="Main str nr 26", email='user@gmail.com', type='user',
+    #              password=hashlib.sha512("user".encode()).hexdigest(), trust_coeff=0)
+    #
+    # db.session.add(user)
+    # db.session.commit()
+    # wishlist1 = Wishlist(user=user)
+    # db.session.add(wishlist1)
+    # db.session.commit()
+    #
+    # next_book1 = NextBook(user=user, period=0, status="None")
+    # db.session.add(next_book1)
+    # db.session.commit()
+    #
+    # print(User.query.all())
+    # print(Book.query.all())
+    # print(BookSeries.query.all())
+    # print(Wishlist.query.all())
+    # print(EntryWishlist.query.all())
+    # print(NextBook.query.all())
+    # print(NextBook.query.filter_by(id=1,id_user=1).first())
     print(Book.query.all())
-    print(BookSeries.query.all())
-    print(Wishlist.query.all())
-    print(EntryWishlist.query.all())
-    print(NextBook.query.all())
-    print(NextBook.query.filter_by(id=1,id_user=1).first())
+    # print(Book.query.filter_by(count_total=2).order_by(Book.created_at.desc()).all())
+
     # DROP SCHEMA public CASCADE;
     # CREATE SCHEMA public;

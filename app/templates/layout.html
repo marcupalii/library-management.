@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/layout_navbar.css') }}">
 
     {% if current_user.is_authenticated %}
-        {% if current_user.type == "user_not_implemented" %}
+        {% if current_user.type == "user" %}
 
             <link rel="stylesheet" type="text/css"
                   href="{{ url_for('.static', filename='css/layout_notification.css') }}">
@@ -35,7 +35,7 @@
             crossorigin="anonymous"></script>
 
     {% if current_user.is_authenticated %}
-        {% if current_user.type == "user_not_implemented" %}
+        {% if current_user.type == "user" %}
             <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
             <script src="{{ url_for('.static', filename='js/layout_notification.js') }}"></script>
             <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
@@ -46,7 +46,7 @@
 
 
 
-{% block content %}
+{% block navbar %}
 
     <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
         <button type="button" class="pull-left btn btn-default d-md-none" data-toggle="offcanvas" data-target="#sidebar"
@@ -62,7 +62,7 @@
         <div class="collapse navbar-collapse" id="ReverseNavbar">
             <ul class="navbar-nav ml-auto" id="navar-right">
                 {% if current_user.is_authenticated %}
-                    {% if current_user.type == "user_not_implemented" %}
+                    {% if current_user.type == "user" %}
                         <li class="nav-item dropdown">
 
                             <button class="btn dropdown-toggle" id="notifications-dropdown"
@@ -102,7 +102,8 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
-                                <i class="fa fa-user"></i> Profile </a>
+                                <i class="fa fa-user"></i> {{ current_user.first_name }},{{ current_user.last_name }}
+                            </a>
                             <div class="dropdown-menu" aria-labelledby="ReverseNavbar">
                                 <a class="dropdown-item" href="#">My account</a>
                                 <a class="dropdown-item" href="#">Log out</a>
@@ -110,14 +111,13 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ url_for('about') }}">
-                        <i class="fa fa-home"></i>About Page<span class="sr-only">(current)</span>
-                    </a>
-                </li>
-
 
                 {% if current_user.is_anonymous %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('about') }}">
+                            <i class="fa fa-home"></i>About Page<span class="sr-only">(current)</span>
+                        </a>
+                    </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="{{ url_for('login') }}">
                             <i class="fa fa-home"></i>Login<span class="sr-only"></span>
@@ -125,27 +125,8 @@
                     </li>
 
                 {% else %}
-                    {% if current_user.type == "user" %}
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{{ url_for('account') }}">
-                                <i class="fa fa-home"></i>Account<span class="sr-only"></span>
-                            </a>
-                        </li>
-                    {% endif %}
-
-                    {% if current_user.type == "admin" %}
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{{ url_for('admin') }}">
-                                <i class="fa fa-home"></i>Bibliotecar Dashboard<span class="sr-only"></span>
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li>
-                        <a><b>{{ current_user.first_name }},{{ current_user.last_name }}</b></a>
-
-                    </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/logout">
+                        <a class="nav-link" href="{{ url_for('logout') }}">
                             <i class="fa fa-home"></i>Logout<span class="sr-only"></span>
                         </a>
                     </li>
@@ -154,5 +135,5 @@
 
         </div>
     </nav>
-
 {% endblock %}
+

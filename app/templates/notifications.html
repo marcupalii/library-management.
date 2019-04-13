@@ -8,8 +8,7 @@
     {{ super() }}
 {% endblock %}
 
-{% block page_title %}Admin dashboard {% endblock %}
-
+{% block page_title %}Notification {% endblock %}
 
 {% block navbar %}
     {{ super() }}
@@ -51,17 +50,31 @@
 
             </div>
             <div class="col order-2 flex-grow-1 content">
-                <div class="">
-                    <p> ADMIN</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et
-                        dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc
-                        congue nisi
-                        vitae suscipit. Quis auctor elit sed vulputate. Habitasse platea dictumst vestibulum rhoncus est
-                    </p>
+                <div class="col-lg-9">
+                    <h3>Notifications</h3>
+
+                    <table class="table small">
+                        <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>content</th>
+                            <th>status</th>
+                            <th>created_at</th>
+                        </tr>
+                        </thead>
+                        {% for notification in notifications %}
+                            <tr>
+                                <th> {{ notification[0] }} </th>
+                                <th> {{ notification[1] }} </th>
+                                <th> {{ notification[2] }} </th>
+                                <th> {{ notification[3] }} </th>
+                            </tr>
+                        {% endfor %}
+                    </table>
                 </div>
             </div>
             <hr>
         </div>
     </div>
 {% endblock %}
+

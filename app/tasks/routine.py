@@ -1,6 +1,6 @@
 
 from app import celery, logger, db
-from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist
+from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications
 from app.Stable_matching_algorithm.algorithm import Stable_matching
 
 
@@ -46,6 +46,16 @@ def update_ranks(rank,id_wishlist):
             entry.rank -= 1
             db.session.commit()
 
+
+def generate_notification(match):
+    notification = Notifications(
+        id_user=match[0],
+        content="You received the {} book, you have 3hrs to accept or deny!".format(Book.query.filter_by(id=match[1][0]).first().name),
+        status="unread"
+    )
+    db.session.add(notification)
+    db.session.commit()
+
 def write_result_of_matching(matched):
 
     for match in matched:
@@ -81,6 +91,7 @@ def write_result_of_matching(matched):
             print("_next_book", _next_book.id_book, _next_book.period, _next_book.status)
 
             update_ranks(rank, wishList.id)
+            generate_notification(match)
 
 
 @celery.task()
