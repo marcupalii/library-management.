@@ -6,6 +6,8 @@ from app import db
 import hashlib
 from app.forms import LoginForm
 from flask_login import login_user, login_required, logout_user, current_user
+from flask import jsonify
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -71,7 +73,7 @@ def wishlist_delete_entry(entry_id):
 
         else:
             return abort(401)
-    return redirect(url_for("account"))
+    return redirect(url_for("wishlist"))
 
 
 
@@ -104,7 +106,7 @@ def add_book_to_wishlist():
     else:
         return abort(401)
 
-    return redirect(url_for("account"))
+    return redirect(url_for("wishlist"))
 
 @app.route("/notifications")
 @login_required
@@ -118,12 +120,12 @@ def notifications():
 
         if _notifications:
             for notification in _notifications:
-                response += [
+                response.append([
                     notification.id,
                     notification.content,
                     notification.status,
-                    notifications.created_at
-                ]
+                    notification.created_at
+                ])
 
 
         return render_template("notifications.html", notifications=response,id_user=current_user.id)
@@ -142,14 +144,14 @@ def wishlist():
         if _entry_wishlist:
             for entry in _entry_wishlist:
                 _book = Book.query.filter_by(id=entry.id_book).first()
-                response += [
+                response.append([
                     entry.rank,
                     _book.name,
                     _book.type,
                     entry.period,
                     entry.created_at,
                     entry.id
-                ]
+                ])
 
         return render_template("wishlist.html", wishlist=response,id_user=current_user.id)
 
@@ -165,44 +167,46 @@ def books_reservation():
     return render_template("books_reservation.html")
 
 
-
-
-from flask import jsonify
-
-
-notifications = {
-    '1': {
-        'href_': "o referinta",
-        'text_': "1:Ti s-a acordat carte plm vine rapid si ia-o",
-        'date_': "intro zi cu soare",
-    },
-    '2': {
-        'href_': "o referinta",
-        'text_': "2:Ti s-a acordat carte plm vine rapid si ia-o",
-        'date_': "intro zi cu soare",
-    },
-    '3': {
-        'href_': "o referinta",
-        'text_': "2:Ti s-a acordat carte plm vine rapid si ia-o",
-        'date_': "intro zi cu soare",
-    }
-}
-
 @app.route("/mark_notification_read/",methods=['POST'])
+@login_required
 def mark_notification_read():
-    global notifications
-    if request.method == "POST":
-        id = request.data.decode()
-        print(id)
-        notifications.pop(id.split("=")[1],None)
-    return render_template("layout.html",id_user=current_user.id)
+    _email = current_user.email
+
+    if _email:
+        _user = User.query.filter_by(email=_email).first()
+        _notification = Notifications.query._filter_by(
+            id_user=_user.id,
+            id=request.data.decode().split("=")[1]
+        )
+        if _notification:
+            _notification.status="read"
+            db.session.commit()
+
+        return render_template("layout.html",id_user=current_user.id)
 
 
 @app.route("/get_notification/<user_id>/",methods=['GET'])
 @login_required
 def get_notification(user_id):
-    if int(user_id) == current_user.id:
-        return jsonify({key:notifications[key] for key in notifications.keys()})
+    _email = current_user.email
+    response = {}
+    if _email:
+        _user = User.query.filter_by(email=_email).first()
+        _notifications = Notifications.query.filter_by(
+            id_user=_user.id,
+            status="unread"
+        )
+        if _notifications:
+            for _notification in _notifications:
+                response.update({
+                    str(_notification.id): {
+                        'href_': '/notifications',
+                        'text_': _notification.content,
+                        'date_': _notification.created_at
+
+                    }
+                })
+        return jsonify({key: response[key] for key in response.keys()})
 
 
 @app.route("/account")

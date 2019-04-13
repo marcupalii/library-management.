@@ -109,6 +109,25 @@
                                 <a class="dropdown-item" href="#">Log out</a>
                             </div>
                         </li>
+                        <!-- TEMPLATE NOTIFICATION -->
+                        <script id="notificationTemplate" type="text/html">
+                            <!-- NOTIFICATION -->
+                            <a class="dropdown-item dropdown-notification" href="{ href }">
+                                <div class="notification-read">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </div>
+                                <div class="notification-img">
+                                    <i class="fa fa-book" aria-hidden="true"></i>
+                                </div>
+                                <div class="notifications-body">
+                                    <p class="notification-text">{ text }</p>
+                                    <p class="notification-date text-muted">
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>{ date }
+                                    </p>
+                                </div>
+                                <div class="hide">{ notification_id }</div>
+                            </a>
+                        </script>
                     {% endif %}
                 {% endif %}
 
