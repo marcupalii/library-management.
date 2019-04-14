@@ -173,13 +173,14 @@ def mark_notification_read():
     _email = current_user.email
 
     if _email:
+        print("==", request.data.decode().split("=")[1], "==")
         _user = User.query.filter_by(email=_email).first()
-        _notification = Notifications.query._filter_by(
+        _notification = Notifications.query.filter_by(
             id_user=_user.id,
-            id=request.data.decode().split("=")[1]
-        )
+            id=int(request.data.decode().split("=")[1])
+        ).first()
         if _notification:
-            _notification.status="read"
+            _notification.status = "read"
             db.session.commit()
 
         return render_template("layout.html",id_user=current_user.id)

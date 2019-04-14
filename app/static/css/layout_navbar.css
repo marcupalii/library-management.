@@ -1,3 +1,9 @@
+
+html, body {
+    height: 100%;
+    padding-top: 30px;
+}
+
 .navbar {
     min-height: 40px;
     border: 1px solid transparent;

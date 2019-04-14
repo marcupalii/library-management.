@@ -1,8 +1,9 @@
 
 from app import db
 import hashlib
-import datetime
 from flask_login import UserMixin
+from datetime import datetime
+import pytz
 db.metadata.clear()
 
 class User(UserMixin,db.Model):
@@ -20,7 +21,7 @@ class User(UserMixin,db.Model):
 
     next_book = db.relationship('NextBook', uselist=False, backref='user')
     wishlist = db.relationship('Wishlist', backref='user', uselist=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
     def __repr__(self):
         return '(Id {} First_name {},Last_Name {} Email {}, Type {}, Pass {} )'.format(self.id, self.first_name,self.last_name,self.email, self.type, self.password)
@@ -33,7 +34,7 @@ class Book(db.Model):
     type = db.Column(db.String(30), nullable=False)
     count_total = db.Column(db.Integer, nullable=False)
     count_free_books = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
     book_series = db.relationship('BookSeries', backref='book', uselist=True)
     def __repr__(self):
         return '( Book {}, Type {}, Count {} {} )  '.format(self.name,self.type,self.count_total,self.count_free_books)
@@ -44,7 +45,7 @@ class BookSeries(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     series = db.Column(db.String(100), unique=True, nullable=False)
     status = db.Column(db.String(20),nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
     def __repr__(self):
         return '( id {}, book_id {}, series {}, status {} )'.format(self.id,self.book_id,self.series,self.status)
@@ -55,7 +56,7 @@ class Wishlist(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     entry_wishlists = db.relationship('EntryWishlist', uselist=True, backref='wishlist')
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
     def __repr__(self):
         return "( id {},id_user {})  ".format(self.id,self.id_user)
@@ -67,7 +68,7 @@ class EntryWishlist(db.Model):
     id_book = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     rank = db.Column(db.Integer, nullable=False)
     period = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
     def __repr__(self):
         return "( id {}, id_wishlist {}, id_book {}, rank {}, period {})  ".format(self.id,self.id_wishlist,self.id_book,self.rank,self.period)
@@ -80,7 +81,8 @@ class NextBook(db.Model):
     id_series_book = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=True)
     period = db.Column(db.Integer,nullable=True)
     status = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
     def __repr__(self):
         return "(id {}, id_user {}, id_book {}, id_series_book {}, period {}, status {}".format(self.id,self.id_user,self.id_book,self.id_series_book,self.period,self.status)
@@ -90,7 +92,7 @@ class Log(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)
 
     entryes_log = db.relationship('EntryLog', uselist=True, backref='log')
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
     def __repr__(self):
         return "(id {}, id_user {}, id_entrylog {})  ".format(self.id,self.id_user,self.id_entryLog)
@@ -103,10 +105,10 @@ class EntryLog(db.Model):
     id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
 
     status = db.Column(db.String(30), nullable=False)
-    period_start = db.Column(db.DateTime, nullable=False)
+    period_start = db.Column(db.DateTime, nullable=False, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
     period_end = db.Column(db.DateTime, nullable=False)
 
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
     def __repr__(self):
         return "(id {}, id_log {}, id_book_series {}, status {}, period {} {})  ".format(self.id, self.id_log, self.id_book_series, self.status, self.period_start,self.period_end)
@@ -117,7 +119,7 @@ class ReservedBookEntry(db.Model):
     id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
 
     id_reserved_book = db.Column(db.Integer, db.ForeignKey('reservedbook.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
 
 class ReservedBook(db.Model):
@@ -129,16 +131,16 @@ class ReservedBook(db.Model):
     reserved_book_entryes = db.relationship('ReservedBookEntry', uselist=True, backref='reserved_book')
 
     count = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
 
 
 class Notifications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
     content = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(10),nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
+
 
 if __name__ == "__main__":
     db.create_all()
@@ -201,14 +203,14 @@ if __name__ == "__main__":
     print(Wishlist.query.all())
     print(EntryWishlist.query.all())
     print(NextBook.query.all())
-    print(NextBook.query.filter_by(id=1,id_user=1).first())
+    # print(NextBook.query.filter_by(id=1,id_user=1).first())
 
 
 
 
 
-    print(Book.query.all())
-    print(Book.query.filter_by(count_total=2).order_by(Book.created_at.desc()).all())
+    # print(Book.query.all())
+    # print(Book.query.filter_by(count_total=2).order_by(Book.created_at.desc()).all())
 
     # DROP SCHEMA public CASCADE;
     # CREATE SCHEMA public;
