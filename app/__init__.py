@@ -2,7 +2,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import DevelopmentConfig
-from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from celery import Celery
 import celeryconfig
@@ -37,18 +36,15 @@ def create_app():
     new_app.config.from_object(DevelopmentConfig)
     new_celery = make_celery(new_app)
     new_db = SQLAlchemy(new_app)
-    new_bootstrap = Bootstrap(new_app)
 
     new_login_manager = LoginManager()
     new_login_manager.init_app(new_app)
     new_login_manager.login_view = 'login'
 
+    return new_app, new_db, new_celery, new_login_manager
 
 
-    return new_app, new_db, new_celery, new_bootstrap, new_login_manager
-
-
-app, db, celery, boostrap, login_manager = create_app()
+app, db, celery, login_manager = create_app()
 # cand execut models importul trebuie comm
 from app import routes
 

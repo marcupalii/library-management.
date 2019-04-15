@@ -70,10 +70,8 @@ $(function () {
 
         get_Notifications: function () {
             appNotifications.badgeLoadingMask(true);
-            let userId = $("#hide-user-id").text();
-            console.log("user id =" + userId);
             $.ajax({
-                url: "/get_notification/" + userId + "/",
+                url: "/get_notification/",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -88,7 +86,6 @@ $(function () {
                         });
                         count += 1;
                     });
-                    console.log(notifications);
                 }
             });
 

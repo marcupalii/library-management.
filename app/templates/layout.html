@@ -1,53 +1,34 @@
-{% extends "bootstrap/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <link rel="shortcut icon" href="#">
+        {% block styles %}
 
-{% block styles %}
+            <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/layout_navbar.css') }}">
 
-    <link rel="shortcut icon" href="#">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/layout_navbar.css') }}">
+            {% if current_user.is_authenticated %}
+                {% if current_user.type == "user" %}
 
-    {% if current_user.is_authenticated %}
-        {% if current_user.type == "user" %}
-
-            <link rel="stylesheet" type="text/css"
-                  href="{{ url_for('.static', filename='css/layout_notification.css') }}">
-            <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/layout_sidebar.css') }}">
-        {% endif %}
-    {% endif %}
-
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-{% endblock %}
-
-{% block scripts %}
-
-    <script
-            src="http://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-            crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            crossorigin="anonymous"></script>
-
-    {% if current_user.is_authenticated %}
-        {% if current_user.type == "user" %}
-            <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
-            <script src="{{ url_for('.static', filename='js/layout_notification.js') }}"></script>
-            <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
-        {% endif %}
-    {% endif %}
-
-{% endblock %}
+                    <link rel="stylesheet" type="text/css"
+                          href="{{ url_for('.static', filename='css/layout_notification.css') }}">
+                    <link rel="stylesheet" type="text/css"
+                          href="{{ url_for('.static', filename='css/layout_sidebar.css') }}">
+                {% endif %}
+            {% endif %}
 
 
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+                  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+                  crossorigin="anonymous">
+            <link rel="stylesheet"
+                  href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        {% endblock %}
+    {% endblock %}
+</head>
 
+<body>
 {% block navbar %}
-
     <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
         <button type="button" class="pull-left btn btn-default d-md-none" data-toggle="offcanvas" data-target="#sidebar"
                 aria-expanded="false" aria-controls="sidebar">
@@ -68,7 +49,6 @@
                             <button class="btn dropdown-toggle" id="notifications-dropdown"
                                     type="button" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
-                                <span class="hide" id="hide-user-id">{{ id_user }}</span>
                                 <i id="notificationsIcon" class="fa fa-bell-o" aria-hidden="true"></i>
                                 <span id="notificationsBadge" class="badge badge-danger">
                                 <i class="fa fa-spinner fa-pulse fa-fw" aria-hidden="true"></i>
@@ -155,4 +135,91 @@
         </div>
     </nav>
 {% endblock %}
+
+
+<div class="container-fluid h-100">
+
+    <div class="row h-100">
+        {% if current_user.is_authenticated %}
+            {% block sidebar %}
+                <div class="order-1 row-offcanvas-left">
+                    <div id="sidebar-fixed">
+                        <div class="sidebar-offcanvas" id="sidebar">
+                            <div class="list-group">
+                                <a class="nav-link" href="{{ url_for('account') }}">
+                                    <i class="fa fa-home"></i>Home<span class="sr-only"></span>
+                                </a>
+
+                                <a class="nav-link" href="{{ url_for('wishlist') }}">
+                                    <i class="fa fa-home"></i>Wishlist<span class="sr-only"></span>
+                                </a>
+
+                                <a class="nav-link" href="{{ url_for('notifications') }}">
+                                    <i class="fa fa-home"></i>Notifications<span class="sr-only"></span>
+                                </a>
+
+                                <a class="nav-link" href="{{ url_for('books_log') }}">
+                                    <i class="fa fa-home"></i>Books log<span class="sr-only"></span>
+                                </a>
+
+                                <a class="nav-link" href="{{ url_for('books_reservation') }}">
+                                    <i class="fa fa-home"></i>Books reservation<span class="sr-only"></span>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            {% endblock %}
+        {% endif %}
+
+        <div class="col order-2 flex-grow-1 content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<div id="footer">
+    <hr>
+    {% block footer %}
+    {% endblock %}
+</div>
+{% block scripts %}
+
+    <script
+            src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    {% if current_user.is_authenticated %}
+        {% if current_user.type == "user" %}
+            <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
+            <script src="{{ url_for('.static', filename='js/layout_notification.js') }}"></script>
+            <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
 

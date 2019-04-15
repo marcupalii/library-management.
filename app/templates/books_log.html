@@ -1,66 +1,14 @@
 {% extends "layout.html" %}
 {% block page_title %}Books log{% endblock %}
 
-{% block styles %}
-    {{ super() }}
-{% endblock %}
+{% block content %}
 
-{% block scripts %}
-    {{ super() }}
-{% endblock %}
+    <p> BOOKS LOGS</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+        labore et
+        dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc
+        congue nisi
+        vitae suscipit. Quis auctor elit sed vulputate. Habitasse platea dictumst vestibulum rhoncus est
+    </p>
 
-
-{% block navbar %}
-    {{ super() }}
-{% endblock %}
-
-{% block body %}
-    {{ super() }}
-    <div class="container-fluid h-100">
-
-        <div class="row h-100">
-            <div class="order-1 row-offcanvas-left">
-
-                <div id="sidebar-fixed">
-                    <div class="sidebar-offcanvas" id="sidebar">
-                        <div class="list-group">
-                            <a class="nav-link" href="{{ url_for('account') }}">
-                                <i class="fa fa-home"></i>Home<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('wishlist') }}">
-                                <i class="fa fa-home"></i>Wishlist<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('notifications') }}">
-                                <i class="fa fa-home"></i>Notifications<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('books_log') }}">
-                                <i class="fa fa-home"></i>Books log<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('books_reservation') }}">
-                                <i class="fa fa-home"></i>Books reservation<span class="sr-only"></span>
-                            </a>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="col order-2 flex-grow-1 content">
-                <div class="">
-                    <p> BOOKS LOGS</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et
-                        dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc
-                        congue nisi
-                        vitae suscipit. Quis auctor elit sed vulputate. Habitasse platea dictumst vestibulum rhoncus est
-                    </p>
-                </div>
-            </div>
-            <hr>
-        </div>
-    </div>
 {% endblock %}

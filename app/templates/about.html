@@ -1,38 +1,13 @@
 {% extends "layout.html" %}
 {% block page_title %}About Page{% endblock %}
 
-{% block styles %}
-    {{ super() }}
-{% endblock %}
 
-{% block scripts %}
-    {{ super() }}
-{% endblock %}
-
-
-{% block navbar %}
-    {{ super() }}
-{% endblock %}
-
-{% block body %}
-    {{ super() }}
-    <div class="container-fluid h-100">
-
-        <div class="row h-100">
-
-            <div class="col order-2 flex-grow-1 content">
-                <div class="">
-                    <p> About page</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et
-                        dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc
-                        congue nisi
-                        vitae suscipit. Quis auctor elit sed vulputate. Habitasse platea dictumst vestibulum rhoncus est
-                    </p>
-                </div>
-            </div>
-            <hr>
-        </div>
-    </div>
-
+{% block content %}
+    <p> About page</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+        labore et
+        dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc
+        congue nisi
+        vitae suscipit. Quis auctor elit sed vulputate. Habitasse platea dictumst vestibulum rhoncus est
+    </p>
 {% endblock %}

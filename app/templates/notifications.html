@@ -1,80 +1,33 @@
 {% extends "layout.html" %}
 
-{% block styles %}
-    {{ super() }}
-{% endblock %}
-
-{% block scripts %}
-    {{ super() }}
-{% endblock %}
 
 {% block page_title %}Notification {% endblock %}
 
-{% block navbar %}
-    {{ super() }}
-{% endblock %}
 
-{% block body %}
-    {{ super() }}
-    <div class="container-fluid h-100">
+{% block content %}
 
-        <div class="row h-100">
-            <div class="order-1 row-offcanvas-left">
+    <div class="col-lg-9">
+        <h3>Notifications</h3>
 
-                <div id="sidebar-fixed">
-                    <div class="sidebar-offcanvas" id="sidebar">
-                        <div class="list-group">
-                            <a class="nav-link" href="{{ url_for('account') }}">
-                                <i class="fa fa-home"></i>Home<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('wishlist') }}">
-                                <i class="fa fa-home"></i>Wishlist<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('notifications') }}">
-                                <i class="fa fa-home"></i>Notifications<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('books_log') }}">
-                                <i class="fa fa-home"></i>Books log<span class="sr-only"></span>
-                            </a>
-
-                            <a class="nav-link" href="{{ url_for('books_reservation') }}">
-                                <i class="fa fa-home"></i>Books reservation<span class="sr-only"></span>
-                            </a>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="col order-2 flex-grow-1 content">
-                <div class="col-lg-9">
-                    <h3>Notifications</h3>
-
-                    <table class="table small">
-                        <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>content</th>
-                            <th>status</th>
-                            <th>created_at</th>
-                        </tr>
-                        </thead>
-                        {% for notification in notifications %}
-                            <tr>
-                                <th> {{ notification[0] }} </th>
-                                <th> {{ notification[1] }} </th>
-                                <th> {{ notification[2] }} </th>
-                                <th> {{ notification[3] }} </th>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
-            <hr>
-        </div>
+        <table class="table small">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>content</th>
+                <th>status</th>
+                <th>created_at</th>
+            </tr>
+            </thead>
+            {% for notification in notifications %}
+                <tr>
+                    <th> {{ notification[0] }} </th>
+                    <th> {{ notification[1] }} </th>
+                    <th> {{ notification[2] }} </th>
+                    <th> {{ notification[3] }} </th>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
+
 {% endblock %}
 

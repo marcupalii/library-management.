@@ -1,4 +1,3 @@
-
 from flask import render_template, request, url_for, redirect, abort
 from app import app, login_manager
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications
@@ -33,12 +32,8 @@ def FUN_404(error):
 def FUN_405(error):
     return render_template("page_405.html"), 405
 
+
 @app.route("/")
-@app.route('/home')
-def home():
-    return render_template("home.html")
-
-
 @app.route('/about')
 def about():
     return render_template("about.html")
@@ -51,7 +46,7 @@ def logout():
     return render_template("about.html")
 
 
-@app.route("/wishlist_delete_entry/<entry_id>",methods=["GET"])
+@app.route("/wishlist_delete_entry/<entry_id>", methods=["GET"])
 @login_required
 def wishlist_delete_entry(entry_id):
     _user = User.query.filter_by(email=current_user.email).first()
@@ -76,8 +71,7 @@ def wishlist_delete_entry(entry_id):
     return redirect(url_for("wishlist"))
 
 
-
-@app.route("/add_book_to_wishlist",methods=["POST"])
+@app.route("/add_book_to_wishlist", methods=["POST"])
 @login_required
 def add_book_to_wishlist():
     _name = request.form.get("name")
@@ -96,7 +90,6 @@ def add_book_to_wishlist():
                 _entry.rank += 1
                 db.session.commit()
 
-
         _new_entry = EntryWishlist(wishlist=_wishlist, id_book=_book.id, rank=_rank, period=_period)
 
         db.session.add(_new_entry)
@@ -107,6 +100,7 @@ def add_book_to_wishlist():
         return abort(401)
 
     return redirect(url_for("wishlist"))
+
 
 @app.route("/notifications")
 @login_required
@@ -127,8 +121,7 @@ def notifications():
                     notification.created_at
                 ])
 
-
-        return render_template("notifications.html", notifications=response,id_user=current_user.id)
+        return render_template("notifications.html", notifications=response, id_user=current_user.id)
 
 
 @app.route("/wishlist")
@@ -139,7 +132,8 @@ def wishlist():
     if _email:
         _user = User.query.filter_by(email=_email).first()
 
-        _entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=_user.wishlist.id).order_by(EntryWishlist.rank.asc()).all()
+        _entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=_user.wishlist.id).order_by(
+            EntryWishlist.rank.asc()).all()
 
         if _entry_wishlist:
             for entry in _entry_wishlist:
@@ -153,7 +147,8 @@ def wishlist():
                     entry.id
                 ])
 
-        return render_template("wishlist.html", wishlist=response,id_user=current_user.id)
+        return render_template("wishlist.html", wishlist=response, id_user=current_user.id)
+
 
 @app.route("/books_log")
 @login_required
@@ -167,7 +162,7 @@ def books_reservation():
     return render_template("books_reservation.html")
 
 
-@app.route("/mark_notification_read/",methods=['POST'])
+@app.route("/mark_notification_read/", methods=['POST'])
 @login_required
 def mark_notification_read():
     _email = current_user.email
@@ -183,12 +178,12 @@ def mark_notification_read():
             _notification.status = "read"
             db.session.commit()
 
-        return render_template("layout.html",id_user=current_user.id)
+        return render_template("layout.html", id_user=current_user.id)
 
 
-@app.route("/get_notification/<user_id>/",methods=['GET'])
+@app.route("/get_notification/", methods=['GET'])
 @login_required
-def get_notification(user_id):
+def get_notification():
     _email = current_user.email
     response = {}
     if _email:
@@ -218,14 +213,13 @@ def account():
     if _email:
         _user = User.query.filter_by(email=_email).first()
 
-
-        return render_template("account.html", id_user=_user.id)
+        return render_template("account.html")
 
     else:
         return redirect(url_for('about'))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login")
 def login():
     if current_user.is_authenticated:
         if current_user.type == "admin":
@@ -234,23 +228,28 @@ def login():
             return redirect(url_for('account'))
 
     form = LoginForm()
-
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            if user.password == hashlib.sha512(form.password.data.encode()).hexdigest():
-                print("remember me =",form.remember.data)
-                login_user(user, remember=form.remember.data)
-
-                if user.type == "admin":
-                    return redirect(url_for("admin"))
-                else:
-                    return redirect(url_for("account"))
-
-        return '<h1>Invalid username or password</h1>'
-
     return render_template('login.html', form=form)
 
+
+@app.route("/process_login_form", methods=['POST'])
+def process_login_form():
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(
+            email=form.email.data,
+            password=hashlib.sha512(form.password.data.encode()).hexdigest()
+        ).first()
+        if user:
+            login_user(user, remember=form.remember.data)
+            if user.type == "admin":
+                return jsonify(data='succes-as-admin')
+            else:
+                return jsonify(data='succes-as-user')
+        else:
+            return jsonify(data="invalid-credentials")
+
+    return jsonify(data=form.errors)
 
 
 @app.route("/admin")
