@@ -107,6 +107,6 @@ body {
     color: #dc3545;
     border-color: #dc3545
 }
-#email-err, #password-err{
+#email-err, #password-err, #invalid-credentials{
     margin: .5rem 1.5rem 1.5rem 1.5rem ;
 }

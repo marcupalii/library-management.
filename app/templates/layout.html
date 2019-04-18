@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
     {% block head %}
         <link rel="shortcut icon" href="#">
         {% block styles %}
 
-            <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/layout_navbar.css') }}">
+            <link rel="stylesheet" type="text/css"
+                  href="{{ url_for('.static', filename='css/layout_top_navbar.css') }}">
 
             {% if current_user.is_authenticated %}
                 {% if current_user.type == "user" %}
@@ -187,7 +189,6 @@
     {% endblock %}
 </div>
 {% block scripts %}
-
     <script
             src="http://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -199,16 +200,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
-
-    {% if current_user.is_authenticated %}
-        {% if current_user.type == "user" %}
-            <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
-            <script src="{{ url_for('.static', filename='js/layout_notification.js') }}"></script>
-            <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
-        {% endif %}
-    {% endif %}
-
 {% endblock %}
+
+{% if current_user.is_authenticated %}
+    {% if current_user.type == "user" %}
+        <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
+        <script src="{{ url_for('.static', filename='js/layout_notification.js') }}"></script>
+        <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
+    {% endif %}
+{% endif %}
+
 
 </body>
 </html>

@@ -1,16 +1,71 @@
 {% extends "layout.html" %}
 
 {% block page_title %}Account Page {% endblock %}
-
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/account.css') }}">
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">
+    </script>
+    <script src="{{ url_for('.static', filename='js/account.js') }}"></script>
+{% endblock %}
 
 {% block content %}
     <p> Account page</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et
-        dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc
-        congue nisi
-        vitae suscipit. Quis auctor elit sed vulputate. Habitasse platea dictumst vestibulum rhoncus est
-    </p>
+
+    <div class="container main-section">
+        <div class="row">
+            <div class="col-lg-12 hedding pb-2">
+                <a  id="jump-here"></a>
+                <h1> Table Row Toggel </h1>
+            </div>
+            <div class="col-lg-12">
+                <table class="table table-bordered" style="border-collapse:collapse;">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Credit</th>
+                        <th class="d-none d-md-block">Debit</th>
+                        <th class="d-none d-lg-block">Balance</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in range(0,10) %}
+                        <tr colspan="6" data-toggle="collapse" aria-expanded="false" data-target="#tr-collapse-id-{{ i }}" aria-controls="tr-collapse-{{ i }}"
+                            class="accordion-toggle">
+                            <td>{{ i }}</td>
+                            <td>12 Jan 2018</td>
+                            <td>Good</td>
+                            <td>$150.00</td>
+                            <td class="d-none d-md-block"> -</td>
+                            <td class="d-none d-lg-block">$150.00</td>
+                        </tr>
+                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ i }}" id="tr-collapse-id-{{ i }}">
+
+                            <td colspan="6" class="hiddenRow">
+
+                                <div class="accordian-body">
+                                    <p class="d-md-none">Debit : <span></span></p>
+                                    <p class="d-lg-none">Balance : <span>$150.00</span></p>
+                                </div>
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="btn btn-default"><a href="#jump-here"><i class="fa fa-chevron-up"></i></a>
+    </div>
 
 {% endblock %}
 
