@@ -1,11 +1,13 @@
-from flask import render_template, request, url_for, redirect, abort
-from app import app, login_manager
-from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications
-from app import db
-import hashlib
-from app.forms import LoginForm
+from flask import render_template, request, url_for, redirect, abort, jsonify, Response
+from app import app, login_manager, db
+from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author
+
+from app.forms import LoginForm, SearchForm
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import jsonify
+
+import hashlib
+import json
 
 
 @login_manager.user_loader
@@ -213,8 +215,8 @@ def account():
     if _email:
         _user = User.query.filter_by(email=_email).first()
 
-        return render_template("account.html")
-
+        form = SearchForm()
+        return render_template('account.html', form=form)
     else:
         return redirect(url_for('about'))
 
@@ -233,7 +235,6 @@ def login():
 
 @app.route("/process_login_form", methods=['POST'])
 def process_login_form():
-
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(
@@ -256,3 +257,81 @@ def process_login_form():
 @login_required
 def admin():
     return render_template("admin.html")
+
+
+@app.route('/autocomplete/<option>/', methods=['GET'])
+@login_required
+def autocomplete(option):
+    if current_user.email:
+
+        print(option, type(option))
+        if option == "1":
+            books_name = Book.query.with_entities(Book.name).all()
+            return Response(json.dumps([el[0] for el in books_name]), mimetype='application/json')
+        elif option == "2":
+            books_type = Book.query.with_entities(Book.type).all()
+            return Response(json.dumps([el[0] for el in books_type]), mimetype='application/json')
+        elif option == "3":
+            books_author = Author.query.with_entities(Author.name).all()
+            return Response(json.dumps([el[0] for el in books_author]), mimetype='application/json')
+
+
+@app.route("/process_search_form/", methods=['POST'])
+@login_required
+def process_search_form():
+    if current_user.email:
+
+        form = SearchForm()
+        if form.validate_on_submit():
+            response = {}
+            print(form.autocomp.data, form.option.data)
+            # return jsonify(data="merge")
+
+            if form.option.data == "1":
+                books = Book.query.filter_by(name=form.autocomp.data).all()
+
+                for book in books:
+                    author = Author.query.filter_by(id=book.author_id).first()
+                    response.update({
+                        str(book.id): {
+                            'author_name': author.name,
+                            'book_name': book.name,
+                            'book_type': book.type,
+                            'count_book': book.count_free_books
+                        }
+                    })
+
+            elif form.option.data == "2":
+                books = Book.query.filter_by(type=form.autocomp.data).all()
+
+                for book in books:
+                    author = Author.query.filter_by(id=book.author_id).first()
+                    response.update({
+                        str(book.id): {
+                            'author_name': author.name,
+                            'book_name': book.name,
+                            'book_type': book.type,
+                            'count_book': book.count_free_books
+                        }
+                    })
+
+            elif form.option.data == "3":
+                authors = Author.query.filter_by(name=form.autocomp.data).all()
+
+                for author in authors:
+                    books = author.books
+
+                    for book in books:
+
+                        response.update({
+                            str(book.id): {
+                                'author_name': author.name,
+                                'book_name': book.name,
+                                'book_type': book.type,
+                                'count_book': book.count_free_books
+                            }
+                        })
+
+            return jsonify(data={key: response[key] for key in response.keys()})
+
+        return jsonify(data=form.errors)

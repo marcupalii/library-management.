@@ -21,51 +21,65 @@
     <div class="container main-section">
         <div class="row">
             <div class="col-lg-12 hedding pb-2">
-                <a  id="jump-here"></a>
-                <h1> Table Row Toggel </h1>
-            </div>
-            <div class="col-lg-12">
-                <table class="table table-bordered" style="border-collapse:collapse;">
-                    <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Credit</th>
-                        <th class="d-none d-md-block">Debit</th>
-                        <th class="d-none d-lg-block">Balance</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for i in range(0,10) %}
-                        <tr colspan="6" data-toggle="collapse" aria-expanded="false" data-target="#tr-collapse-id-{{ i }}" aria-controls="tr-collapse-{{ i }}"
-                            class="accordion-toggle">
-                            <td>{{ i }}</td>
-                            <td>12 Jan 2018</td>
-                            <td>Good</td>
-                            <td>$150.00</td>
-                            <td class="d-none d-md-block"> -</td>
-                            <td class="d-none d-lg-block">$150.00</td>
-                        </tr>
-                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ i }}" id="tr-collapse-id-{{ i }}">
+                <a id="jump-here"></a>
+                <form method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div id="search-form-content">
 
-                            <td colspan="6" class="hiddenRow">
-
-                                <div class="accordian-body">
-                                    <p class="d-md-none">Debit : <span></span></p>
-                                    <p class="d-lg-none">Balance : <span>$150.00</span></p>
+                        <div class="d-flex flex-column col-5">
+                            <div class="d-flex flex-row flex-grow-1">
+                                <div class="flex-grow-1" id="search-container">
+                                    {{ form.autocomp(placeholder='Search') }}
                                 </div>
+                                <div>
+                                    <button class="btn btn-secondary" type="Submit" data-toggle="collapse"
+                                            data-target="#collapse-table"
+                                            aria-expanded="false" aria-controls="collapse-table"
+                                            id="button-collapse-table">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="has-error" id="name-err"></div>
+                            </div>
 
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </div>
+
+                        <div class="">
+                            {% for subfield in form.option %}
+                                <tr>
+                                    <td>{{ subfield }}</td>
+                                    <td>{{ subfield.label }}</td>
+                                </tr>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </form>
+                <div class="collapse" id="collapse-table">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered" style="border-collapse:collapse;">
+                            <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Book name</th>
+                                <th>Book type</th>
+                                <th>Author name</th>
+                                <th class="d-none d-md-block">Status</th>
+                                <th class="d-none d-lg-block">No.</th>
+                            </tr>
+                            </thead>
+                            <tbody id="content-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+
     <div class="btn btn-default"><a href="#jump-here"><i class="fa fa-chevron-up"></i></a>
     </div>
-
 {% endblock %}
 
