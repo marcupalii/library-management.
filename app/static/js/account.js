@@ -1,4 +1,5 @@
 $(function () {
+
     $('.accordion-toggle').click(function () {
 
         // if ($('.accordion-toggle').attr('aria-expanded') === "true") {
@@ -56,6 +57,8 @@ $(function () {
             url: "/process_search_form/",
             data: $('form').serialize(),
             success: function (data) {
+                var error = "true";
+
                 $('#name_autocomplete').val('');
                 $('#content-table').empty();
                 var i = 0;
@@ -67,21 +70,12 @@ $(function () {
                         $('#name-err').text(data['data'][key][0]);
                         $('#name-err').css("visibility", "visible");
 
-                        $('#button-collapse-table').click(function (e) {
-                            e.stopPropagation();
-                        });
                         break;
+
                     } else {
-
-                        $('#button-collapse-table').click(function (e) {
-
-                            if ($('#content-table').children().length !== 0) {
-                                if ($('#collapse-table').hasClass("show")) {
-                                    e.stopPropagation();
-                                }
-                            }
-                        });
-
+                        if (error === "true") {
+                            error = "false";
+                        }
                         i += 1;
                         $('#content-table').append(
                             $('<tr/>')
@@ -148,12 +142,27 @@ $(function () {
                         );
                     }
                 }
+
+                if (error === "false") {
+                    if ($('#collapse-table').css("display") === "none") {
+
+                        $('#collapse-table').slideToggle(500);
+                    } else {
+                        $('#collapse-table').slideToggle(0);
+                        $('#collapse-table').slideToggle(500);
+                    }
+                } else {
+                    if ($('#collapse-table').css("display") !== "none") {
+                        $('#collapse-table').slideToggle(0);
+                    }
+                }
             }
 
         });
         e.preventDefault();
     });
-    // Inject our CSRF token into our AJAX request.
+
+
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
@@ -192,5 +201,6 @@ $(function () {
     $(window).resize(function () {
         $(".ui-menu").css({"display": "none"});
     });
+
 
 });
