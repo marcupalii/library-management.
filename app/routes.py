@@ -2,7 +2,7 @@ from flask import render_template, request, url_for, redirect, abort, jsonify, R
 from app import app, login_manager, db
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author
 
-from app.forms import LoginForm, SearchForm
+from app.forms import LoginForm, SearchForm, WishlistForm
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import jsonify
 
@@ -335,3 +335,17 @@ def process_search_form():
             return jsonify(data={key: response[key] for key in response.keys()})
 
         return jsonify(data=form.errors)
+
+# @app.route("/process_add_to_wishlist_form/", methods=['POST'])
+# @login_required
+# def process_add_to_wishlist_form():
+#     if current_user.email:
+#
+#         form = SearchForm()
+#         if form.validate_on_submit():
+#             response = {}
+#             print(form.id_book.data, form.period.data)
+#
+#             return jsonify(data={key: response[key] for key in response.keys()})
+#
+#         return jsonify(data=form.errors)

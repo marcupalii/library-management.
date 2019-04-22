@@ -77,36 +77,66 @@ $(function () {
                             error = "false";
                         }
                         i += 1;
-                        $('#content-table').append(
-                            $('<tr/>')
-                                .attr("colspan", "6")
-                                .attr("data-toggle", "collapse")
-                                .attr("data-target", "#tr-collapse-id-" + i.toString())
-                                .attr("aria-controls", "aria-controls" + i.toString())
-                                .addClass("accordion-toggle")
-                                .append(
-                                    $('<td/>').text(i.toString())
-                                )
-                                .append(
-                                    $('<td/>').text(data['data'][key]['book_name'])
-                                )
-                                .append(
-                                    $('<td/>').text(data['data'][key]['book_type'])
-                                )
-                                .append(
-                                    $('<td/>').text(data['data'][key]['author_name'])
-                                )
-                                .append(
-                                    $('<td/>')
-                                        .text(data['data'][key]['count_book'])
-                                        .addClass("d-none d-md-block")
-                                )
-                                .append(
-                                    $('<td/>')
-                                        .text(i.toString())
-                                        .addClass("d-none d-lg-block")
-                                )
-                        );
+                        $('#content-table')
+                            .append(
+                                $('<tr/>')
+                                    .attr("colspan", "6")
+                                    .append(
+                                        $('<td/>')
+                                            .text(i.toString())
+                                            .attr("id", "nr-row-content-" + i.toString())
+                                    )
+                                    .append(
+                                        $('<td/>')
+                                            .text(data['data'][key]['book_name'])
+                                            .attr("id", "book-name-row-content-" + i.toString())
+                                    )
+                                    .append(
+                                        $('<td/>')
+                                            .text(data['data'][key]['book_type'])
+                                            .attr("id", "book-type-row-content-" + i.toString())
+                                    )
+                                    .append(
+                                        $('<td/>')
+                                            .text(data['data'][key]['author_name'])
+                                            .attr("id", "author-name-row-content-" + i.toString())
+                                            .addClass("d-none d-md-block")
+                                    )
+
+                                    .append(
+                                        $('<td/>')
+                                            .text(data['data'][key]['count_book'])
+                                            .addClass("d-none d-lg-block")
+                                            .attr("id", "count-book-row-content-" + i.toString())
+                                    )
+                                    .append(
+                                        $('<td/>')
+                                            .append(
+                                                $('<button/>')
+                                                    .addClass("btn accordion-toggle d-lg-none")
+                                                    .attr("data-toggle", "collapse")
+                                                    .attr("data-target", "#tr-collapse-id-" + i.toString())
+                                                    .attr("aria-controls", "aria-controls" + i.toString())
+                                                    .attr("id", i.toString())
+                                                    .attr("type", "button")
+                                                    .append(
+                                                        $('<i/>')
+                                                            .addClass("fas fa-expand-arrows-alt")
+                                                    )
+                                            )
+                                            .append(
+                                                $('<button/>')
+                                                    .addClass("btn modal-button")
+                                                    .attr("id", i.toString())
+                                                    .attr("type", "button")
+                                                    .append(
+                                                        $('<i/>')
+                                                            .addClass("fas fa-external-link-alt")
+                                                    )
+                                            )
+                                    )
+                            );
+
 
                         $('#content-table').append(
                             $('<tr/>')
@@ -122,19 +152,19 @@ $(function () {
                                                 .append(
                                                     $('<p/>')
                                                         .addClass("d-md-none")
-                                                        .text("Status : ")
+                                                        .text("author_name: ")
                                                         .append(
                                                             $('<span/>')
-                                                                .text(data['data'][key]['count_book'])
+                                                                .text(data['data'][key]['author_name'])
                                                         )
                                                 )
                                                 .append(
                                                     $('<p/>')
                                                         .addClass("d-lg-none")
-                                                        .text("NO1. : ")
+                                                        .text("Status : ")
                                                         .append(
                                                             $('<span/>')
-                                                                .text(i.toString())
+                                                                .text(data['data'][key]['count_book'])
                                                         )
                                                 )
                                         )
@@ -143,6 +173,10 @@ $(function () {
                     }
                 }
 
+                if (i === 0) {
+                    error = "false";
+                    $('#content-table').css("text-align", "center").text("no results find !");
+                }
                 if (error === "false") {
                     if ($('#collapse-table').css("display") === "none") {
 
@@ -202,5 +236,17 @@ $(function () {
         $(".ui-menu").css({"display": "none"});
     });
 
+});
 
+
+$(document).on("click", ".modal-button", function () {
+    let id = $(this).attr("id");
+    console.log(id);
+    $('#no').text($("#nr-row-content-" + id).text());
+    $('#book-name').text($("#book-name-row-content-" + id).text());
+    $('#book-type').text($("#book-type-row-content-" + id).text());
+    $('#author-name').text($("#author-name-row-content-" + id).text());
+    $('#status').text($("#count-book-row-content-" + id).text());
+
+    $('#myModal').modal('toggle');
 });
