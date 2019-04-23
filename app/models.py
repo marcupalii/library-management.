@@ -37,7 +37,7 @@ class Book(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')))
     book_series = db.relationship('BookSeries', backref='book', uselist=True)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
-
+    lazy = "dynamic"
     def __repr__(self):
         return '( Book {}, Type {}, Count {} {} )  '.format(self.name,self.type,self.count_total,self.count_free_books)
 
@@ -49,7 +49,7 @@ class Author(db.Model):
     books = db.relationship('Book', backref='author', uselist=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
-
+    lazy = "dynamic"
     def __repr__(self):
         return '( id {}, name {}, books {} creted_at {})  '.format(self.id,self.name,self.books, self.created_at)
 

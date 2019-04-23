@@ -1,5 +1,9 @@
 $(function () {
-
+    $('#page_number').css("display", "none");
+    $('#page_number').val(1);
+    var nr_rows = 0;
+    var data_form = "";
+    var nr_of_pages = 1;
     $('.accordion-toggle').click(function () {
 
         // if ($('.accordion-toggle').attr('aria-expanded') === "true") {
@@ -45,154 +49,232 @@ $(function () {
         get_autocomplete($(this)[0].value);
     });
 
-
-    $('form').submit(function (e) {
+    function reset_err_tags() {
         $('#name-err').css("visibility", "hidden");
         if ($('#name_autocomplete').hasClass('has-error')) {
             $('#name_autocomplete').toggleClass('has-error');
         }
+    }
 
-        $.ajax({
-            type: "POST",
-            url: "/process_search_form/",
-            data: $('form').serialize(),
-            success: function (data) {
-                var error = "true";
 
-                $('#name_autocomplete').val('');
-                $('#content-table').empty();
-                var i = 0;
-                for (key in data['data']) {
-                    if (key === "autocomp") {
-                        if ($('#name_autocomplete').hasClass('has-error') === false) {
-                            $('#name_autocomplete').addClass('has-error');
-                        }
-                        $('#name-err').text(data['data'][key][0]);
-                        $('#name-err').css("visibility", "visible");
+    function write_row(row, row_index) {
 
-                        break;
+        $('#content-table')
+            .append(
+                $('<tr/>')
+                    .attr("colspan", "6")
+                    .append(
+                        $('<td/>')
+                            .text(row_index.toString())
+                            .attr("id", "nr-row-content-" + row_index.toString())
+                    )
+                    .append(
+                        $('<td/>')
+                            .text(row['book_name'])
+                            .attr("id", "book-name-row-content-" + row_index.toString())
+                    )
+                    .append(
+                        $('<td/>')
+                            .text(row['book_type'])
+                            .attr("id", "book-type-row-content-" + row_index.toString())
+                    )
+                    .append(
+                        $('<td/>')
+                            .text(row['author_name'])
+                            .attr("id", "author-name-row-content-" + row_index.toString())
+                            .addClass("d-none d-md-block")
+                    )
 
-                    } else {
-                        if (error === "true") {
-                            error = "false";
-                        }
-                        i += 1;
-                        $('#content-table')
+                    .append(
+                        $('<td/>')
+                            .text(row['count_book'])
+                            .addClass("d-none d-lg-block")
+                            .attr("id", "count-book-row-content-" + row_index.toString())
+                    )
+                    .append(
+                        $('<td/>')
                             .append(
-                                $('<tr/>')
-                                    .attr("colspan", "6")
+                                $('<button/>')
+                                    .addClass("btn accordion-toggle d-lg-none")
+                                    .attr("data-toggle", "collapse")
+                                    .attr("data-target", "#tr-collapse-id-" + row_index.toString())
+                                    .attr("aria-controls", "aria-controls" + row_index.toString())
+                                    .attr("id", row_index.toString())
+                                    .attr("type", "button")
                                     .append(
-                                        $('<td/>')
-                                            .text(i.toString())
-                                            .attr("id", "nr-row-content-" + i.toString())
+                                        $('<i/>')
+                                            .addClass("fas fa-expand-arrows-alt")
                                     )
+                            )
+                            .append(
+                                $('<button/>')
+                                    .addClass("btn modal-button")
+                                    .attr("id", row_index.toString())
+                                    .attr("type", "button")
                                     .append(
-                                        $('<td/>')
-                                            .text(data['data'][key]['book_name'])
-                                            .attr("id", "book-name-row-content-" + i.toString())
+                                        $('<i/>')
+                                            .addClass("fas fa-external-link-alt")
                                     )
-                                    .append(
-                                        $('<td/>')
-                                            .text(data['data'][key]['book_type'])
-                                            .attr("id", "book-type-row-content-" + i.toString())
-                                    )
-                                    .append(
-                                        $('<td/>')
-                                            .text(data['data'][key]['author_name'])
-                                            .attr("id", "author-name-row-content-" + i.toString())
-                                            .addClass("d-none d-md-block")
-                                    )
-
-                                    .append(
-                                        $('<td/>')
-                                            .text(data['data'][key]['count_book'])
-                                            .addClass("d-none d-lg-block")
-                                            .attr("id", "count-book-row-content-" + i.toString())
-                                    )
-                                    .append(
-                                        $('<td/>')
-                                            .append(
-                                                $('<button/>')
-                                                    .addClass("btn accordion-toggle d-lg-none")
-                                                    .attr("data-toggle", "collapse")
-                                                    .attr("data-target", "#tr-collapse-id-" + i.toString())
-                                                    .attr("aria-controls", "aria-controls" + i.toString())
-                                                    .attr("id", i.toString())
-                                                    .attr("type", "button")
-                                                    .append(
-                                                        $('<i/>')
-                                                            .addClass("fas fa-expand-arrows-alt")
-                                                    )
-                                            )
-                                            .append(
-                                                $('<button/>')
-                                                    .addClass("btn modal-button")
-                                                    .attr("id", i.toString())
-                                                    .attr("type", "button")
-                                                    .append(
-                                                        $('<i/>')
-                                                            .addClass("fas fa-external-link-alt")
-                                                    )
-                                            )
-                                    )
-                            );
+                            )
+                    )
+            );
 
 
-                        $('#content-table').append(
-                            $('<tr/>')
-                                .addClass("sub-table-row p collapse p-3 tr-collapse-" + i.toString())
-                                .attr("id", "tr-collapse-id-" + i.toString())
+        $('#content-table').append(
+            $('<tr/>')
+                .addClass("sub-table-row p collapse p-3 tr-collapse-" + row_index.toString())
+                .attr("id", "tr-collapse-id-" + row_index.toString())
+                .append(
+                    $('<td/>')
+                        .attr("colspan", "6")
+                        .addClass("hiddenRow")
+                        .append(
+                            $('<div/>')
+                                .addClass("accordian-body")
                                 .append(
-                                    $('<td/>')
-                                        .attr("colspan", "6")
-                                        .addClass("hiddenRow")
+                                    $('<p/>')
+                                        .addClass("d-md-none")
+                                        .text("author_name: ")
                                         .append(
-                                            $('<div/>')
-                                                .addClass("accordian-body")
-                                                .append(
-                                                    $('<p/>')
-                                                        .addClass("d-md-none")
-                                                        .text("author_name: ")
-                                                        .append(
-                                                            $('<span/>')
-                                                                .text(data['data'][key]['author_name'])
-                                                        )
-                                                )
-                                                .append(
-                                                    $('<p/>')
-                                                        .addClass("d-lg-none")
-                                                        .text("Status : ")
-                                                        .append(
-                                                            $('<span/>')
-                                                                .text(data['data'][key]['count_book'])
-                                                        )
-                                                )
+                                            $('<span/>')
+                                                .text(row['author_name'])
                                         )
+                                )
+                                .append(
+                                    $('<p/>')
+                                        .addClass("d-lg-none")
+                                        .text("Status : ")
+                                        .append(
+                                            $('<span/>')
+                                                .text(row['count_book'])
+                                        )
+                                )
+                        )
+                )
+        );
+    }
+
+    function show_page_numbers(page_numbers) {
+
+        console.log("nr_of_pages"+nr_of_pages);
+        $('#paginationBox').empty();
+        $('#paginationBox').append(
+            $('<li/>')
+                .addClass("page-item")
+                .append(
+                    $('<button/>')
+                        .attr("id", "prev")
+                        .addClass("btn btn-secondary page_num_link page-link")
+                        .html("&laquo;")
+                )
+        );
+        for (var i = 0; i < page_numbers.length; i++) {
+            if (page_numbers[i] !== null) {
+                nr_of_pages = page_numbers[i];
+                if (i !== 0) {
+                    if (page_numbers[i - 1] !== page_numbers[i] - 1) {
+                        $('#paginationBox').append(
+                            $('<li/>')
+                                .addClass("page-item")
+                                .html("...")
+                        );
+                    } else {
+                        $('#paginationBox').append(
+                            $('<li/>')
+                                .addClass("page-item")
+                                .append(
+                                    $('<button/>')
+                                        .attr("id", page_numbers[i])
+                                        .addClass("btn btn-secondary page_num_link page-link")
+                                        .html(page_numbers[i] + "  ")
                                 )
                         );
                     }
-                }
-
-                if (i === 0) {
-                    error = "false";
-                    $('#content-table').css("text-align", "center").text("no results find !");
-                }
-                if (error === "false") {
-                    if ($('#collapse-table').css("display") === "none") {
-
-                        $('#collapse-table').slideToggle(500);
-                    } else {
-                        $('#collapse-table').slideToggle(0);
-                        $('#collapse-table').slideToggle(500);
-                    }
                 } else {
-                    if ($('#collapse-table').css("display") !== "none") {
-                        $('#collapse-table').slideToggle(0);
-                    }
+                    $('#paginationBox').append(
+                        $('<li/>')
+                            .addClass("page-item")
+                            .append(
+                                $('<button/>')
+                                    .attr("id", page_numbers[i])
+                                    .addClass("btn btn-secondary page_num_link page-link")
+                                    .html(page_numbers[i] + "  ")
+                            )
+                    );
                 }
             }
 
+        }
+        $('#paginationBox').append(
+            $('<li/>')
+                .addClass("page-item")
+                .append(
+                    $('<button/>')
+                        .attr("id", "next")
+                        .addClass("btn btn-secondary page_num_link page-link")
+                        .html("&raquo;")
+                )
+        );
+        $('.page-link').parent().removeClass("active");
+        $('#' + $('#page_number').val() + '.page-link').parent().addClass("active");
+
+    }
+
+    function create_table(data) {
+        for (key in data['data']) {
+            nr_rows += 1;
+            write_row(data['data'][key], nr_rows);
+        }
+        show_page_numbers(data['pages_lst']);
+        if (nr_rows === 0) {
+            $('#content-table').css("text-align", "center").text("no results find !");
+        }
+
+        if ($('#collapse-table').css("display") === "none") {
+
+            $('#collapse-table').slideToggle(500);
+        } else {
+            $('#collapse-table').slideToggle(0);
+            $('#collapse-table').slideToggle(500);
+        }
+    }
+
+    function get_data() {
+
+        data_form = data_form.replace(/&page_number=\d+&/, "&page_number=" + $('#page_number').val() + "&");
+        $.ajax({
+            type: "POST",
+            url: "/process_search_form/",
+            data: data_form,
+            success: function (data) {
+
+                $('#name_autocomplete').val('');
+                $('#content-table').empty();
+
+                if (data['data'].hasOwnProperty("autocomp")) {
+                    if ($('#name_autocomplete').hasClass('has-error') === false) {
+                        $('#name_autocomplete').addClass('has-error');
+                    }
+
+                    $('#name-err').text(data['data']['autocomp']['0']);
+                    $('#name-err').css("visibility", "visible");
+
+                    if ($('#collapse-table').css("display") !== "none") {
+                        $('#collapse-table').slideToggle(0);
+                    }
+                } else {
+                    create_table(data);
+                }
+
+            }
+
         });
+    }
+
+    $('form').submit(function (e) {
+        reset_err_tags();
+        data_form = $('form').serialize();
+        get_data();
         e.preventDefault();
     });
 
@@ -236,12 +318,26 @@ $(function () {
         $(".ui-menu").css({"display": "none"});
     });
 
+    $(document).on("click", ".page_num_link", function () {
+
+        let page_nr = $('#page_number');
+
+        if ($(this).attr("id") === "prev") {
+            page_nr.val(parseInt(page_nr.val()) <= 1 ? 1 : parseInt(page_nr.val()) - 1);
+        } else if ($(this).attr("id") === "next") {
+            page_nr.val(parseInt(page_nr.val()) >= nr_of_pages ? nr_of_pages : parseInt(page_nr.val()) + 1);
+        } else {
+            page_nr.val(parseInt($(this).attr("id")));
+        }
+        console.log("page_nr.val()=" + page_nr.val());
+        get_data();
+    });
+
 });
 
 
 $(document).on("click", ".modal-button", function () {
     let id = $(this).attr("id");
-    console.log(id);
     $('#no').text($("#nr-row-content-" + id).text());
     $('#book-name').text($("#book-name-row-content-" + id).text());
     $('#book-type').text($("#book-type-row-content-" + id).text());

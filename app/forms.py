@@ -11,6 +11,7 @@ class LoginForm(FlaskForm):
 class SearchForm(FlaskForm):
     option = RadioField('Label', choices=[('1', 'Name'), ('2', 'Type'), ('3', 'Author')])
     autocomp = StringField('Search', id='name_autocomplete',validators=[InputRequired("Field can not be empty!"),Length(max=50)])
+    page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
 
 class WishlistForm(FlaskForm):
     id_book = DecimalField(validators=[InputRequired("Field can not be empty!")])

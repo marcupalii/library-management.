@@ -24,6 +24,7 @@
                 <a id="jump-here"></a>
                 <form method="post" novalidate>
                     {{ form.hidden_tag() }}
+                    {{ form.page_number }}
                     <div id="search-form-content">
 
                         <div class="d-flex flex-column col-5">
@@ -70,9 +71,14 @@
                             </tbody>
                         </table>
                     </div>
+                    <div>
+                        <ul class="pagination" id="paginationBox">
+                        </ul>
+                    </div>
                 </div>
 
             </div>
+
         </div>
     </div>
 
@@ -81,9 +87,9 @@
 
     <div class="container">
 
-{#        <button type="button" class="btn modal-button" id="modal-button-1">#}
-{#            <i class="fas fa-external-link-alt"></i>#}
-{#        </button>#}
+        {#        <button type="button" class="btn modal-button" id="modal-button-1">#}
+        {#            <i class="fas fa-external-link-alt"></i>#}
+        {#        </button>#}
         <!-- The Modal -->
         <div class="modal fade" id="myModal">
             <div class="modal-dialog modal-lg modal-dialog-centered">
