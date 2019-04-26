@@ -28,8 +28,8 @@ footer {
 }
 
 /*.row-offcanvas-left {*/
-    /*flex: 0 0 12%;*/
-    /*max-width: 12%;*/
+/*flex: 0 0 12%;*/
+/*max-width: 12%;*/
 /*}*/
 
 
@@ -77,7 +77,7 @@ footer {
         display: block;
         top: 0;
         z-index: 1;
-
+        background-color: #343a40 !important;
     }
 
 
