@@ -4,7 +4,7 @@ footer {
 }
 
 .row-offcanvas-left {
-    min-width: 250px;
+    min-width: 200px;
 }
 
 
@@ -13,8 +13,8 @@ footer {
     margin-top: 0;
     margin-left: 0;
     margin-bottom: 0;
-    max-width: 250px;
-    min-width: 250px;
+    /*max-width: 200px;*/
+    min-width: 200px;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -26,6 +26,12 @@ footer {
     width: 100%;
     min-height: 100%;
 }
+
+/*.row-offcanvas-left {*/
+    /*flex: 0 0 12%;*/
+    /*max-width: 12%;*/
+/*}*/
+
 
 @media screen and (max-width: 767px) {
 
@@ -50,7 +56,7 @@ footer {
         transition: all 0.5s linear;
     }
 
-    #sidebar-fixed{
+    #sidebar-fixed {
         transition: all 0.5s;
         background-color: rgba(0, 0, 0, 0.5);
     }
@@ -73,7 +79,6 @@ footer {
         z-index: 1;
 
     }
-
 
 
 }

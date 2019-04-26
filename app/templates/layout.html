@@ -142,32 +142,32 @@
 {% endblock %}
 
 
-<div class="container-fluid h-100">
+<div class="mb-5">
 
-    <div class="row h-100">
+    <div class="d-flex flex-row">
         {% if current_user.is_authenticated %}
             {% block sidebar %}
                 <div class="order-1 row-offcanvas-left">
                     <div id="sidebar-fixed">
                         <div class="sidebar-offcanvas" id="sidebar">
                             <div class="list-group">
-                                <a class="nav-link" href="{{ url_for('account') }}">
-                                    <i class="fa fa-home"></i>Home<span class="sr-only"></span>
+                                <a class="nav-link list-group-item list-group-item-action bg-light" href="{{ url_for('account') }}">
+                                    <i class="fa fa-home"></i>DashBoard<span class="sr-only"></span>
                                 </a>
 
-                                <a class="nav-link" href="{{ url_for('wishlist') }}">
+                                <a class="nav-link list-group-item list-group-item-action bg-light" href="{{ url_for('wishlist') }}">
                                     <i class="fa fa-home"></i>Wishlist<span class="sr-only"></span>
                                 </a>
 
-                                <a class="nav-link" href="{{ url_for('notifications') }}">
+                                <a class="nav-link list-group-item list-group-item-action bg-light" href="{{ url_for('notifications') }}">
                                     <i class="fa fa-home"></i>Notifications<span class="sr-only"></span>
                                 </a>
 
-                                <a class="nav-link" href="{{ url_for('books_log') }}">
+                                <a class="nav-link list-group-item list-group-item-action bg-light" href="{{ url_for('books_log') }}">
                                     <i class="fa fa-home"></i>Books log<span class="sr-only"></span>
                                 </a>
 
-                                <a class="nav-link" href="{{ url_for('books_reservation') }}">
+                                <a class="nav-link list-group-item list-group-item-action bg-light" href="{{ url_for('books_reservation') }}">
                                     <i class="fa fa-home"></i>Books reservation<span class="sr-only"></span>
                                 </a>
 
@@ -179,7 +179,7 @@
             {% endblock %}
         {% endif %}
 
-        <div class="col order-2 flex-grow-1 content">
+        <div class="order-2 flex-grow-1 content">
             {% block content %}
             {% endblock %}
         </div>

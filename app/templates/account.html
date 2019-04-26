@@ -13,10 +13,58 @@
             integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">
     </script>
     <script src="{{ url_for('.static', filename='js/account.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 {% endblock %}
 
 {% block content %}
-    <p> Account page</p>
+    <div id="calendar"></div>
+
+    <div class="container">
+        <div class="row my-3">
+            <div class="col">
+                <h4>Bootstrap 4 Chart.js</h4>
+            </div>
+        </div>
+        <div class="row py-2">
+            <div class="col-md-4 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="chDonut1"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="chDonut2"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="chDonut3"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row my-3">
+            <div class="col">
+                <h4>Bootstrap 4 Chart.js - Line Chart</h4>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="chLine" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container main-section">
         <div class="row">
