@@ -1,8 +1,4 @@
 
-footer {
-    padding: 30px 0;
-}
-
 #sidebar-fixed {
     position: relative;
     margin-top: 0;
@@ -63,7 +59,7 @@ footer {
     .row-offcanvas-left.active #sidebar-fixed {
         transform: translate3d(0, 0, 0);
     }
-    
+
     .sidebar-offcanvas {
         background-color: #343a40 !important;
     }

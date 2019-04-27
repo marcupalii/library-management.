@@ -38,7 +38,10 @@ def FUN_405(error):
 @app.route("/")
 @app.route('/about')
 def about():
-    return render_template("about.html")
+    if current_user.is_authenticated:
+        return redirect(url_for('account'))
+    else:
+        return render_template("about.html")
 
 
 @app.route("/logout")
