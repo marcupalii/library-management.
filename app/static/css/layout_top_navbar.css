@@ -1,8 +1,9 @@
 
 html, body {
-    height: 100%;
+    min-height: 100%;
     padding-top: 30px;
-    width: 100%;
+    min-width: 100% !important;
+    max-width: 100% !important;
 }
 
 .navbar {
@@ -14,10 +15,20 @@ html, body {
     margin-right: 10px;
 }
 
+.content {
+    margin-left: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+}
 
-/*@media screen and (min-width: 767px) {*/
-    /*.content {*/
-        /*flex: 0 0 65%;*/
-        /*max-width: 65%;*/
-    /*}*/
-/*}*/
+@media screen and (min-width: 1024px) {
+    .content {
+        margin-left: 25%;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        max-width: 75%;
+    }
+}

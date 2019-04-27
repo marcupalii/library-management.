@@ -29,22 +29,6 @@
     display: none;
 }
 
-@media (min-width: 768px) {
-    .d-md-block {
-        display: table-cell !important;;
-    }
-
-}
-
-@media (min-width: 992px) {
-
-    .d-lg-block {
-        display: table-cell !important;;
-    }
-
-}
-
-
 #name_autocomplete {
     width: 100%;
     height: 100%;
@@ -83,3 +67,17 @@
     }
 }
 
+@media (min-width: 768px) {
+    .d-md-block {
+        display: table-cell !important;;
+    }
+
+}
+
+@media (min-width: 992px) {
+
+    .d-lg-block {
+        display: table-cell !important;;
+    }
+
+}

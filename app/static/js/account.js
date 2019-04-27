@@ -76,7 +76,7 @@ $(function () {
     /* large line chart */
     var chLine = document.getElementById("chLine");
     var chartData = {
-        labels: ["January", "February", "March", "April", "May", "June", "July","August","September","October","November","December"],
+        labels: ["Jan", "Feb","Mar", "Apr", "May", "June", "July","Aug","Sept","Oct","Nov","Dec"],
         datasets: [{
             data: [1, 5, 0, 2, 10, 3, 4],
             backgroundColor: 'transparent',

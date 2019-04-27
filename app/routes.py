@@ -276,70 +276,6 @@ def autocomplete(option):
             return Response(json.dumps([el[0] for el in books_author]), mimetype='application/json')
 
 
-# @app.route("/process_search_form/", methods=['POST'])
-# @login_required
-# def process_search_form():
-#     if current_user.email:
-#
-#         form = SearchForm()
-#         if form.validate_on_submit():
-#             response = {}
-#             print(form.autocomp.data, form.option.data, form.page_number.data)
-#             # return jsonify(data="merge")
-#
-#             if form.option.data == "1":
-#                 books = Book.query.filter_by(name=form.autocomp.data).all()
-#
-#                 for book in books:
-#                     author = Author.query.filter_by(id=book.author_id).first()
-#                     response.update({
-#                         str(book.id): {
-#                             'author_name': author.name,
-#                             'book_name': book.name,
-#                             'book_type': book.type,
-#                             'count_book': book.count_free_books
-#                         }
-#                     })
-#
-#             elif form.option.data == "2":
-#                 books = Book.query.filter_by(type=form.autocomp.data).all()
-#
-#                 for book in books:
-#                     author = Author.query.filter_by(id=book.author_id).first()
-#                     response.update({
-#                         str(book.id): {
-#                             'author_name': author.name,
-#                             'book_name': book.name,
-#                             'book_type': book.type,
-#                             'count_book': book.count_free_books
-#                         }
-#                     })
-#
-#             elif form.option.data == "3":
-#                 authors = Author.query.filter_by(name=form.autocomp.data).all()
-#
-#                 for author in authors:
-#                     books = author.books
-#
-#                     for book in books:
-#
-#                         response.update({
-#                             str(book.id): {
-#                                 'author_name': author.name,
-#                                 'book_name': book.name,
-#                                 'book_type': book.type,
-#                                 'count_book': book.count_free_books
-#                             }
-#                         })
-#
-#             return jsonify(data={key: response[key] for key in response.keys()})
-#
-#         return jsonify(data=form.errors)
-#
-
-
-
-
 @app.route("/process_search_form/", methods=['POST'])
 @login_required
 def process_search_form():
@@ -396,23 +332,24 @@ def process_search_form():
 
             elif form.option.data == "3":
                 author = Author.query.filter_by(name=form.autocomp.data).first()
-                books = Book.query.filter_by(author_id=author.id).order_by(Book.name).paginate(
-                    per_page=3,
-                    page=form.page_number.data,
-                    error_out=True
-                )
+                if author:
+                    books = Book.query.filter_by(author_id=author.id).order_by(Book.name).paginate(
+                        per_page=3,
+                        page=form.page_number.data,
+                        error_out=True
+                    )
 
-                for book in books.items:
-                    response.update({
-                        str(book.id): {
-                            'author_name': author.name,
-                            'book_name': book.name,
-                            'book_type': book.type,
-                            'count_book': book.count_free_books
-                        }
-                    })
-                for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
-                    num_list.append(i)
+                    for book in books.items:
+                        response.update({
+                            str(book.id): {
+                                'author_name': author.name,
+                                'book_name': book.name,
+                                'book_type': book.type,
+                                'count_book': book.count_free_books
+                            }
+                        })
+                    for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+                        num_list.append(i)
 
             return jsonify(
                 data={key: response[key] for key in response.keys()},
@@ -420,23 +357,3 @@ def process_search_form():
             )
 
         return jsonify(data=form.errors)
-
-
-
-
-
-
-
-# @app.route("/process_add_to_wishlist_form/", methods=['POST'])
-# @login_required
-# def process_add_to_wishlist_form():
-#     if current_user.email:
-#
-#         form = SearchForm()
-#         if form.validate_on_submit():
-#             response = {}
-#             print(form.id_book.data, form.period.data)
-#
-#             return jsonify(data={key: response[key] for key in response.keys()})
-#
-#         return jsonify(data=form.errors)

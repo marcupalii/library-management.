@@ -3,18 +3,11 @@ footer {
     padding: 30px 0;
 }
 
-.row-offcanvas-left {
-    min-width: 200px;
-}
-
-
 #sidebar-fixed {
     position: fixed;
     margin-top: 0;
     margin-left: 0;
     margin-bottom: 0;
-    /*max-width: 200px;*/
-    min-width: 200px;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -27,13 +20,15 @@ footer {
     min-height: 100%;
 }
 
-/*.row-offcanvas-left {*/
-/*flex: 0 0 12%;*/
-/*max-width: 12%;*/
-/*}*/
+@media screen and (min-width: 1024px) {
+    .row-offcanvas-left {
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
 
-
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 1024px) {
 
     #sidebar {
         background-color: grey;
@@ -49,8 +44,8 @@ footer {
     }
 
     .row-offcanvas-left.active {
-        min-width: 100vw;
-        min-height: 100vh;
+        min-width: 100%;
+        min-height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         position: fixed;
         transition: all 0.5s linear;
