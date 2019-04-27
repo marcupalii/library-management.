@@ -11,9 +11,13 @@
 }
 
 #sidebar {
-    padding-top: 60%;
     width: 100%;
     height: 100%;
+}
+
+.h-20 {
+    min-height: 20%;
+    max-height: 20%;
 }
 
 .row-offcanvas-left {
@@ -24,8 +28,17 @@
     height: 100%;
 }
 
+@media screen and (min-width: 1440px) {
+    #sidebar {
+        width: 80%;
+    }
+}
+
 @media screen and (max-width: 1024px) {
 
+    .h-20{
+        background-color: #343a40 !important;
+    }
     #sidebar {
         background-color: grey;
     }

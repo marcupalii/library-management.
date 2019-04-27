@@ -146,9 +146,12 @@
         {% if current_user.is_authenticated %}
             {% block sidebar %}
                 <div class="position-fixed row-offcanvas-left">
-                    <div id="sidebar-fixed">
+                    <div class="d-flex flex-column" id="sidebar-fixed">
+                        <div class="h-20">
+
+                        </div>
                         <div class="sidebar-offcanvas" id="sidebar">
-                            <div class="list-group">
+                            <div class="list-group p-3">
                                 <a class="nav-link list-group-item list-group-item-action bg-light"
                                    href="{{ url_for('account') }}">
                                     <i class="fa fa-home"></i>DashBoard<span class="sr-only"></span>
