@@ -31,10 +31,11 @@
 </head>
 
 <body>
+{#class="pull-left btn btn-default"#}
 {% block navbar %}
     <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
-        <button type="button" class="pull-left btn btn-default d-lg-none" data-toggle="offcanvas" data-target="#sidebar"
-                aria-expanded="false" aria-controls="sidebar">
+        <button type="button" class="btn btn-default" data-toggle="offcanvas" data-target="#sidebar"
+                aria-expanded="false" aria-controls="sidebar" id="button-sidebar">
             <i class="fa fa-chevron-down"></i>
         </button>
         <a class="navbar-brand" href="#">Library Management</a>
@@ -144,7 +145,7 @@
     <div class="row">
         {% if current_user.is_authenticated %}
             {% block sidebar %}
-                <div class="px-1 position-fixed row-offcanvas-left">
+                <div class="position-fixed row-offcanvas-left">
                     <div id="sidebar-fixed">
                         <div class="sidebar-offcanvas" id="sidebar">
                             <div class="list-group">

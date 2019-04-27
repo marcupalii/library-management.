@@ -23,7 +23,12 @@ html, body {
     max-width: 100%;
 }
 
-@media screen and (min-width: 1024px) {
+
+@media screen and (min-width: 1025px) {
+    #button-sidebar {
+        display: none !important;
+    }
+
     .content {
         margin-left: 25%;
         flex-basis: 0;

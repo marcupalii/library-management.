@@ -4,7 +4,7 @@ footer {
 }
 
 #sidebar-fixed {
-    position: fixed;
+    position: relative;
     margin-top: 0;
     margin-left: 0;
     margin-bottom: 0;
@@ -17,15 +17,15 @@ footer {
 #sidebar {
     padding-top: 60%;
     width: 100%;
-    min-height: 100%;
+    height: 100%;
 }
 
-@media screen and (min-width: 1024px) {
-    .row-offcanvas-left {
-        -ms-flex: 0 0 25%;
-        flex: 0 0 25%;
-        max-width: 25%;
-    }
+.row-offcanvas-left {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+    min-width: 20%;
+    height: 100%;
 }
 
 @media screen and (max-width: 1024px) {
@@ -35,8 +35,10 @@ footer {
     }
 
     .row-offcanvas-left {
+        min-width: 100%;
+        min-height: 100%;
         position: absolute;
-        z-index: 1;
+        z-index: 10;
         -webkit-transition: all .25s ease-out;
         -o-transition: all .25s ease-out;
         transition: all .25s ease-out;
@@ -44,34 +46,25 @@ footer {
     }
 
     .row-offcanvas-left.active {
-        min-width: 100%;
-        min-height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         position: fixed;
         transition: all 0.5s linear;
     }
 
     #sidebar-fixed {
-        transition: all 0.5s;
+
+        transition: all 0.5s linear;
         background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .row-offcanvas-left #sidebar-fixed {
-
+        width: 30%;
         transform: translate3d(-100%, 0, 0);
     }
 
-    .row-offcanvas-left.active #sidebar-fixed {
 
+    .row-offcanvas-left.active #sidebar-fixed {
         transform: translate3d(0, 0, 0);
     }
-
-
-    .row-offcanvas-left.active .sidebar-offcanvas {
-        width: 60%;
-        display: block;
-        top: 0;
-        z-index: 1;
+    
+    .sidebar-offcanvas {
         background-color: #343a40 !important;
     }
 
