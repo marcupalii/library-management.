@@ -76,7 +76,7 @@ $(function () {
     /* large line chart */
     var chLine = document.getElementById("chLine");
     var chartData = {
-        labels: ["Jan", "Feb","Mar", "Apr", "May", "June", "July","Aug","Sept","Oct","Nov","Dec"],
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
         datasets: [{
             data: [1, 5, 0, 2, 10, 3, 4],
             backgroundColor: 'transparent',
@@ -129,38 +129,9 @@ $(function () {
     });
 
 
-    $('#option-0').prop('checked', true);
-
-    function get_autocomplete(option) {
-        $.ajax({
-            url: "/autocomplete/" + option + "/",
-            type: 'GET',
-            contentType: 'application/json;charset=UTF-8',
-        }).done(function (data) {
-            console.log(data);
-            $('#name_autocomplete').autocomplete({
-                minLength: 1,
-                source: function (req, resp) {
-                    var match = new RegExp("^" + $.ui.autocomplete.escapeRegex(req.term), "i");
-                    resp($.grep(data, function (el) {
-                        return match.test(el);
-                    }));
-                }
-            });
-        });
-    }
-
-    get_autocomplete("1");
-
-    $(document).on('change', 'input:radio[id^="option-"]', function () {
-        get_autocomplete($(this)[0].value);
-    });
-
     function reset_err_tags() {
-        $('#name-err').css("visibility", "hidden");
-        if ($('#name_autocomplete').hasClass('has-error')) {
-            $('#name_autocomplete').toggleClass('has-error');
-        }
+        $('#search_name_error').css("visibility", "hidden");
+        $('.form-control').removeClass("has-error");
     }
 
 
@@ -262,8 +233,6 @@ $(function () {
     }
 
     function show_page_numbers(page_numbers) {
-
-        console.log("nr_of_pages" + nr_of_pages);
         $('#paginationBox').empty();
         $('#paginationBox').append(
             $('<li/>')
@@ -328,17 +297,19 @@ $(function () {
     }
 
     function create_table(data) {
+        let index_start = 3 * (parseInt($('#page_number').val()) - 1);
         for (key in data['data']) {
-            nr_rows += 1;
-            write_row(data['data'][key], nr_rows);
+            index_start += 1;
+            write_row(data['data'][key], index_start);
+
         }
-        show_page_numbers(data['pages_lst']);
-        if (nr_rows === 0) {
+        if (index_start !== 0) {
+            show_page_numbers(data['pages_lst']);
+        } else {
             $('#content-table').css("text-align", "center").text("no results find !");
         }
 
         if ($('#collapse-table').css("display") === "none") {
-
             $('#collapse-table').slideToggle(0);
         } else {
             $('#collapse-table').slideToggle(0);
@@ -346,25 +317,39 @@ $(function () {
         }
     }
 
-    function get_data() {
+    $.each($('input'), function () {
+        if ($(this).attr("id").match(/^search_[a-z]+$/)) {
+            $(this).addClass("form-control");
+            $(this).parent().prev().addClass("col-sm-2 col-form-label");
+        }
+    });
 
+    function get_data() {
         data_form = data_form.replace(/&page_number=\d+&/, "&page_number=" + $('#page_number').val() + "&");
         $.ajax({
             type: "POST",
-            url: "/process_search_form/",
+            url: "/search_book/",
             data: data_form,
             success: function (data) {
-
-                $('#name_autocomplete').val('');
                 $('#content-table').empty();
 
-                if (data['data'].hasOwnProperty("autocomp")) {
-                    if ($('#name_autocomplete').hasClass('has-error') === false) {
-                        $('#name_autocomplete').addClass('has-error');
+                if (data['data'].hasOwnProperty("search_name")) {
+
+                    if ($('#search_name.form-control').hasClass('has-error') === false) {
+                        $('#search_name.form-control').addClass('has-error');
                     }
 
-                    $('#name-err').text(data['data']['autocomp']['0']);
-                    $('#name-err').css("visibility", "visible");
+                    if ($('#search_type.form-control').hasClass('has-error') === false) {
+                        $('#search_type.form-control').addClass('has-error');
+                    }
+
+                    if ($('#search_author.form-control').hasClass('has-error') === false) {
+                        $('#search_author.form-control').addClass('has-error');
+                    }
+
+
+                    $('#search_name_error').text(data['data']['search_name']['0']);
+                    $('#search_name_error').css("visibility", "visible");
 
                     if ($('#collapse-table').css("display") !== "none") {
                         $('#collapse-table').slideToggle(0);
@@ -372,11 +357,11 @@ $(function () {
                 } else {
                     create_table(data);
                 }
-
             }
 
         });
     }
+
 
     $('form').submit(function (e) {
         reset_err_tags();
@@ -395,36 +380,6 @@ $(function () {
     });
 
 
-    $.extend($.ui.autocomplete.prototype.options, {
-
-        open: function (event, ui) {
-
-            if ($('#name_autocomplete').val() !== "") {
-                $('#name-err').css("visibility", "hidden");
-                if ($('#name_autocomplete').hasClass('has-error')) {
-                    $('#name_autocomplete').toggleClass('has-error');
-                }
-            }
-
-
-            $(".selector").autocomplete({autoFocus: true});
-            $(this).autocomplete("widget").css({
-                "width": ($('#search-container').width() + "px")
-            });
-
-            $('.ui-menu-item').css("width", "99%");
-
-            $('.ui-menu-item').css("margin-left", "1.5px");
-
-        }
-        ,
-    })
-    ;
-
-    $(window).resize(function () {
-        $(".ui-menu").css({"display": "none"});
-    });
-
     $(document).on("click", ".page_num_link", function () {
 
         let page_nr = $('#page_number');
@@ -436,7 +391,6 @@ $(function () {
         } else {
             page_nr.val(parseInt($(this).attr("id")));
         }
-        console.log("page_nr.val()=" + page_nr.val());
         get_data();
     });
 

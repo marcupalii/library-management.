@@ -3,15 +3,11 @@
 {% block page_title %}Account Page {% endblock %}
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('.static', filename='css/account.css') }}">
 {% endblock %}
 {% block scripts %}
     {{ super() }}
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">
-    </script>
     <script src="{{ url_for('.static', filename='js/account.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 {% endblock %}
@@ -66,42 +62,45 @@
         </div>
     </div>
 
-    <div class="container main-section">
+    <div class="container">
         <div class="row">
             <div class="col-lg-12 hedding pb-2">
                 <a id="jump-here"></a>
-                <form method="post" novalidate>
-                    {{ form.hidden_tag() }}
-                    {{ form.page_number }}
-                    <div id="search-form-content">
-
-                        <div class="d-flex flex-column col-5">
-                            <div class="d-flex flex-row flex-grow-1">
-                                <div class="flex-grow-1" id="search-container">
-                                    {{ form.autocomp(placeholder='Search') }}
-                                </div>
-                                <div>
-                                    <button class="btn btn-secondary" type="Submit" id="button-collapse-table">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
+                <div>
+                    <form method="post" novalidate>
+                        {{ form.hidden_tag() }}
+                        {{ form.page_number }}
+                        <div class="form-group row">
+                            {{ form.search_name.label }}
+                            <div class="col-sm-20">
+                                {{ form.search_name }}
                             </div>
-                            <div>
-                                <div class="has-error" id="name-err"></div>
+                        </div>
+                        <div class="form-group row">
+                            {{ form.search_author.label }}
+                            <div class="col-sm-20">
+                                {{ form.search_author }}
                             </div>
-
                         </div>
 
-                        <div class="">
-                            {% for subfield in form.option %}
-                                <tr>
-                                    <td>{{ subfield }}</td>
-                                    <td>{{ subfield.label }}</td>
-                                </tr>
-                            {% endfor %}
+                        <div class="form-group row">
+                            {{ form.search_type.label }}
+                            <div class="col-sm-20">
+                                {{ form.search_type }}
+                            </div>
                         </div>
-                    </div>
-                </form>
+                        <div class="" id="search_name_error">
+
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary" type="Submit" id="button-collapse-table">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+
                 <div id="collapse-table">
                     <div class="col-lg-12">
                         <table class="table table-bordered" style="border-collapse:collapse;">
@@ -135,10 +134,6 @@
 
     <div class="container">
 
-        {#        <button type="button" class="btn modal-button" id="modal-button-1">#}
-        {#            <i class="fas fa-external-link-alt"></i>#}
-        {#        </button>#}
-        <!-- The Modal -->
         <div class="modal fade" id="myModal">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">

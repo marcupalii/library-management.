@@ -2,7 +2,7 @@ from flask import render_template, request, url_for, redirect, abort, jsonify, R
 from app import app, login_manager, db
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author
 
-from app.forms import LoginForm, SearchForm, WishlistForm
+from app.forms import LoginForm, Search
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import jsonify
 
@@ -218,7 +218,9 @@ def account():
     if _email:
         _user = User.query.filter_by(email=_email).first()
 
-        form = SearchForm()
+        # form = SearchForm()
+        # return render_template('account.html', form=form)
+        form = Search(search_by_name=False, search_by_type=False, search_by_author=False)
         return render_template('account.html', form=form)
     else:
         return redirect(url_for('about'))
@@ -262,38 +264,120 @@ def admin():
     return render_template("admin.html")
 
 
-@app.route('/autocomplete/<option>/', methods=['GET'])
+# @app.route('/autocomplete/<option>/', methods=['GET'])
+# @login_required
+# def autocomplete(option):
+#     if current_user.email:
+#
+#         print(option, type(option))
+#         if option == "1":
+#             books_name = Book.query.with_entities(Book.name).all()
+#             return Response(json.dumps([el[0] for el in books_name]), mimetype='application/json')
+#         elif option == "2":
+#             books_type = Book.query.with_entities(Book.type).all()
+#             return Response(json.dumps([el[0] for el in books_type]), mimetype='application/json')
+#         elif option == "3":
+#             books_author = Author.query.with_entities(Author.name).all()
+#             return Response(json.dumps([el[0] for el in books_author]), mimetype='application/json')
+
+#
+# @app.route("/process_search_form/", methods=['POST'])
+# @login_required
+# def process_search_form():
+#     response = {}
+#     num_list = []
+#
+#     if current_user.email:
+#
+#         form = SearchForm()
+#         if form.validate_on_submit():
+#
+#             print(form.autocomp.data, form.option.data)
+#
+#             if form.option.data == "1":
+#                 books = Book.query.filter_by(name=form.autocomp.data).order_by(Book.name).paginate(
+#                     per_page=3,
+#                     page=form.page_number.data,
+#                     error_out=True
+#                 )
+#
+#                 for book in books.items:
+#                     author = Author.query.filter_by(id=book.author_id).first()
+#                     response.update({
+#                         str(book.id): {
+#                             'author_name': author.name,
+#                             'book_name': book.name,
+#                             'book_type': book.type,
+#                             'count_book': book.count_free_books
+#                         }
+#                     })
+#
+#                 for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+#                     num_list.append(i)
+#
+#             elif form.option.data == "2":
+#                 books = Book.query.filter_by(type=form.autocomp.data).order_by(Book.name).paginate(
+#                     per_page=3,
+#                     page=form.page_number.data,
+#                     error_out=True
+#                 )
+#
+#                 for book in books.items:
+#                     author = Author.query.filter_by(id=book.author_id).first()
+#                     response.update({
+#                         str(book.id): {
+#                             'author_name': author.name,
+#                             'book_name': book.name,
+#                             'book_type': book.type,
+#                             'count_book': book.count_free_books
+#                         }
+#                     })
+#                 for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+#                     num_list.append(i)
+#
+#             elif form.option.data == "3":
+#                 author = Author.query.filter_by(name=form.autocomp.data).first()
+#                 if author:
+#                     books = Book.query.filter_by(author_id=author.id).order_by(Book.name).paginate(
+#                         per_page=3,
+#                         page=form.page_number.data,
+#                         error_out=True
+#                     )
+#
+#                     for book in books.items:
+#                         response.update({
+#                             str(book.id): {
+#                                 'author_name': author.name,
+#                                 'book_name': book.name,
+#                                 'book_type': book.type,
+#                                 'count_book': book.count_free_books
+#                             }
+#                         })
+#                     for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+#                         num_list.append(i)
+#
+#             return jsonify(
+#                 data={key: response[key] for key in response.keys()},
+#                 pages_lst=[value for value in num_list]
+#             )
+#
+#         return jsonify(data=form.errors)
+
+
+@app.route("/search_book/", methods=['POST'])
 @login_required
-def autocomplete(option):
-    if current_user.email:
-
-        print(option, type(option))
-        if option == "1":
-            books_name = Book.query.with_entities(Book.name).all()
-            return Response(json.dumps([el[0] for el in books_name]), mimetype='application/json')
-        elif option == "2":
-            books_type = Book.query.with_entities(Book.type).all()
-            return Response(json.dumps([el[0] for el in books_type]), mimetype='application/json')
-        elif option == "3":
-            books_author = Author.query.with_entities(Author.name).all()
-            return Response(json.dumps([el[0] for el in books_author]), mimetype='application/json')
-
-
-@app.route("/process_search_form/", methods=['POST'])
-@login_required
-def process_search_form():
+def search_book():
     response = {}
     num_list = []
 
     if current_user.email:
 
-        form = SearchForm()
+        form = Search()
         if form.validate_on_submit():
 
-            print(form.autocomp.data, form.option.data)
-
-            if form.option.data == "1":
-                books = Book.query.filter_by(name=form.autocomp.data).order_by(Book.name).paginate(
+            if form.search_name.data and form.search_type.data:
+                books = Book.query.filter_by(name=form.search_name.data, type=form.search_type.data).order_by(
+                    Book.name).paginate(
                     per_page=3,
                     page=form.page_number.data,
                     error_out=True
@@ -313,8 +397,9 @@ def process_search_form():
                 for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
 
-            elif form.option.data == "2":
-                books = Book.query.filter_by(type=form.autocomp.data).order_by(Book.name).paginate(
+            elif form.search_name.data:
+                books = Book.query.filter_by(name=form.search_name.data).order_by(
+                    Book.name).paginate(
                     per_page=3,
                     page=form.page_number.data,
                     error_out=True
@@ -330,10 +415,33 @@ def process_search_form():
                             'count_book': book.count_free_books
                         }
                     })
+
                 for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
 
-            elif form.option.data == "3":
+            elif form.search_type.data:
+                books = Book.query.filter_by(type=form.search_type.data).order_by(
+                    Book.name).paginate(
+                    per_page=3,
+                    page=form.page_number.data,
+                    error_out=True
+                )
+
+                for book in books.items:
+                    author = Author.query.filter_by(id=book.author_id).first()
+                    response.update({
+                        str(book.id): {
+                            'author_name': author.name,
+                            'book_name': book.name,
+                            'book_type': book.type,
+                            'count_book': book.count_free_books
+                        }
+                    })
+
+                for i in books.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+                    num_list.append(i)
+
+            elif form.search_author.data:
                 author = Author.query.filter_by(name=form.autocomp.data).first()
                 if author:
                     books = Book.query.filter_by(author_id=author.id).order_by(Book.name).paginate(
@@ -359,4 +467,6 @@ def process_search_form():
                 pages_lst=[value for value in num_list]
             )
 
+
+        print(form.errors)
         return jsonify(data=form.errors)

@@ -158,110 +158,115 @@ class Notifications(db.Model):
 
 
 if __name__ == "__main__":
-    db.create_all()
-
-
-    # ----------------------       ONE TO MANY model   ------------------------------------
-    author1 = Author(name="author 1")
-    author2 = Author(name="author 2")
-    author3 = Author(name="author 3")
-    author4 = Author(name="author 4")
-
-    book1 = Book(name="book1", author=author1, type="type1", count_total=2, count_free_books=2)
-    book2 = Book(name="book2", author=author1, type="type3", count_total=2, count_free_books=2)
-    book3 = Book(name="book3", author=author2, type="type1", count_total=2, count_free_books=2)
-    book4 = Book(name="book4", author=author3, type="type2", count_total=2, count_free_books=2)
-    book5 = Book(name="book5", author=author4, type="type4", count_total=2, count_free_books=2)
-    book6 = Book(name="book6", author=author4, type="type1", count_total=2, count_free_books=2)
-
-
-    db.session.add(book1)
-    db.session.add(book2)
-    db.session.add(book3)
-    db.session.add(book4)
-    db.session.add(book5)
-    db.session.add(book6)
-    db.session.commit()
-
-    book_series1 = BookSeries(book=book1, series="310SL1", status="available")
-    book_series2 = BookSeries(book=book1, series="310SL2", status="available")
-
-    book_series3 = BookSeries(book=book2, series="311SL1", status="available")
-    book_series4 = BookSeries(book=book2, series="311SL2", status="available")
-
-    book_series5 = BookSeries(book=book3, series="312SL1", status="available")
-
-    book_series6 = BookSeries(book=book4, series="313SL1", status="available")
-
-    book_series7 = BookSeries(book=book5, series="314SL1", status="available")
-
-    book_series8 = BookSeries(book=book6, series="315SL2", status="available")
-
-    book_series9 = BookSeries(book=book2, series="310SL3", status="available")
-    book_series10 = BookSeries(book=book2, series="310SL4", status="available")
-
-    db.session.add(book_series1)
-    db.session.add(book_series2)
-    db.session.add(book_series3)
-    db.session.add(book_series4)
-    db.session.add(book_series5)
-    db.session.add(book_series6)
-    db.session.add(book_series7)
-    db.session.add(book_series8)
-    db.session.add(book_series9)
-    db.session.add(book_series10)
-
-    db.session.commit()
-
-
-    for i in range(7,50):
-        book = Book(name="book{}".format(i), author=author1, type="type1", count_total=2, count_free_books=2)
-        db.session.add(book)
-        db.session.commit()
-
-    #  ---------------------- ------------- ------------------------------------
-
-
-
-    admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
-                 password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
-
-
-    db.session.add(admin)
-    db.session.commit()
-    wishlist = Wishlist(user=admin)
-    db.session.add(wishlist)
-    db.session.commit()
-
-    next_book2 = NextBook(user=admin, period=0, status="None")
-    db.session.add(next_book2)
-    db.session.commit()
-
-
-
-    user = User(first_name='first name', last_name='last name', address="Main str nr 26", email='user@gmail.com', type='user',
-                 password=hashlib.sha512("user".encode()).hexdigest(), trust_coeff=0)
-
-    db.session.add(user)
-    db.session.commit()
-    wishlist1 = Wishlist(user=user)
-    db.session.add(wishlist1)
-    db.session.commit()
-
-    next_book1 = NextBook(user=user, period=0, status="None")
-    db.session.add(next_book1)
-    db.session.commit()
+    # db.create_all()
+    #
+    #
+    # # ----------------------       ONE TO MANY model   ------------------------------------
+    # author1 = Author(name="author 1")
+    # author2 = Author(name="author 2")
+    # author3 = Author(name="author 3")
+    # author4 = Author(name="author 4")
+    #
+    # book1 = Book(name="book1", author=author1, type="type1", count_total=2, count_free_books=2)
+    # book2 = Book(name="book2", author=author1, type="type3", count_total=2, count_free_books=2)
+    # book3 = Book(name="book3", author=author2, type="type1", count_total=2, count_free_books=2)
+    # book4 = Book(name="book4", author=author3, type="type2", count_total=2, count_free_books=2)
+    # book5 = Book(name="book5", author=author4, type="type4", count_total=2, count_free_books=2)
+    # book6 = Book(name="book6", author=author4, type="type1", count_total=2, count_free_books=2)
+    #
+    #
+    # db.session.add(book1)
+    # db.session.add(book2)
+    # db.session.add(book3)
+    # db.session.add(book4)
+    # db.session.add(book5)
+    # db.session.add(book6)
+    # db.session.commit()
+    #
+    # book_series1 = BookSeries(book=book1, series="310SL1", status="available")
+    # book_series2 = BookSeries(book=book1, series="310SL2", status="available")
+    #
+    # book_series3 = BookSeries(book=book2, series="311SL1", status="available")
+    # book_series4 = BookSeries(book=book2, series="311SL2", status="available")
+    #
+    # book_series5 = BookSeries(book=book3, series="312SL1", status="available")
+    #
+    # book_series6 = BookSeries(book=book4, series="313SL1", status="available")
+    #
+    # book_series7 = BookSeries(book=book5, series="314SL1", status="available")
+    #
+    # book_series8 = BookSeries(book=book6, series="315SL2", status="available")
+    #
+    # book_series9 = BookSeries(book=book2, series="310SL3", status="available")
+    # book_series10 = BookSeries(book=book2, series="310SL4", status="available")
+    #
+    # db.session.add(book_series1)
+    # db.session.add(book_series2)
+    # db.session.add(book_series3)
+    # db.session.add(book_series4)
+    # db.session.add(book_series5)
+    # db.session.add(book_series6)
+    # db.session.add(book_series7)
+    # db.session.add(book_series8)
+    # db.session.add(book_series9)
+    # db.session.add(book_series10)
+    #
+    # db.session.commit()
+    #
+    #
+    # for i in range(7,50):
+    #     book = Book(name="book{}".format(i), author=author1, type="type1", count_total=2, count_free_books=2)
+    #     db.session.add(book)
+    #     db.session.commit()
+    #
+    # #  ---------------------- ------------- ------------------------------------
+    #
+    #
+    #
+    # admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
+    #              password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
+    #
+    #
+    # db.session.add(admin)
+    # db.session.commit()
+    # wishlist = Wishlist(user=admin)
+    # db.session.add(wishlist)
+    # db.session.commit()
+    #
+    # next_book2 = NextBook(user=admin, period=0, status="None")
+    # db.session.add(next_book2)
+    # db.session.commit()
+    #
+    #
+    #
+    # user = User(first_name='first name', last_name='last name', address="Main str nr 26", email='user@gmail.com', type='user',
+    #              password=hashlib.sha512("user".encode()).hexdigest(), trust_coeff=0)
+    #
+    # db.session.add(user)
+    # db.session.commit()
+    # wishlist1 = Wishlist(user=user)
+    # db.session.add(wishlist1)
+    # db.session.commit()
+    #
+    # next_book1 = NextBook(user=user, period=0, status="None")
+    # db.session.add(next_book1)
+    # db.session.commit()
 
     print(User.query.all())
     print(Book.query.all())
     print(BookSeries.query.all())
     print(Wishlist.query.all())
     print(EntryWishlist.query.all())
+
     print(NextBook.query.all())
     # print(NextBook.query.filter_by(id=1,id_user=1).first())
 
 
-
+    print("\n join: \n")
+    # results = Author.query.join(Book., Author.id == Book.author_id).filter_by(type="type1")
+    results = Book.query.filter_by(type="type1").join(Author, Author.id== Book.author_id).add_columns(Author.id,Author.name,Author.created_at)
+    for result in results:
+        print(result[0])
 
 
     # print(Book.query.all())
