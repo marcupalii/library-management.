@@ -259,14 +259,23 @@ if __name__ == "__main__":
     print(EntryWishlist.query.all())
 
     print(NextBook.query.all())
+    print("\n\n\n")
+    # entryes = Book.query.filter(Book.name.like('%%'))
+    # form_bool = "book2"
+    form_bool = False
+    name = form_bool if form_bool else '%%'
+    print("name=",name)
+    entryes = Book.query.filter(Book.name.like(name))
+    for entry in entryes:
+        print(entry)
     # print(NextBook.query.filter_by(id=1,id_user=1).first())
 
 
-    print("\n join: \n")
+    # print("\n join: \n")
     # results = Author.query.join(Book., Author.id == Book.author_id).filter_by(type="type1")
-    results = Book.query.filter_by(type="type1").join(Author, Author.id== Book.author_id).add_columns(Author.id,Author.name,Author.created_at)
-    for result in results:
-        print(result[0])
+    # results = Book.query.filter_by(type="type1").join(Author, Author.id== Book.author_id).add_columns(Author.id,Author.name,Author.created_at)
+    # for result in results:
+    #     print(result[0])
 
 
     # print(Book.query.all())

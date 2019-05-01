@@ -89,9 +89,18 @@
                                 {{ form.search_type }}
                             </div>
                         </div>
-                        <div class="" id="search_name_error">
-
+{#                        <div class="custom-control custom-checkbox mb-3">#}
+{#                            {{ form.search_substring }}#}
+{#                            {{ form.search_substring.label }}#}
+{#                        </div>#}
+                        <div class="form-group row">
+                            {{ form.search_substring.label }}
+                            <div class="col-sm-20 check-container">
+                                {{ form.search_substring }}
+                            </div>
                         </div>
+
+                        <div class="" id="search_name_error"></div>
                         <div>
                             <button class="btn btn-secondary" type="Submit" id="button-collapse-table">
                                 <i class="fa fa-search"></i>

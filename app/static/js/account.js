@@ -233,7 +233,6 @@ $(function () {
     }
 
     function show_page_numbers(page_numbers) {
-        $('#paginationBox').empty();
         $('#paginationBox').append(
             $('<li/>')
                 .addClass("page-item")
@@ -296,6 +295,19 @@ $(function () {
 
     }
 
+    function clear_form() {
+        $.each($('input'), function () {
+            if ($(this).attr('id').match(/^search_[a-z]+$/)) {
+                if ($(this).attr("id") === "search_substring") {
+                    $(this).prop("checked", false)
+                } else {
+                    $(this).val('');
+                }
+
+            }
+        })
+    }
+
     function create_table(data) {
         let index_start = 3 * (parseInt($('#page_number').val()) - 1);
         for (key in data['data']) {
@@ -303,8 +315,10 @@ $(function () {
             write_row(data['data'][key], index_start);
 
         }
+        $('#paginationBox').empty();
         if (index_start !== 0) {
             show_page_numbers(data['pages_lst']);
+            clear_form();
         } else {
             $('#content-table').css("text-align", "center").text("no results find !");
         }
@@ -319,9 +333,22 @@ $(function () {
 
     $.each($('input'), function () {
         if ($(this).attr("id").match(/^search_[a-z]+$/)) {
-            $(this).addClass("form-control");
+            // if ($(this).attr("id") !== "search_substring") {
+            //     $(this).addClass("form-control");
+            //     $(this).parent().prev().addClass("col-sm-2 col-form-label");
+            // } else {
+            //     $(this).addClass("custom-control-input");
+            //     $(this).next().addClass("custom-control-label");
+
+
+            if ($(this).attr("id") !== "search_substring") {
+                $(this).addClass("form-control");
+            }
+
             $(this).parent().prev().addClass("col-sm-2 col-form-label");
+
         }
+
     });
 
     function get_data() {
@@ -365,6 +392,7 @@ $(function () {
 
     $('form').submit(function (e) {
         reset_err_tags();
+        $('#page_number').val(1);
         data_form = $('form').serialize();
         get_data();
         e.preventDefault();
@@ -394,7 +422,8 @@ $(function () {
         get_data();
     });
 
-});
+})
+;
 
 
 $(document).on("click", ".modal-button", function () {

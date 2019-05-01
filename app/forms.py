@@ -13,7 +13,7 @@ class Search(FlaskForm):
     search_name = StringField(label='Book Name: ', validators=[Optional()])
     search_author = StringField(label='Author Name: ', validators=[Optional()])
     search_type = StringField(label='Type: ', validators=[Optional()])
-
+    search_substring = BooleanField('Search sub-string')
     def validate(self):
         if not super(Search, self).validate():
             return False
