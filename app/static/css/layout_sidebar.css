@@ -47,7 +47,7 @@
         min-width: 100%;
         min-height: 100%;
         position: absolute;
-        z-index: 10;
+        z-index: 0;
         -webkit-transition: all .25s ease-out;
         -o-transition: all .25s ease-out;
         transition: all .25s ease-out;
@@ -58,6 +58,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         position: fixed;
         transition: all 0.5s linear;
+        z-index: 10;
     }
 
     #sidebar-fixed {
