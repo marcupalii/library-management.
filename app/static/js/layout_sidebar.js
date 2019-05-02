@@ -1,4 +1,15 @@
 $(document).ready(function () {
+    $(window).resize(function () {
+        if ($('#button-sidebar').attr("aria-expanded") === "false"){
+            $('.content')
+                .css("z-index", "-1")
+                .delay(1000)
+                .queue(function (next) {
+                    $(this).css("z-index", "1");
+                    next();
+                });
+        }
+    });
     $('[data-toggle="offcanvas"]').click(function () {
 
         let navar_button = $('#navbar-button');
@@ -11,19 +22,14 @@ $(document).ready(function () {
         if ($('.row-offcanvas-left').hasClass("active")) {
             $('.row-offcanvas-left').toggleClass('active');
             $('.content')
-                .delay(500)
+                .delay(1000)
                 .queue(function (next) {
                     $(this).css("z-index", "1");
                     next();
                 });
         } else {
             $('.row-offcanvas-left').toggleClass('active');
-            $('.content')
-                .delay(500)
-                .queue(function (next) {
-                    $(this).css("z-index", "-1");
-                    next();
-                });
+            $('.content').css("z-index", "-1");
         }
 
 
