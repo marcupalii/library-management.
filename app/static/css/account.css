@@ -1,4 +1,7 @@
 
+tbody,thead{
+    text-align: center;
+}
 .table tr {
     cursor: pointer;
 }
