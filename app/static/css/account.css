@@ -14,6 +14,14 @@
     font-size: 25px;
 }
 
+
+.last-td{
+    border: 0!important;
+}
+.table-bordered{
+    border: 0!important;
+}
+
 .hiddenRow {
     padding: 0 4px !important;
     background-color: #eeeeee;

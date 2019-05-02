@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $(window).resize(function () {
-        if ($('#button-sidebar').attr("aria-expanded") === "false"){
+        if ($('#button-sidebar').attr("aria-expanded") === "false" && $(window).width() <= 1050){
             $('.content')
                 .css("z-index", "-1")
                 .delay(1000)

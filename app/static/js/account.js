@@ -155,6 +155,7 @@ $(function () {
                     )
                     .append(
                         $('<td/>')
+                            .addClass("last-td")
                             .append(
                                 $('<button/>')
                                     .addClass("btn accordion-toggle d-lg-none")
@@ -330,6 +331,12 @@ $(function () {
             }
 
             $(this).parent().prev().addClass("col-sm-2 col-form-label");
+        }
+        else if ($(this).attr("id")==="days_number"){
+            $(this).css("width","25%");
+            // $(this).addClass("form-control");
+            // $(this).parent().prev().addClass("col-sm-2 col-form-label");
+            //  $(this).parent().prev().children().first().css("width","100%");
 
         }
 

@@ -2,7 +2,7 @@ from flask import render_template, request, url_for, redirect, abort, jsonify, R
 from app import app, login_manager, db
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author
 from flask_sqlalchemy import Pagination
-from app.forms import LoginForm, Search
+from app.forms import LoginForm, Search, Wishlist_form
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import jsonify
 
@@ -215,7 +215,8 @@ def account():
         # form = SearchForm()
         # return render_template('account.html', form=form)
         form = Search(search_by_name=False, search_by_type=False, search_by_author=False)
-        return render_template('account.html', form=form)
+        wishlist_form = Wishlist_form()
+        return render_template('account.html', form=form,wishlist_form = wishlist_form)
     else:
         return redirect(url_for('about'))
 

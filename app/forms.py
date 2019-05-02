@@ -22,3 +22,8 @@ class Search(FlaskForm):
             self.search_name.errors.append(msg)
             return False
         return True
+
+
+class Wishlist_form(FlaskForm):
+    days_number = DecimalField(label="Number of days: ",validators=[InputRequired(), NumberRange(min=1)])
+    book_id = DecimalField(validators=[InputRequired()])

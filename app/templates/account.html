@@ -153,22 +153,60 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Modal Heading</h4>
+                        <h4 class="modal-title">Add book to wishlist</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <div id="no"></div>
-                        <div id="book-name"></div>
-                        <div id="book-type"></div>
-                        <div id="author-name"></div>
-                        <div id="status"></div>
-                    </div>
+                        <div class="container-fluid">
 
-                    <!-- Modal footer -->
+                            <div class="row">
+                                <div class="col">Number</div>
+                                <div class="col" id="no"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">Book name</div>
+                                <div class="col" id="book-name"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">Book type</div>
+                                <div class="col" id="book-type"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">Author name</div>
+                                <div class="col" id="author-name"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">Status</div>
+                                <div class="col" id="status"></div>
+                            </div>
+
+
+                            <form class="row" method="post" novalidate>
+                                {{ form.hidden_tag() }}
+                                <div class="col">
+                                    {{ wishlist_form.days_number.label }}
+                                </div>
+                                <div class="col">
+
+                                    {{ wishlist_form.days_number }}
+
+                                </div>
+
+                                <div class="" id="days_number_error"></div>
+                            </form>
+
+
+                        </div>
+
+                    </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="Submit" class="btn btn-secondary"><i class="">Save</i></button>
                     </div>
 
                 </div>
