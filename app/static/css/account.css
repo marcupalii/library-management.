@@ -1,6 +1,5 @@
-
 /*tbody,thead{*/
-    /*text-align: center;*/
+/*text-align: center;*/
 /*}*/
 .table tr {
     cursor: pointer;
@@ -14,12 +13,16 @@
     font-size: 25px;
 }
 
-
-.last-td{
-    border: 0!important;
+.hidden-content {
+    display: none;
 }
-.table-bordered{
-    border: 0!important;
+
+.last-td {
+    border: 0 !important;
+}
+
+.table-bordered {
+    border: 0 !important;
 }
 
 .hiddenRow {
@@ -41,9 +44,18 @@
 }
 
 #search_name_error {
-    color: #dc3545;
+    color: #dc3545!important;
 }
 
+#wishlist-form {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.error-label {
+    margin-left: 0;
+    margin-right: 0;
+}
 
 @media (min-width: 768px) {
     .d-md-block {

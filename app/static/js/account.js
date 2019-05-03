@@ -1,3 +1,10 @@
+String.prototype.format = function () {
+    var formatted = this;
+    for (var arg in arguments) {
+        formatted = formatted.replace("{" + arg + "}", arguments[arg]);
+    }
+    return formatted;
+};
 $(function () {
 
 
@@ -119,7 +126,7 @@ $(function () {
     }
 
 
-    function write_row(row, row_index) {
+    function write_row(row, row_index, book_id) {
 
         $('#content-table')
             .append(
@@ -152,6 +159,12 @@ $(function () {
                             .text(row['count_book'])
                             .addClass("d-none d-lg-block")
                             .attr("id", "count-book-row-content-" + row_index.toString())
+                    )
+                    .append(
+                        $('<td/>')
+                            .text(book_id)
+                            .attr("id", "book-id-row-content-" + row_index.toString())
+                            .addClass("hidden-content")
                     )
                     .append(
                         $('<td/>')
@@ -297,7 +310,7 @@ $(function () {
         let index_start = 3 * (parseInt($('#page_number').val()) - 1);
         for (key in data['data']) {
             index_start += 1;
-            write_row(data['data'][key], index_start);
+            write_row(data['data'][key], index_start, key);
 
         }
         $('#paginationBox').empty();
@@ -331,9 +344,8 @@ $(function () {
             }
 
             $(this).parent().prev().addClass("col-sm-2 col-form-label");
-        }
-        else if ($(this).attr("id")==="days_number"){
-            $(this).css("width","25%");
+        } else if ($(this).attr("id") === "days_number" || $(this).attr("id") === "rank") {
+            $(this).css("width", "25%");
             // $(this).addClass("form-control");
             // $(this).parent().prev().addClass("col-sm-2 col-form-label");
             //  $(this).parent().prev().children().first().css("width","100%");
@@ -413,6 +425,54 @@ $(function () {
         get_data();
     });
 
+
+    $('#days_number_error').css("visibility", "hidden");
+    $('#rank_error').css("visibility", "hidden");
+
+    $('#add-to-wishlist-button').click(function () {
+        $('#days_number_error').css("visibility", "hidden");
+        $('#rank_error').css("visibility", "hidden");
+        $('#book_id').val($('#book-id').text());
+        let rank = $('#rank').val();
+        let rank_range = $('#rank-range').text().split("-");
+
+        if (rank_range.length === 2) {
+            if (parseInt(rank) < parseInt(rank_range[0].match(/[0-9]+/)[0]) ||
+                parseInt(rank) > parseInt(rank_range[1].match(/[0-9]+/)[0])
+            ) {
+                $('#rank_error').text('Rank out of range');
+                return
+            }
+        } else if (parseInt(rank) !== parseInt(rank_range[0].match(/[0-9]+/)[0])) {
+            $('#rank_error').text('Rank out of range');
+            return
+        }
+
+
+        $.ajax({
+            type: "POST",
+            url: "/add_to_wishlist/",
+            data: $('#wishlist-form').serialize(),
+            success: function (data) {
+                if (data['data'].hasOwnProperty("days_number")) {
+                    $('#days_number_error').css("visibility", "visible");
+                    $('#days_number_error').text(data['data']["days_number"][0]);
+                } else if (data['data'].hasOwnProperty("rank")) {
+                    $('#rank_error').css("visibility", "visible");
+                    $('#rank_error').text(data['data']["rank"][0]);
+                } else {
+
+                    $('#rank-range').text("Range(1-{0})".format(data['data']));
+                    console.log("succes");
+                    console.log("data=", data);
+                    $('#days_number').val('');
+                    $('#myModal').modal('hide');
+                }
+
+
+            }
+        });
+    });
 })
 ;
 
@@ -424,7 +484,7 @@ $(document).on("click", ".modal-button", function () {
     $('#book-type').text($("#book-type-row-content-" + id).text());
     $('#author-name').text($("#author-name-row-content-" + id).text());
     $('#status').text($("#count-book-row-content-" + id).text());
-
+    $('#book-id').text($("#book-id-row-content-" + id).text());
     $('#myModal').modal('toggle');
 });
 

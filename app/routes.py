@@ -1,7 +1,6 @@
 from flask import render_template, request, url_for, redirect, abort, jsonify, Response
 from app import app, login_manager, db
 from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author
-from flask_sqlalchemy import Pagination
 from app.forms import LoginForm, Search, Wishlist_form
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import jsonify
@@ -73,37 +72,6 @@ def wishlist_delete_entry(entry_id):
 
         else:
             return abort(401)
-    return redirect(url_for("wishlist"))
-
-
-@app.route("/add_book_to_wishlist", methods=["POST"])
-@login_required
-def add_book_to_wishlist():
-    _name = request.form.get("name")
-    _period = request.form.get("period")
-    _rank = int(request.form.get("rank"))
-    _book = Book.query.filter_by(name=_name).first()
-    if _book:
-
-        _user = User.query.filter_by(email=current_user.email).first()
-        _wishlist = _user.wishlist
-
-        _entrywishlist = _wishlist.entry_wishlists
-        for _entry in _entrywishlist:
-
-            if _entry.rank >= _rank:
-                _entry.rank += 1
-                db.session.commit()
-
-        _new_entry = EntryWishlist(wishlist=_wishlist, id_book=_book.id, rank=_rank, period=_period)
-
-        db.session.add(_new_entry)
-        db.session.commit()
-
-
-    else:
-        return abort(401)
-
     return redirect(url_for("wishlist"))
 
 
@@ -216,7 +184,15 @@ def account():
         # return render_template('account.html', form=form)
         form = Search(search_by_name=False, search_by_type=False, search_by_author=False)
         wishlist_form = Wishlist_form()
-        return render_template('account.html', form=form,wishlist_form = wishlist_form)
+
+        nr = EntryWishlist.query.filter_by(id_wishlist=_user.wishlist.id).count()
+
+        if nr:
+            wishlist_form.rank.label = "Rank({}-{})".format(1, nr + 1)
+        else:
+            wishlist_form.rank.label = "Rank({})".format(1)
+        print(wishlist_form.rank.label)
+        return render_template('account.html', form=form, wishlist_form=wishlist_form)
     else:
         return redirect(url_for('about'))
 
@@ -259,6 +235,37 @@ def admin():
     return render_template("admin.html")
 
 
+@app.route("/add_to_wishlist/", methods=['POST'])
+@login_required
+def add_to_wishlist():
+    if current_user.email:
+        form = Wishlist_form()
+        if form.validate_on_submit():
+            print("book_id= {},   nr_of_days= {}, rank={} ".format(form.book_id.data, form.days_number.data,
+                                                                   form.rank.data))
+            nr = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
+
+            book = Book.query.filter_by(id=form.book_id.data).first()
+            if book:
+                wishlist = current_user.wishlist
+
+                entrywishlist = wishlist.entry_wishlists
+                for entry in entrywishlist:
+
+                    if entry.rank >= form.rank.data:
+                        entry.rank += 1
+                        db.session.commit()
+
+                new_entry = EntryWishlist(wishlist=wishlist, id_book=book.id, rank=form.rank.data, period=form.days_number.data)
+
+                db.session.add(new_entry)
+                db.session.commit()
+
+            return jsonify(data=nr + 1)
+        print(form.errors)
+        return jsonify(data=form.errors)
+
+
 @app.route("/search_book/", methods=['POST'])
 @login_required
 def search_book():
@@ -276,7 +283,7 @@ def search_book():
                 name = form.search_name.data if form.search_name.data else '%%'
                 type = form.search_type.data if form.search_type.data else '%%'
             else:
-                author = '%' + form.search_author.data + '%' if  form.search_author.data else '%%'
+                author = '%' + form.search_author.data + '%' if form.search_author.data else '%%'
                 name = '%' + form.search_name.data + '%' if form.search_name.data else '%%'
                 type = '%' + form.search_type.data + '%' if form.search_type.data else '%%'
 
@@ -287,10 +294,10 @@ def search_book():
                 .order_by(Book.name) \
                 .add_columns(Author.id, Author.name) \
                 .paginate(
-                    per_page=3,
-                    page=form.page_number.data,
-                    error_out=True
-                )
+                per_page=3,
+                page=form.page_number.data,
+                error_out=True
+            )
             if book_author_join:
                 for entry in book_author_join.items:
                     response.update({

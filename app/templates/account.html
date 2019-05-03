@@ -161,52 +161,78 @@
                     <div class="modal-body">
                         <div class="container-fluid">
 
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col">Number</div>
                                 <div class="col" id="no"></div>
                             </div>
 
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col">Book name</div>
                                 <div class="col" id="book-name"></div>
                             </div>
 
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col">Book type</div>
                                 <div class="col" id="book-type"></div>
                             </div>
 
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col">Author name</div>
                                 <div class="col" id="author-name"></div>
                             </div>
 
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col">Status</div>
                                 <div class="col" id="status"></div>
                             </div>
 
+                            <div class="hidden-content" id="book-id"></div>
 
-                            <form class="row" method="post" novalidate>
-                                {{ form.hidden_tag() }}
-                                <div class="col">
-                                    {{ wishlist_form.days_number.label }}
+                            <form id="wishlist-form" class="container-fluid" method="post" novalidate>
+                                {{ wishlist_form.hidden_tag() }}
+                                <div class="hidden-content">{{ wishlist_form.book_id }} </div>
+
+
+                                <div class="row mb-2">
+                                    <div class="col mb-2">
+                                        <div class="row  error-label">
+                                            {{ wishlist_form.days_number.label }}
+                                        </div>
+                                        <small class="row  error-label text-muted" id="days_number_error"></small>
+                                    </div>
+
+                                    <div class="col mb-2">
+                                        <div class="row  error-label">
+                                            {{ wishlist_form.days_number }}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col">
 
-                                    {{ wishlist_form.days_number }}
+                                <div class="row mb-2">
+                                    <div class="col mb-2">
+                                        <div class="row d-flex flex-column error-label ">
+                                            <div class=""  id="rank-range">
+                                                {{ wishlist_form.rank.label }}
+                                            </div>
+                                            <small class="text-muted" id="rank_error"></small>
+                                        </div>
 
+                                    </div>
+
+                                    <div class="col mb-2">
+                                        <div class="row  error-label">
+                                            {{ wishlist_form.rank }}
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="" id="days_number_error"></div>
                             </form>
-
-
                         </div>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="Submit" class="btn btn-secondary"><i class="">Save</i></button>
+                        <button type="Submit" id="add-to-wishlist-button" class="btn btn-secondary"><i class="">Save</i>
+                        </button>
                     </div>
 
                 </div>
