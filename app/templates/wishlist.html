@@ -21,7 +21,7 @@
             </thead>
             {% for entry in wishlist %}
                 <tr>
-                    <th> {{ entry[0] }} </th>
+                    <th class="rank"> {{ entry[0] }} </th>
                     <th> {{ entry[1] }} </th>
                     <th> {{ entry[2] }} </th>
                     <th> {{ entry[3] }} </th>
@@ -29,6 +29,12 @@
                     <th><a href="/wishlist_delete_entry/{{ entry[5] }}">Delete</a></th>
                 </tr>
             {% endfor %}
+            <div>
+                <a href="{{ prev_url }}">Prev</a>
+            </div>
+            <div>
+                <a href="{{ next_url }}">Next</a>
+            </div>
         </table>
     </div>
 

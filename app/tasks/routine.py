@@ -1,45 +1,47 @@
-
 from app import celery, logger, db
 from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications
 from app.Stable_matching_algorithm.algorithm import Stable_matching
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 import pytz
-from sqlalchemy.orm.attributes import flag_modified
+
 
 def update_state():
     from app.models import User, NextBook, Book, Wishlist
-    _wishlists = Wishlist.query.all()
+    wishlists = Wishlist.query.all()
 
     users_with_wishlist = {}
     trust_coeffs = {}
     book_count = {}
 
-    for _wishlist in _wishlists:
-        _next_book = NextBook.query.filter_by(id_user=_wishlist.id_user).first()
+    for wishlist in wishlists:
+        next_book = NextBook.query.filter_by(id_user=wishlist.id_user).first()
 
-        if _next_book.status == "None":
-            _entry_wishlist = _wishlist.entry_wishlists
-            if len(_entry_wishlist) != 0:
-                if _wishlist.id_user not in users_with_wishlist.keys():
-                    users_with_wishlist.update({_wishlist.id_user: []})
+        if next_book.status == "None":
+            entry_wishlist = wishlist.entry_wishlists
+            if len(entry_wishlist) != 0:
+                if wishlist.id_user not in users_with_wishlist.keys():
+                    users_with_wishlist.update({wishlist.id_user: []})
 
-                if _wishlist.id_user not in trust_coeffs.keys():
-                    _user = User.query.filter_by(id=_wishlist.id_user).first()
-                    trust_coeffs.update({_wishlist.id_user: _user.trust_coeff})
+                if wishlist.id_user not in trust_coeffs.keys():
+                    user = User.query.filter_by(id=wishlist.id_user).first()
+                    trust_coeffs.update({wishlist.id_user: user.trust_coeff})
 
-                for _entry in _entry_wishlist:
-                    _book = Book.query.filter_by(id=_entry.id_book).first()
+                for entry in entry_wishlist:
+                    book = Book.query.filter_by(id=entry.id_book).first()
 
-                    users_with_wishlist[_wishlist.id_user].append(
-                        (_book.id, _entry.period, _entry.rank)
-                    )
+                    users_with_wishlist[wishlist.id_user].append({
+                        'book_id': book.id,
+                        'nr_of_days': entry.period,
+                        'rank': entry.rank
+                    })
 
-                    if _book.id not in book_count.keys():
-                        book_count.update({_book.id: _book.count_free_books})
+                    if book.id not in book_count.keys():
+                        book_count.update({book.id: book.count_free_books})
 
     return users_with_wishlist, trust_coeffs, book_count
 
-def update_ranks(rank,id_wishlist):
+
+def update_ranks(rank, id_wishlist):
     _entryes_wishlist = EntryWishlist.query.filter_by(id_wishlist=id_wishlist)
 
     for entry in _entryes_wishlist:
@@ -48,63 +50,65 @@ def update_ranks(rank,id_wishlist):
             db.session.commit()
 
 
-def generate_notification(match):
+def generate_notification(match,user_id):
     notification = Notifications(
-        id_user=match[0],
-        content="You received the {} book, you have 3hrs to accept or deny!".format(Book.query.filter_by(id=match[1][0]).first().name),
+        id_user=user_id,
+        content="You received the {} book, you have 3hrs to accept or deny!".format(
+            Book.query.filter_by(id=match['book_id']).first().name),
         status="unread"
     )
     db.session.add(notification)
     db.session.commit()
 
-def write_result_of_matching(matched):
 
-    for match in matched:
+def write_result_of_matching(matched):
+    for user_id in matched.keys():
 
         # check if user still wanted the book
-        wishList = Wishlist.query.filter_by(id_user=match[0]).first()
+        wishList = Wishlist.query.filter_by(id_user=user_id).first()
         _entry_wishlit = EntryWishlist.query.filter_by(
             id_wishlist=wishList.id,
-            id_book=match[1][0],
-            period=match[1][1]
+            id_book=matched[user_id]['book_id'],
+            period=matched[user_id]['nr_of_days']
         ).first()
 
-        _next_book = NextBook.query.filter_by(id_user=match[0]).first()
+        _next_book = NextBook.query.filter_by(id_user=user_id).first()
 
         if _entry_wishlit:
             rank = _entry_wishlit.rank
 
             db.session.delete(_entry_wishlit)
 
-            _book_series = BookSeries.query.filter_by(book_id=match[1][0], status="available").first()
+            _book_series = BookSeries.query.filter_by(
+                book_id=matched[user_id]['book_id'],
+                status="available"
+            ).first()
+
             _book_series.status = "taken"
 
-            _book = Book.query.filter_by(id=match[1][0]).first()
+            _book = Book.query.filter_by(id=matched[user_id]['book_id']).first()
             _book.count_free_books -= 1
 
-            _next_book.id_book = match[1][0]
+            _next_book.id_book = matched[user_id]['book_id']
             _next_book.id_series_book = _book_series.id
-            _next_book.period = match[1][1]
+            _next_book.period =matched[user_id]['nr_of_days']
             _next_book.status = "Pending"
-
 
             db.session.commit()
 
-            print("_next_book", _next_book.id_book, _next_book.period, _next_book.status,_next_book.id_series_book)
+            print("_next_book", _next_book.id_book, _next_book.period, _next_book.status, _next_book.id_series_book)
 
             update_ranks(rank, wishList.id)
-            generate_notification(match)
+            generate_notification(matched[user_id],user_id)
 
 
 def clean_unaccepted_books():
-
     _next_book = NextBook.query.filter_by(status="Pending").all()
 
     for entry in _next_book:
         time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
         time_entry = entry.updated_at.replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
         if (time_entry + timedelta(seconds=50)) - time_now >= timedelta(seconds=0):
-
             _book = Book.query.filter_by(id=entry.id_book).first()
             _book.count_free_books += 1
             _book_series = BookSeries.query.filter_by(id=entry.id_series_book).first()
@@ -116,7 +120,6 @@ def clean_unaccepted_books():
             entry.period = None
             entry.status = "None"
 
-
             notification = Notifications(
                 id_user=entry.id_user,
                 content="You lost the {} book, because u did not accept within 3hrs ".format(_book.name),
@@ -127,10 +130,8 @@ def clean_unaccepted_books():
             db.session.commit()
 
 
-
 @celery.task()
 def stable_matching_routine():
-
     clean_unaccepted_books()
 
     users_with_wishlist, trust_coeffs, book_count = update_state()
@@ -141,8 +142,4 @@ def stable_matching_routine():
     del stable_matching
 
     write_result_of_matching(matched)
-    books = NextBook.query.all()
-    for entry in books:
-        print(entry)
-
     logger.info("stable matching algorithm done")

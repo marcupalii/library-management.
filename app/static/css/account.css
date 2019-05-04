@@ -38,7 +38,9 @@
 #collapse-table {
     display: none;
 }
-
+.table tr{
+    cursor: initial!important;
+}
 .has-error {
     border-color: #dc3545
 }

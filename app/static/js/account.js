@@ -1,10 +1,11 @@
 String.prototype.format = function () {
-    var formatted = this;
-    for (var arg in arguments) {
+    let formatted = this;
+    for (let arg in arguments) {
         formatted = formatted.replace("{" + arg + "}", arguments[arg]);
     }
     return formatted;
 };
+
 $(function () {
 
 
@@ -113,8 +114,9 @@ $(function () {
     }
 
 
-    $('#page_number').css("display", "none");
-    $('#page_number').val(1);
+    $('#page_number')
+        .css("display", "none")
+        .val(1);
     var nr_rows = 0;
     var data_form = "";
     var nr_of_pages = 1;
@@ -156,9 +158,9 @@ $(function () {
 
                     .append(
                         $('<td/>')
-                            .text(row['count_book'])
+                            .text(row['status'])
                             .addClass("d-none d-lg-block")
-                            .attr("id", "count-book-row-content-" + row_index.toString())
+                            .attr("id", "status-book-row-content-" + row_index.toString())
                     )
                     .append(
                         $('<td/>')
@@ -193,45 +195,46 @@ $(function () {
                                     )
                             )
                     )
+            )
+
+
+            .append(
+                $('<tr/>')
+                    .addClass("sub-table-row p collapse p-3 tr-collapse-" + row_index.toString())
+                    .attr("id", "tr-collapse-id-" + row_index.toString())
+                    .append(
+                        $('<td/>')
+                            .attr("colspan", "6")
+                            .addClass("hiddenRow")
+                            .append(
+                                $('<div/>')
+                                    .addClass("accordian-body")
+                                    .append(
+                                        $('<p/>')
+                                            .addClass("d-md-none")
+                                            .text("author_name: ")
+                                            .append(
+                                                $('<span/>')
+                                                    .text(row['author_name'])
+                                            )
+                                    )
+                                    .append(
+                                        $('<p/>')
+                                            .addClass("d-lg-none")
+                                            .text("Status : ")
+                                            .append(
+                                                $('<span/>')
+                                                    .text(row['status'])
+                                            )
+                                    )
+                            )
+                    )
             );
-
-
-        $('#content-table').append(
-            $('<tr/>')
-                .addClass("sub-table-row p collapse p-3 tr-collapse-" + row_index.toString())
-                .attr("id", "tr-collapse-id-" + row_index.toString())
-                .append(
-                    $('<td/>')
-                        .attr("colspan", "6")
-                        .addClass("hiddenRow")
-                        .append(
-                            $('<div/>')
-                                .addClass("accordian-body")
-                                .append(
-                                    $('<p/>')
-                                        .addClass("d-md-none")
-                                        .text("author_name: ")
-                                        .append(
-                                            $('<span/>')
-                                                .text(row['author_name'])
-                                        )
-                                )
-                                .append(
-                                    $('<p/>')
-                                        .addClass("d-lg-none")
-                                        .text("Status : ")
-                                        .append(
-                                            $('<span/>')
-                                                .text(row['count_book'])
-                                        )
-                                )
-                        )
-                )
-        );
     }
 
     function show_page_numbers(page_numbers) {
-        $('#paginationBox').append(
+        let pagination_container = $('#paginationBox');
+        pagination_container.append(
             $('<li/>')
                 .addClass("page-item")
                 .append(
@@ -246,13 +249,13 @@ $(function () {
                 nr_of_pages = page_numbers[i];
                 if (i !== 0) {
                     if (page_numbers[i - 1] !== page_numbers[i] - 1) {
-                        $('#paginationBox').append(
+                        pagination_container.append(
                             $('<li/>')
                                 .addClass("page-item")
                                 .html("...")
                         );
                     } else {
-                        $('#paginationBox').append(
+                        pagination_container.append(
                             $('<li/>')
                                 .addClass("page-item")
                                 .append(
@@ -264,7 +267,7 @@ $(function () {
                         );
                     }
                 } else {
-                    $('#paginationBox').append(
+                    pagination_container.append(
                         $('<li/>')
                             .addClass("page-item")
                             .append(
@@ -278,7 +281,7 @@ $(function () {
             }
 
         }
-        $('#paginationBox').append(
+        pagination_container.append(
             $('<li/>')
                 .addClass("page-item")
                 .append(
@@ -318,37 +321,29 @@ $(function () {
             show_page_numbers(data['pages_lst']);
             clear_form();
         } else {
-            $('#content-table').css("text-align", "center").text("no results find !");
+            $('#content-table')
+                .css("text-align", "center")
+                .text("no results find !");
         }
 
         if ($('#collapse-table').css("display") === "none") {
             $('#collapse-table').slideToggle(0);
         } else {
-            $('#collapse-table').slideToggle(0);
-            $('#collapse-table').slideToggle(0);
+            $('#collapse-table')
+                .slideToggle(0)
+                .slideToggle(0);
         }
     }
 
     $.each($('input'), function () {
         if ($(this).attr("id").match(/^search_[a-z]+$/)) {
-            // if ($(this).attr("id") !== "search_substring") {
-            //     $(this).addClass("form-control");
-            //     $(this).parent().prev().addClass("col-sm-2 col-form-label");
-            // } else {
-            //     $(this).addClass("custom-control-input");
-            //     $(this).next().addClass("custom-control-label");
-
-
             if ($(this).attr("id") !== "search_substring") {
                 $(this).addClass("form-control");
             }
-
             $(this).parent().prev().addClass("col-sm-2 col-form-label");
         } else if ($(this).attr("id") === "days_number" || $(this).attr("id") === "rank") {
             $(this).css("width", "25%");
-            // $(this).addClass("form-control");
-            // $(this).parent().prev().addClass("col-sm-2 col-form-label");
-            //  $(this).parent().prev().children().first().css("width","100%");
+            $(this).addClass("form-control");
 
         }
 
@@ -430,8 +425,11 @@ $(function () {
     $('#rank_error').css("visibility", "hidden");
 
     $('#add-to-wishlist-button').click(function () {
-        $('#days_number_error').css("visibility", "hidden");
-        $('#rank_error').css("visibility", "hidden");
+        let period_err = $('#days_number_error');
+        let rank_err = $('#rank_error');
+        period_err.css("visibility", "hidden");
+
+        rank_err.css("visibility", "hidden");
         $('#book_id').val($('#book-id').text());
         let rank = $('#rank').val();
         let rank_range = $('#rank-range').text().split("-");
@@ -440,11 +438,15 @@ $(function () {
             if (parseInt(rank) < parseInt(rank_range[0].match(/[0-9]+/)[0]) ||
                 parseInt(rank) > parseInt(rank_range[1].match(/[0-9]+/)[0])
             ) {
-                $('#rank_error').text('Rank out of range');
+                rank_err
+                    .css("visibility", "visible")
+                    .text('Rank out of range');
                 return
             }
         } else if (parseInt(rank) !== parseInt(rank_range[0].match(/[0-9]+/)[0])) {
-            $('#rank_error').text('Rank out of range');
+            rank_err
+                .css("visibility", "visible")
+                .text('Rank out of range');
             return
         }
 
@@ -455,15 +457,17 @@ $(function () {
             data: $('#wishlist-form').serialize(),
             success: function (data) {
                 if (data['data'].hasOwnProperty("days_number")) {
-                    $('#days_number_error').css("visibility", "visible");
-                    $('#days_number_error').text(data['data']["days_number"][0]);
+                    period_err
+                        .css("visibility", "visible")
+                        .text(data['data']["days_number"][0]);
                 } else if (data['data'].hasOwnProperty("rank")) {
-                    $('#rank_error').css("visibility", "visible");
-                    $('#rank_error').text(data['data']["rank"][0]);
+                    rank_err
+                        .css("visibility", "visible")
+                        .text(data['data']["rank"][0]);
                 } else {
 
                     $('#rank-range').text("Range(1-{0})".format(data['data']));
-                    console.log("succes");
+
                     console.log("data=", data);
                     $('#days_number').val('');
                     $('#myModal').modal('hide');
@@ -476,14 +480,31 @@ $(function () {
 })
 ;
 
+function redirect_to_wishlist_book(book_id) {
+    $.ajax({
+        type: "GET",
+        url: "/wishlist_book/"+book_id+"/",
+        dataType: "json",
+        success: function (data) {
+            console.log("succes");
+            console.log(data);
+
+            window.location = data["url"];
+        }
+
+    });
+}
 
 $(document).on("click", ".modal-button", function () {
     let id = $(this).attr("id");
+    if ($("#status-book-row-content-" + id).text() === "Already in wishlist") {
+        return redirect_to_wishlist_book($("#book-id-row-content-" + id).text());
+    }
     $('#no').text($("#nr-row-content-" + id).text());
     $('#book-name').text($("#book-name-row-content-" + id).text());
     $('#book-type').text($("#book-type-row-content-" + id).text());
     $('#author-name').text($("#author-name-row-content-" + id).text());
-    $('#status').text($("#count-book-row-content-" + id).text());
+    $('#status').text($("#status-book-row-content-" + id).text());
     $('#book-id').text($("#book-id-row-content-" + id).text());
     $('#myModal').modal('toggle');
 });

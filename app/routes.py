@@ -97,19 +97,42 @@ def notifications():
         return render_template("notifications.html", notifications=response, id_user=current_user.id)
 
 
-@app.route("/wishlist")
+@app.route("/wishlist/page/<page>/")
 @login_required
-def wishlist():
+def wishlist(page):
+
     _email = current_user.email
     response = []
     if _email:
-        _user = User.query.filter_by(email=_email).first()
+        user = User.query.filter_by(email=_email).first()
 
-        _entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=_user.wishlist.id).order_by(
-            EntryWishlist.rank.asc()).all()
+        # entry_wishlist = EntryWishlist.query\
+        #     .filter_by(id_wishlist=user.wishlist.id)\
+        #     .order_by(EntryWishlist.rank.asc())
+        #
+        # if entry_wishlist:
+        #     for entry in entry_wishlist:
+        #         _book = Book.query.filter_by(id=entry.id_book).first()
+        #         response.append([
+        #             entry.rank,
+        #             _book.name,
+        #             _book.type,
+        #             entry.period,
+        #             entry.created_at,
+        #             entry.id
+        #         ])
 
-        if _entry_wishlist:
-            for entry in _entry_wishlist:
+        entry_wishlist = EntryWishlist.query \
+            .filter_by(id_wishlist=user.wishlist.id) \
+            .order_by(EntryWishlist.rank.asc())\
+            .paginate(per_page=3,
+                page=int(page),
+                error_out=True
+            )
+
+
+        if entry_wishlist:
+            for entry in entry_wishlist.items:
                 _book = Book.query.filter_by(id=entry.id_book).first()
                 response.append([
                     entry.rank,
@@ -120,7 +143,36 @@ def wishlist():
                     entry.id
                 ])
 
-        return render_template("wishlist.html", wishlist=response, id_user=current_user.id)
+
+        next_url = url_for('wishlist', page=entry_wishlist.next_num) \
+            if entry_wishlist.has_next else url_for('wishlist', page=page)
+        prev_url = url_for('wishlist', page=entry_wishlist.prev_num) \
+            if entry_wishlist.has_prev else url_for('wishlist', page=page)
+        return render_template(
+            'wishlist.html',
+            wishlist=response,
+            id_user=current_user.id,
+            next_url=next_url,
+            prev_url=prev_url
+        )
+
+        # return render_template("wishlist.html", wishlist=response, id_user=current_user.id)
+
+
+@app.route("/wishlist_book/<book_id>/",methods=["GET"])
+@login_required
+def wishlist_book(book_id):
+    book = EntryWishlist.query.filter_by(id_book=book_id).first()
+    per_page = 3
+
+    page = book.rank // per_page if book.rank % per_page == 0 else (book.rank // per_page) +1
+    print("book_id=",book_id)
+    print("page=",page)
+    return jsonify({
+        "url":"/wishlist/page/{}".format(page),
+        "rank":book.rank
+    })
+
 
 
 @app.route("/books_log")
@@ -180,8 +232,6 @@ def account():
     if _email:
         _user = User.query.filter_by(email=_email).first()
 
-        # form = SearchForm()
-        # return render_template('account.html', form=form)
         form = Search(search_by_name=False, search_by_type=False, search_by_author=False)
         wishlist_form = Wishlist_form()
 
@@ -243,7 +293,7 @@ def add_to_wishlist():
         if form.validate_on_submit():
             print("book_id= {},   nr_of_days= {}, rank={} ".format(form.book_id.data, form.days_number.data,
                                                                    form.rank.data))
-            nr = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
+
 
             book = Book.query.filter_by(id=form.book_id.data).first()
             if book:
@@ -260,7 +310,7 @@ def add_to_wishlist():
 
                 db.session.add(new_entry)
                 db.session.commit()
-
+            nr = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
             return jsonify(data=nr + 1)
         print(form.errors)
         return jsonify(data=form.errors)
@@ -300,12 +350,24 @@ def search_book():
             )
             if book_author_join:
                 for entry in book_author_join.items:
+                    entry_wishlist = EntryWishlist.query.filter_by(
+                        id_wishlist=current_user.wishlist.id,
+                        id_book= entry[0].id
+                    ).first()
+                    status = ""
+                    if entry_wishlist:
+                        status = "Already in wishlist"
+                    elif entry[0].count_free_books <= 3:
+                        status ="Unavailable"
+                    else:
+                        status = "Available"
+
                     response.update({
                         str(entry[0].id): {
                             'author_name': entry[2],
                             'book_name': entry[0].name,
                             'book_type': entry[0].type,
-                            'count_book': entry[0].count_free_books
+                            'status': status
                         }
                     })
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
