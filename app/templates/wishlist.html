@@ -39,11 +39,28 @@
                 </tr>
             {% endfor %}
         </table>
-        <div>
-            <a href="{{ prev_url }}">Prev</a>
-        </div>
-        <div>
-            <a href="{{ next_url }}">Next</a>
+
+        <div class="pagination" id="paginationBox">
+            <li class="page-item">
+                <button id="prev" class="btn btn-secondary page_num_link page-link">
+                    <a href="{{ prev_url }}">&laquo;</a>
+                </button>
+            </li>
+            {% for nr in num_list %}
+                {% if nr %}
+                    <li class="page-item">
+                        <button id="{{ nr }}" class="btn btn-secondary page_num_link page-link">{{ nr }}</button>
+                    </li>
+                {% else %}
+                    <li class="page-item">...</li>
+                {% endif %}
+            {% endfor %}
+            <li class="page-item">
+                <button id="next" class="btn btn-secondary page_num_link page-link">
+                    <a href="{{ next_url }}">&raquo;</a>
+                </button>
+            </li>
+
         </div>
     </div>
 

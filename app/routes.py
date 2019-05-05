@@ -146,16 +146,18 @@ def wishlist(page,book_id):
         prev_url = url_for('wishlist', page=entry_wishlist.prev_num,  book_id=book_id) \
             if entry_wishlist.has_prev else url_for('wishlist', page=page, book_id=0)
 
+        num_list = []
+        for i in entry_wishlist.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+            num_list.append(i)
+
         return render_template(
             'wishlist.html',
             wishlist=response,
             id_user=current_user.id,
             next_url=next_url,
-            prev_url=prev_url
+            prev_url=prev_url,
+            num_list=num_list
         )
-
-        # return render_template("wishlist.html", wishlist=response, id_user=current_user.id)
-
 
 @app.route("/wishlist_book/<book_id>/",methods=["GET"])
 @login_required
@@ -302,7 +304,6 @@ def add_to_wishlist():
         if form.validate_on_submit():
             print("book_id= {},   nr_of_days= {}, rank={} ".format(form.book_id.data, form.days_number.data,
                                                                    form.rank.data))
-
 
             book = Book.query.filter_by(id=form.book_id.data).first()
             if book:

@@ -1,4 +1,9 @@
 $(document).ready(function () {
+
+    let page = $(location).attr('href').match(/page\/([0-9])+/)[1];
+    $('.page-link').parent().removeClass("active");
+    $('#'+page+'.page_num_link').parent().addClass("active");
+
     if ($(location).attr('href').match(/focus=0/)) {
     } else {
         let matched = $(location).attr('href').match(/focus%3D([0-9]+)/);
@@ -22,5 +27,9 @@ $(document).ready(function () {
         });
 
     }
-
+    $('.page_num_link').click(function () {
+        let page = $(this).attr("id").trim();
+        let focus = $(location).attr('href').match(/focus[a-zA-Z0-9%=]+/);
+        window.location = "/wishlist/page/"+page+"/" + focus[0];
+    })
 });
