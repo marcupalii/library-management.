@@ -130,11 +130,13 @@ def wishlist(page,book_id):
 
         if entry_wishlist:
             for entry in entry_wishlist.items:
-                _book = Book.query.filter_by(id=entry.id_book).first()
+                book = Book.query.filter_by(id=entry.id_book).first()
+                author = Author.query.filter_by(id=book.author_id).first()
                 response.append([
                     entry.rank,
-                    _book.name,
-                    _book.type,
+                    book.name,
+                    book.type,
+                    author.name,
                     entry.period,
                     entry.created_at,
                     entry.id

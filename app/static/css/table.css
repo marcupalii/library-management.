@@ -1,0 +1,46 @@
+
+.table {
+    background-color: #fff !important;
+}
+
+.hedding h1 {
+    font-size: 25px;
+}
+
+.hidden-content {
+    display: none;
+}
+
+.last-td {
+    border: 0 !important;
+}
+
+.table-bordered {
+    border: 0 !important;
+}
+
+.hiddenRow {
+    padding: 0 4px !important;
+    background-color: #eeeeee;
+    font-size: 13px;
+}
+
+.accordian-body span {
+    color: #a2a2a2 !important;
+}
+
+@media (min-width: 768px) {
+    .d-md-block {
+        display: table-cell !important;;
+    }
+
+}
+
+@media (min-width: 992px) {
+
+    .d-lg-block {
+        display: table-cell !important;;
+    }
+
+}
+

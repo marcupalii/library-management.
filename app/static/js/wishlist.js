@@ -32,4 +32,7 @@ $(document).ready(function () {
         let focus = $(location).attr('href').match(/focus[a-zA-Z0-9%=]+/);
         window.location = "/wishlist/page/"+page+"/" + focus[0];
     })
+    $('.delete-from-wishlist').click(function () {
+       window.location = $(this).attr("id");
+    });
 });

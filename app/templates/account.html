@@ -5,6 +5,8 @@
     {{ super() }}
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('.static', filename='css/account.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/table.css') }}">
 {% endblock %}
 {% block scripts %}
     {{ super() }}
@@ -89,10 +91,7 @@
                                 {{ form.search_type }}
                             </div>
                         </div>
-                        {#                        <div class="custom-control custom-checkbox mb-3">#}
-                        {#                            {{ form.search_substring }}#}
-                        {#                            {{ form.search_substring.label }}#}
-                        {#                        </div>#}
+
                         <div class="form-group row">
                             {{ form.search_substring.label }}
                             <div class="col-sm-20 check-container">
