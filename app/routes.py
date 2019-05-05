@@ -53,26 +53,40 @@ def logout():
 @app.route("/wishlist_delete_entry/<entry_id>", methods=["GET"])
 @login_required
 def wishlist_delete_entry(entry_id):
-    _user = User.query.filter_by(email=current_user.email).first()
-    if _user:
-        _entry = EntryWishlist.query.filter_by(id=entry_id).first()
-        if _entry:
-            rank = _entry.rank
-            db.session.delete(_entry)
+    user = User.query.filter_by(email=current_user.email).first()
+    per_page = 3
+    rank = 0
+    if user:
+        entry = EntryWishlist.query.filter_by(id=entry_id).first()
+        if entry:
+            rank = entry.rank
+            db.session.delete(entry)
             db.session.commit()
 
-            _wishlist = _user.wishlist
-            _entryes = _wishlist.entry_wishlists
+            wishlist = user.wishlist
+            entryes = wishlist.entry_wishlists
 
-            for _entry in _entryes:
-
-                if _entry.rank >= rank:
-                    _entry.rank -= 1
+            for entry in entryes:
+                if entry.rank >= rank:
+                    entry.rank -= 1
                     db.session.commit()
 
         else:
             return abort(401)
-    return redirect(url_for("wishlist"))
+
+    total = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
+    page = 1
+    total_pages = 1
+
+    if rank > per_page:
+       page = rank // per_page if rank % per_page == 0 else (rank // per_page) + 1
+
+    if total > total_pages:
+        total_pages = total // per_page if total % per_page == 0 else (total // per_page) +1
+
+    if page > total_pages:
+        page = total_pages
+    return redirect(url_for("wishlist",page=page,book_id=0))
 
 
 @app.route("/notifications")
@@ -97,30 +111,14 @@ def notifications():
         return render_template("notifications.html", notifications=response, id_user=current_user.id)
 
 
-@app.route("/wishlist/page/<page>/")
+@app.route("/wishlist/page/<page>/focus=<book_id>/")
 @login_required
-def wishlist(page):
+def wishlist(page,book_id):
 
     _email = current_user.email
     response = []
     if _email:
         user = User.query.filter_by(email=_email).first()
-
-        # entry_wishlist = EntryWishlist.query\
-        #     .filter_by(id_wishlist=user.wishlist.id)\
-        #     .order_by(EntryWishlist.rank.asc())
-        #
-        # if entry_wishlist:
-        #     for entry in entry_wishlist:
-        #         _book = Book.query.filter_by(id=entry.id_book).first()
-        #         response.append([
-        #             entry.rank,
-        #             _book.name,
-        #             _book.type,
-        #             entry.period,
-        #             entry.created_at,
-        #             entry.id
-        #         ])
 
         entry_wishlist = EntryWishlist.query \
             .filter_by(id_wishlist=user.wishlist.id) \
@@ -129,7 +127,6 @@ def wishlist(page):
                 page=int(page),
                 error_out=True
             )
-
 
         if entry_wishlist:
             for entry in entry_wishlist.items:
@@ -144,10 +141,11 @@ def wishlist(page):
                 ])
 
 
-        next_url = url_for('wishlist', page=entry_wishlist.next_num) \
-            if entry_wishlist.has_next else url_for('wishlist', page=page)
-        prev_url = url_for('wishlist', page=entry_wishlist.prev_num) \
-            if entry_wishlist.has_prev else url_for('wishlist', page=page)
+        next_url = url_for('wishlist', page=entry_wishlist.next_num, book_id=book_id) \
+            if entry_wishlist.has_next else url_for('wishlist', page=page, book_id=0)
+        prev_url = url_for('wishlist', page=entry_wishlist.prev_num,  book_id=book_id) \
+            if entry_wishlist.has_prev else url_for('wishlist', page=page, book_id=0)
+
         return render_template(
             'wishlist.html',
             wishlist=response,
@@ -164,12 +162,23 @@ def wishlist(page):
 def wishlist_book(book_id):
     book = EntryWishlist.query.filter_by(id_book=book_id).first()
     per_page = 3
+    page = 1
+    total_pages = 1
 
-    page = book.rank // per_page if book.rank % per_page == 0 else (book.rank // per_page) +1
-    print("book_id=",book_id)
-    print("page=",page)
+    total = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
+
+    if book.rank > per_page:
+        page = book.rank // per_page if book.rank % per_page == 0 else (book.rank // per_page) + 1
+
+    if total > per_page:
+        total_pages = total // per_page if total % per_page == 0 else (total // per_page) + 1
+
+    if page > total_pages:
+        page = total_pages
+
+
     return jsonify({
-        "url":"/wishlist/page/{}".format(page),
+        "url":"/wishlist/page/{}/focus={}".format(page,book.rank),
         "rank":book.rank
     })
 

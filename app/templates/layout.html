@@ -141,7 +141,7 @@
 {% endblock %}
 
 
-<div class="container-fluid mb-5">
+<div class="container-fluid mb-5 push-footer">
     <div class="row">
         {% if current_user.is_authenticated %}
             {% block sidebar %}
@@ -159,7 +159,7 @@
 
                                 <a class="nav-link list-group-item list-group-item-action bg-light"
 {#                                   href="{{ url_for('wishlist') }}">#}
-                                    href="/wishlist/page/1/">
+                                    href="/wishlist/page/1/focus=0/">
                                     <i class="fa fa-home"></i>Wishlist<span class="sr-only"></span>
                                 </a>
 

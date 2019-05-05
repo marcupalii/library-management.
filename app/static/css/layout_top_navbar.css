@@ -7,7 +7,9 @@ html, body {
 footer {
     padding: 30px 0;
 }
-
+.push-footer{
+    height:90%;
+}
 .navbar {
     min-height: 40px;
     border: 1px solid transparent;

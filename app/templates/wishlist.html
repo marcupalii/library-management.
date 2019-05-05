@@ -2,9 +2,18 @@
 
 {% block page_title %}Wishlist{% endblock %}
 
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/wishlist.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('.static', filename='js/wishlist.js') }}"></script>
+{% endblock %}
 
 {% block content %}
-
     <div class="col-lg-9">
         <h3>Wishlist</h3>
 
@@ -29,13 +38,13 @@
                     <th><a href="/wishlist_delete_entry/{{ entry[5] }}">Delete</a></th>
                 </tr>
             {% endfor %}
-            <div>
-                <a href="{{ prev_url }}">Prev</a>
-            </div>
-            <div>
-                <a href="{{ next_url }}">Next</a>
-            </div>
         </table>
+        <div>
+            <a href="{{ prev_url }}">Prev</a>
+        </div>
+        <div>
+            <a href="{{ next_url }}">Next</a>
+        </div>
     </div>
 
 {% endblock %}

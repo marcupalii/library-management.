@@ -473,7 +473,7 @@ $(function () {
                     $('#myModal').modal('hide');
                 }
 
-
+                get_data();
             }
         });
     });
@@ -486,9 +486,6 @@ function redirect_to_wishlist_book(book_id) {
         url: "/wishlist_book/"+book_id+"/",
         dataType: "json",
         success: function (data) {
-            console.log("succes");
-            console.log(data);
-
             window.location = data["url"];
         }
 
