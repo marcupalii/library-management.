@@ -152,7 +152,7 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Add book to wishlist</h4>
+                        <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
@@ -187,7 +187,7 @@
 
                             <div class="hidden-content" id="book-id"></div>
 
-                            <form id="wishlist-form" class="container-fluid" method="post" novalidate>
+                            <form  id="wishlist-form" class="container-fluid wishlist-modal" method="post" novalidate>
                                 {{ wishlist_form.hidden_tag() }}
                                 <div class="hidden-content">{{ wishlist_form.book_id }} </div>
 
@@ -210,7 +210,7 @@
                                 <div class="row mb-2">
                                     <div class="col mb-2">
                                         <div class="row d-flex flex-column error-label ">
-                                            <div class=""  id="rank-range">
+                                            <div class="" id="rank-range">
                                                 {{ wishlist_form.rank.label }}
                                             </div>
                                             <small class="text-muted" id="rank_error"></small>
@@ -228,9 +228,14 @@
                             </form>
                         </div>
 
+                        <div class="container-fluid reserved-modal">
+                            <p>reserved modal</p>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="Submit" id="add-to-wishlist-button" class="btn btn-secondary"><i class="">Save</i>
+                        </button>
+                        <button type="Submit" id="add-to-reserved-button" class="btn btn-secondary"><i class="">Save</i>
                         </button>
                     </div>
 

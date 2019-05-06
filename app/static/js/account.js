@@ -483,7 +483,7 @@ $(function () {
 function redirect_to_wishlist_book(book_id) {
     $.ajax({
         type: "GET",
-        url: "/wishlist_book/"+book_id+"/",
+        url: "/wishlist_book/" + book_id + "/",
         dataType: "json",
         success: function (data) {
             window.location = data["url"];
@@ -493,17 +493,37 @@ function redirect_to_wishlist_book(book_id) {
 }
 
 $(document).on("click", ".modal-button", function () {
+    $('.wishlist-modal').css("visibility", "hidden");
+    $('.reserved-modal').css("visibility", "hidden");
+    $('#add-to-wishlist-button').css("visibility", "hidden");
+    $('#add-to-reserved-button').css("visibility", "hidden");
+
     let id = $(this).attr("id");
+
     if ($("#status-book-row-content-" + id).text() === "Already in wishlist") {
         return redirect_to_wishlist_book($("#book-id-row-content-" + id).text());
+    } else {
+
+        if ($("#status-book-row-content-" + id).text() === "Unavailable") {
+            $('.modal-title').text("Add book to wishlist");
+            $('#add-to-wishlist-button').css("visibility", "visible");
+            $('.wishlist-modal').css("visibility", "visible");
+        } else {
+            $('.reserved-modal').css("visibility", "visible");
+            $('#add-to-reserved-button').css("visibility", "visible");
+            $('.modal-title').text("Reserv the book");
+
+        }
+
+        $('#no').text($("#nr-row-content-" + id).text());
+        $('#book-name').text($("#book-name-row-content-" + id).text());
+        $('#book-type').text($("#book-type-row-content-" + id).text());
+        $('#author-name').text($("#author-name-row-content-" + id).text());
+        $('#status').text($("#status-book-row-content-" + id).text());
+        $('#book-id').text($("#book-id-row-content-" + id).text());
+        $('#myModal').modal('toggle');
     }
-    $('#no').text($("#nr-row-content-" + id).text());
-    $('#book-name').text($("#book-name-row-content-" + id).text());
-    $('#book-type').text($("#book-type-row-content-" + id).text());
-    $('#author-name').text($("#author-name-row-content-" + id).text());
-    $('#status').text($("#status-book-row-content-" + id).text());
-    $('#book-id').text($("#book-id-row-content-" + id).text());
-    $('#myModal').modal('toggle');
+
 });
 
 $(document).on("click", '.accordion-toggle', function () {

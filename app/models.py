@@ -209,8 +209,8 @@ if __name__ == "__main__":
             name="book{}".format(i),
             author=random.choice(authors),
             type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
-            count_total=total,
-            count_free_books=free
+            count_total=total+2,
+            count_free_books=free+2
         )
         db.session.add(book)
         for j in range(1, 4):
