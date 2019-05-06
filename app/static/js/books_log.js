@@ -30,9 +30,6 @@ $(document).ready(function () {
     $('.page_num_link').click(function () {
         let page = $(this).attr("id").trim();
         let focus = $(location).attr('href').match(/focus[a-zA-Z0-9%=]+/);
-        window.location = "/wishlist/page/"+page+"/" + focus[0];
-    });
-    $('.delete-from-wishlist').click(function () {
-       window.location = $(this).attr("id");
+        window.location = "/books_log/page/"+page+"/" + focus[0];
     });
 });

@@ -1,10 +1,11 @@
 from flask import render_template, request, url_for, redirect, abort, jsonify, Response
 from app import app, login_manager, db
-from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author
-from app.forms import LoginForm, Search, Wishlist_form
+from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author, Log, EntryLog
+from app.forms import LoginForm, Search, Wishlist_form, Reserved_book_date
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import jsonify
-
+import datetime
+import pytz
 import hashlib
 import json
 
@@ -79,14 +80,14 @@ def wishlist_delete_entry(entry_id):
     total_pages = 1
 
     if rank > per_page:
-       page = rank // per_page if rank % per_page == 0 else (rank // per_page) + 1
+        page = rank // per_page if rank % per_page == 0 else (rank // per_page) + 1
 
     if total > total_pages:
-        total_pages = total // per_page if total % per_page == 0 else (total // per_page) +1
+        total_pages = total // per_page if total % per_page == 0 else (total // per_page) + 1
 
     if page > total_pages:
         page = total_pages
-    return redirect(url_for("wishlist",page=page,book_id=0))
+    return redirect(url_for("wishlist", page=page, book_id=0))
 
 
 @app.route("/notifications")
@@ -113,8 +114,7 @@ def notifications():
 
 @app.route("/wishlist/page/<page>/focus=<book_id>/")
 @login_required
-def wishlist(page,book_id):
-
+def wishlist(page, book_id):
     _email = current_user.email
     response = []
     if _email:
@@ -122,11 +122,11 @@ def wishlist(page,book_id):
 
         entry_wishlist = EntryWishlist.query \
             .filter_by(id_wishlist=user.wishlist.id) \
-            .order_by(EntryWishlist.rank.asc())\
+            .order_by(EntryWishlist.rank.asc()) \
             .paginate(per_page=3,
-                page=int(page),
-                error_out=True
-            )
+                      page=int(page),
+                      error_out=True
+                      )
 
         if entry_wishlist:
             for entry in entry_wishlist.items:
@@ -142,10 +142,9 @@ def wishlist(page,book_id):
                     entry.id
                 ])
 
-
         next_url = url_for('wishlist', page=entry_wishlist.next_num, book_id=book_id) \
             if entry_wishlist.has_next else url_for('wishlist', page=page, book_id=0)
-        prev_url = url_for('wishlist', page=entry_wishlist.prev_num,  book_id=book_id) \
+        prev_url = url_for('wishlist', page=entry_wishlist.prev_num, book_id=book_id) \
             if entry_wishlist.has_prev else url_for('wishlist', page=page, book_id=0)
 
         num_list = []
@@ -161,7 +160,8 @@ def wishlist(page,book_id):
             num_list=num_list
         )
 
-@app.route("/wishlist_book/<book_id>/",methods=["GET"])
+
+@app.route("/wishlist_book/<book_id>/", methods=["GET"])
 @login_required
 def wishlist_book(book_id):
     book = EntryWishlist.query.filter_by(id_book=book_id).first()
@@ -180,18 +180,10 @@ def wishlist_book(book_id):
     if page > total_pages:
         page = total_pages
 
-
     return jsonify({
-        "url":"/wishlist/page/{}/focus={}".format(page,book.rank),
-        "rank":book.rank
+        "url": "/wishlist/page/{}/focus={}".format(page, book.rank),
+        "rank": book.rank
     })
-
-
-
-@app.route("/books_log")
-@login_required
-def books_log():
-    return render_template("books_log.html")
 
 
 @app.route("/mark_notification_read/", methods=['POST'])
@@ -247,15 +239,20 @@ def account():
 
         form = Search(search_by_name=False, search_by_type=False, search_by_author=False)
         wishlist_form = Wishlist_form()
-
+        reserved_book_date = Reserved_book_date()
         nr = EntryWishlist.query.filter_by(id_wishlist=_user.wishlist.id).count()
 
         if nr:
             wishlist_form.rank.label = "Rank({}-{})".format(1, nr + 1)
         else:
             wishlist_form.rank.label = "Rank({})".format(1)
-        print(wishlist_form.rank.label)
-        return render_template('account.html', form=form, wishlist_form=wishlist_form)
+
+        return render_template(
+            'account.html',
+            form=form,
+            wishlist_form=wishlist_form,
+            reserved_book_date=reserved_book_date
+        )
     else:
         return redirect(url_for('about'))
 
@@ -318,7 +315,8 @@ def add_to_wishlist():
                         entry.rank += 1
                         db.session.commit()
 
-                new_entry = EntryWishlist(wishlist=wishlist, id_book=book.id, rank=form.rank.data, period=form.days_number.data)
+                new_entry = EntryWishlist(wishlist=wishlist, id_book=book.id, rank=form.rank.data,
+                                          period=form.days_number.data)
 
                 db.session.add(new_entry)
                 db.session.commit()
@@ -364,16 +362,28 @@ def search_book():
                 for entry in book_author_join.items:
                     entry_wishlist = EntryWishlist.query.filter_by(
                         id_wishlist=current_user.wishlist.id,
-                        id_book= entry[0].id
+                        id_book=entry[0].id
                     ).first()
-                    status = ""
-                    if entry_wishlist:
-                        status = "Already in wishlist"
-                    elif entry[0].count_free_books <= 3:
-                        status ="Unavailable"
-                    else:
-                        status = "Available"
+                    book_series = BookSeries.query.filter_by(book_id=entry[0].id).all()
 
+                    status = ""
+                    for series in book_series:
+                        entry_log = EntryLog.query.filter_by(
+                            id_book_series=series.id,
+                            status="Reserved"
+                        ).all()
+                        if entry_log:
+                            status = "Reserved"
+                            break
+
+                    if status == "":
+                        if entry_wishlist:
+                            status = "Already in wishlist"
+                        elif entry[0].count_free_books <= 3:
+                            status = "Unavailable"
+                        else:
+                            status = "Available"
+                    print(status)
                     response.update({
                         str(entry[0].id): {
                             'author_name': entry[2],
@@ -390,3 +400,105 @@ def search_book():
                 pages_lst=[value for value in num_list]
             )
         return jsonify(data=form.errors)
+
+
+@app.route("/add_to_reserved/", methods=["POST"])
+@login_required
+def add_to_reserved():
+    if current_user.email:
+        print("router:add_to_reserved")
+        form = Reserved_book_date()
+        if form.validate_on_submit():
+
+            book_log = Log.query.filter_by(id_user=current_user.id).first()
+            if not book_log:
+                book_log = Log(id_user=current_user.id)
+                db.session.add(book_log)
+                db.session.commit()
+            book_log = Log.query.filter_by(id_user=current_user.id).first()
+            fmt = "%Y-%m-%d"
+            # date_start = datetime.datetime.strptime(form.startdate.data, fmt)\
+            #     .replace(tzinfo=pytz.UTC)\
+            #     .astimezone(pytz.timezone('Europe/Bucharest'))
+            #
+            # date_end = datetime.datetime.strptime(form.enddate.data, fmt) \
+            #     .replace(tzinfo=pytz.UTC) \
+            #     .astimezone(pytz.timezone('Europe/Bucharest'))
+
+            entry_log = EntryLog(
+                id_log=book_log.id,
+                id_book_series=BookSeries.query.filter_by(book_id=form.book_id_reserved.data).first().id,
+                status="Reserved",
+                period_start=form.startdate.data,
+                period_end=form.enddate.data
+            )
+            db.session.add(entry_log)
+            db.session.commit()
+
+            return jsonify(data="succes")
+        print(form.errors)
+        return jsonify(data=form.errors)
+
+
+@app.route("/books_log/page/<page>/focus=<book_id>/")
+@login_required
+def books_log(page, book_id):
+    _email = current_user.email
+    response = []
+    num_list = []
+    if _email:
+
+        book_log= Log.query.filter_by(id_user=current_user.id).first()
+        if book_log:
+            entry_log = EntryLog.query\
+                .filter_by(id_log=book_log.id)\
+                .order_by(EntryLog.created_at.desc()) \
+                .paginate(per_page=3,
+                          page=int(page),
+                          error_out=True
+                )
+
+            index = 0
+            if entry_log:
+                for entry in entry_log.items:
+                    index += 1
+                    book_series = BookSeries.query.filter_by(id=entry.id_book_series).first()
+                    book = Book.query.filter_by(id=book_series.book_id).first()
+                    author = Author.query.filter_by(id=book.author_id).first()
+
+                    response.append([
+                        index,
+                        book.name,
+                        book.type,
+                        author.name,
+                        entry.period_start,
+                        entry.period_end,
+                        entry.status,
+                        entry.id
+                    ])
+
+                next_url = url_for('books_log', page=entry_log.next_num, book_id=book_id) \
+                    if entry_log.has_next else url_for('books_log', page=page, book_id=0)
+                prev_url = url_for('books_log', page=entry_log.prev_num, book_id=book_id) \
+                    if entry_log.has_prev else url_for('books_log', page=page, book_id=0)
+
+                for i in entry_log.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+                    num_list.append(i)
+
+                return render_template(
+                    'books_log.html',
+                    logs=response,
+                    id_user=current_user.id,
+                    next_url=next_url,
+                    prev_url=prev_url,
+                    num_list=num_list
+                )
+
+        return render_template(
+            'books_log.html',
+            logs=response,
+            id_user=current_user.id,
+            next_url=url_for('books_log', page=1, book_id=0),
+            prev_url=url_for('books_log', page=1, book_id=0),
+            num_list=num_list
+        )

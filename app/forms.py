@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, RadioField, DecimalField, Field, ValidationError
+from wtforms import StringField, PasswordField, BooleanField, DecimalField, DateField
 from wtforms.validators import InputRequired, Email, Length, NumberRange, Optional
 
 
@@ -35,3 +35,17 @@ class Wishlist_form(FlaskForm):
     book_id = DecimalField(validators=[InputRequired("Missing book id")])
     rank = DecimalField(label="Rank", validators=[InputRequired("Rank out of range"), NumberRange(min=1)])
 
+
+class Reserved_book_date(FlaskForm):
+    startdate = DateField('Start Date', format='%Y-%m-%d',validators=[InputRequired("Date required!")])
+    enddate = DateField('End Date', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
+    book_id_reserved = DecimalField(validators=[InputRequired("Missing book id"), NumberRange(min=1)])
+
+    def validate(self):
+        if not super(Reserved_book_date, self).validate():
+            return False
+        if self.startdate.data > self.enddate.data:
+            msg = 'Start date can not be bigger than end date!'
+            self.startdate.errors.append(msg)
+            return False
+        return True

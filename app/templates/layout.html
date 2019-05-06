@@ -158,8 +158,7 @@
                                 </a>
 
                                 <a class="nav-link list-group-item list-group-item-action bg-light"
-{#                                   href="{{ url_for('wishlist') }}">#}
-                                    href="/wishlist/page/1/focus=0/">
+                                   href="{{ url_for('wishlist',page=1,book_id=0) }}">
                                     <i class="fa fa-home"></i>Wishlist<span class="sr-only"></span>
                                 </a>
 
@@ -169,7 +168,7 @@
                                 </a>
 
                                 <a class="nav-link list-group-item list-group-item-action bg-light"
-                                   href="{{ url_for('books_log') }}">
+                                   href="{{ url_for('books_log', page=1, book_id=0) }}">
                                     <i class="fa fa-home"></i>Books log<span class="sr-only"></span>
                                 </a>
 

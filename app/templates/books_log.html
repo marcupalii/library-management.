@@ -1,14 +1,111 @@
 {% extends "layout.html" %}
 {% block page_title %}Books log{% endblock %}
 
+{% block styles %}
+    {{ super() }}
+    {#    <link rel="stylesheet" type="text/css"#}
+    {#          href="{{ url_for('.static', filename='css/books_log.css') }}">#}
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/table.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('.static', filename='js/books_log.js') }}"></script>
+{% endblock %}
+
 {% block content %}
+    <div class="container">
 
-    <p> BOOKS LOGS</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et
-        dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc
-        congue nisi
-        vitae suscipit. Quis auctor elit sed vulputate. Habitasse platea dictumst vestibulum rhoncus est
-    </p>
+        <h3>Books log</h3>
+        <div id="collapse-table">
+            <div class="col-lg-12">
+                <table class="table table-bordered" style="border-collapse:collapse;">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Book name</th>
+                        <th>Book type</th>
+                        <th>Author name</th>
+                        <th class="d-none d-md-block">Period start</th>
+                        <th class="d-none d-md-block">Period end</th>
+                        <th class="d-none d-lg-block">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="content-table">
 
+                    {% for entry in logs %}
+                        <tr colspan="7">
+                            <td class="rank" id="nr-row-content-{{ entry[0] }}">
+                                {{ entry[0] }}
+                            </td>
+                            <td id="book-name-row-content-{{ entry[0] }}">
+                                {{ entry[1] }}
+                            </td>
+                            <td id="book-type-row-content-{{ entry[0] }}">
+                                {{ entry[2] }}
+                            </td>
+                            <td id="author-row-content-{{ entry[0] }}">
+                                {{ entry[3] }}
+                            </td>
+                            <td class="d-none d-md-block" id="period-start-row-content-{{ entry[0] }}">
+                                {{ entry[4] }}
+                            </td>
+                            <td class="d-none d-md-block" id="period-end-row-content-{{ entry[0] }}">
+                                {{ entry[5] }}
+                            </td>
+                            <td class="d-none d-lg-block" id="status-row-content-{{ entry[0] }}">
+                                {{ entry[6] }}
+                            </td>
+                        </tr>
+
+                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"
+                            id="tr-collapse-id-{{ entry[0] }}">
+                            <td colspan="6" class="hiddenRow">
+                                <div class="accordian-body">
+
+                                    <p class="d-md-none">Period start: <span>{{ entry[4] }}</span>
+                                    </p>
+
+                                    <p class="d-md-none">Period end: <span>{{ entry[5] }}</span>
+                                    </p>
+
+                                    <p class="d-lg-none">Status: <span>{{ entry[6] }}</span>
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <ul class="pagination" id="paginationBox">
+                    <li class="page-item">
+                        <button id="prev" class="btn btn-secondary page_num_link page-link">
+                            <a href="{{ prev_url }}">&laquo;</a>
+                        </button>
+                    </li>
+                    {% for nr in num_list %}
+                        {% if nr %}
+                            <li class="page-item">
+                                <button id="{{ nr }}"
+                                        class="btn btn-secondary page_num_link page-link">{{ nr }}</button>
+                            </li>
+                        {% else %}
+                            <li class="page-item">...</li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item">
+                        <button id="next" class="btn btn-secondary page_num_link page-link">
+                            <a href="{{ next_url }}">&raquo;</a>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
 {% endblock %}

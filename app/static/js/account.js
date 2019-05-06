@@ -477,6 +477,24 @@ $(function () {
             }
         });
     });
+
+
+    $('#add-to-reserved-button').click(function () {
+        console.log("before post=", $('#book-id').text());
+        $('#book_id_reserved').val($('#book-id').text());
+        console.log($('#reserved-date-form').serialize());
+        $.ajax({
+            type: "POST",
+            url: "/add_to_reserved/",
+            data: $('#reserved-date-form').serialize(),
+            success: function (data) {
+                console.log("succes");
+                $('#reserved-date-form').trigger('reset');
+                $('#myModal').modal('hide');
+                get_data();
+            }
+        });
+    });
 })
 ;
 
@@ -492,6 +510,18 @@ function redirect_to_wishlist_book(book_id) {
     });
 }
 
+function redirect_to_books_log(book_id) {
+    // $.ajax({
+    //     type: "GET",
+    //     url: "/reserved_book/" + book_id + "/",
+    //     dataType: "json",
+    //     success: function (data) {
+    //         window.location = data["url"];
+    //     }
+    //
+    // });
+}
+
 $(document).on("click", ".modal-button", function () {
     $('.wishlist-modal').css("visibility", "hidden");
     $('.reserved-modal').css("visibility", "hidden");
@@ -502,6 +532,8 @@ $(document).on("click", ".modal-button", function () {
 
     if ($("#status-book-row-content-" + id).text() === "Already in wishlist") {
         return redirect_to_wishlist_book($("#book-id-row-content-" + id).text());
+    } else if ($("#status-book-row-content-" + id).text() === "Reserved") {
+        return redirect_to_books_log($("#book-id-row-content-" + id).text());
     } else {
 
         if ($("#status-book-row-content-" + id).text() === "Unavailable") {
@@ -509,6 +541,19 @@ $(document).on("click", ".modal-button", function () {
             $('#add-to-wishlist-button').css("visibility", "visible");
             $('.wishlist-modal').css("visibility", "visible");
         } else {
+            $('#startdate')
+                .attr("type", "date")
+                .attr("min", "2019-05-06")
+                .attr("max", "2019-12-29")
+                .addClass("form-control");
+
+            $('#enddate')
+                .attr("type", "date")
+                .attr("min", "2019-05-06")
+                .attr("max", "2019-12-29")
+                .addClass("form-control");
+
+
             $('.reserved-modal').css("visibility", "visible");
             $('#add-to-reserved-button').css("visibility", "visible");
             $('.modal-title').text("Reserv the book");
@@ -522,6 +567,7 @@ $(document).on("click", ".modal-button", function () {
         $('#status').text($("#status-book-row-content-" + id).text());
         $('#book-id').text($("#book-id-row-content-" + id).text());
         $('#myModal').modal('toggle');
+        console.log("book-id=", $('#book-id').text());
     }
 
 });
@@ -542,4 +588,3 @@ $(document).on("click", '.accordion-toggle', function () {
 
     $(this).next('tr').find('.hiddenRow').show();
 });
-

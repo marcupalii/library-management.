@@ -149,30 +149,30 @@ class EntryLog(db.Model):
                                                                                          self.id_book_series,
                                                                                          self.status, self.period_start,
                                                                                          self.period_end)
-
-
-class ReservedBookEntry(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-
-    id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
-
-    id_reserved_book = db.Column(db.Integer, db.ForeignKey('reservedbook.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
-
-
-class ReservedBook(db.Model):
-    __tablename__ = "reservedbook"
-    id = db.Column(db.Integer, primary_key=True)
-
-    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    reserved_book_entryes = db.relationship('ReservedBookEntry', uselist=True, backref='reserved_book')
-
-    count = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
-
+#
+#
+# class ReservedBookEntry(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#
+#     id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
+#
+#     id_reserved_book = db.Column(db.Integer, db.ForeignKey('reservedbook.id'), nullable=False)
+#     created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+#         pytz.timezone('Europe/Bucharest')))
+#
+#
+# class ReservedBook(db.Model):
+#     __tablename__ = "reservedbook"
+#     id = db.Column(db.Integer, primary_key=True)
+#
+#     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+#
+#     reserved_book_entryes = db.relationship('ReservedBookEntry', uselist=True, backref='reserved_book')
+#
+#     count = db.Column(db.Integer, nullable=False)
+#     created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+#         pytz.timezone('Europe/Bucharest')))
+#
 
 class Notifications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
