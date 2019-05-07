@@ -1,35 +1,38 @@
 $(document).ready(function () {
-
-    let page = $(location).attr('href').match(/page\/([0-9])+/)[1];
+    var actual_page = $(location).attr('href').match(/page\/([0-9])+/)[1];
     $('.page-link').parent().removeClass("active");
-    $('#'+page+'.page_num_link').parent().addClass("active");
+    $('#' + actual_page + '.page_num_link').parent().addClass("active");
 
     if ($(location).attr('href').match(/focus=0/)) {
     } else {
         let matched = $(location).attr('href').match(/focus%3D([0-9]+)/);
-        let rank_id_focus = matched[1].trim();
-        $.each($('.rank'), function () {
+        let entry_id_focus = matched[1].trim();
 
-            if ($(this).text().trim() === rank_id_focus) {
-                // $('html, body').animate({ scrollTop: $(this).parent().offset().top }, 'slow');
-                // $(this).parent().focus();
-
+        $.each($('.entry-id'), function () {
+            if ($(this).attr("id").match(/([0-9])+/)[0].trim() === entry_id_focus) {
                 $(this).parent()
                     .attr("tabindex", -1)
                     .focus();
-
-                // $(this)
-                //     .parent()
-                //     .css('outline', 'none !important')
-                //     .attr("tabindex", -1)
-                //     .focus();
             }
         });
 
     }
     $('.page_num_link').click(function () {
-        let page = $(this).attr("id").trim();
+        let page = "1";
+        if ($(this).attr("id").trim() === "prev") {
+            if (parseInt(actual_page) > 1) {
+                page = (parseInt(actual_page) - 1).toString()
+            }
+        } else if ($(this).attr("id").trim() === "next") {
+            page = (parseInt(actual_page) + 1).toString()
+        } else {
+            page = $(this).attr("id").trim();
+        }
+        if (parseInt(page) > parseInt($('#nr_of_pages').text())){
+            page = $('#nr_of_pages').text();
+        }
+
         let focus = $(location).attr('href').match(/focus[a-zA-Z0-9%=]+/);
-        window.location = "/books_log/page/"+page+"/" + focus[0];
+        window.location = "/books_log/page/" + page + "/" + focus[0];
     });
 });

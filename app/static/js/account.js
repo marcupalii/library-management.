@@ -511,15 +511,15 @@ function redirect_to_wishlist_book(book_id) {
 }
 
 function redirect_to_books_log(book_id) {
-    // $.ajax({
-    //     type: "GET",
-    //     url: "/reserved_book/" + book_id + "/",
-    //     dataType: "json",
-    //     success: function (data) {
-    //         window.location = data["url"];
-    //     }
-    //
-    // });
+    $.ajax({
+        type: "GET",
+        url: "/reserved_book/" + book_id + "/",
+        dataType: "json",
+        success: function (data) {
+            window.location = data["url"];
+        }
+
+    });
 }
 
 $(document).on("click", ".modal-button", function () {

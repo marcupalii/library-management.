@@ -57,6 +57,7 @@
                             <td class="d-none d-lg-block" id="status-row-content-{{ entry[0] }}">
                                 {{ entry[6] }}
                             </td>
+                            <td class="entry-id hidden-content" id="entry-id-row-content-{{ entry[7] }}"></td>
                         </tr>
 
                         <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"
@@ -83,6 +84,7 @@
 
             <div>
                 <ul class="pagination" id="paginationBox">
+                    <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
                     <li class="page-item">
                         <button id="prev" class="btn btn-secondary page_num_link page-link">
                             <a href="{{ prev_url }}">&laquo;</a>
