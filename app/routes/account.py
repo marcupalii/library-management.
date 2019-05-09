@@ -1,4 +1,3 @@
-
 from flask import render_template, request, url_for, redirect
 from app import app, db
 from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Author, Log, EntryLog
@@ -85,20 +84,134 @@ def search_book():
                 name = '%' + form.search_name.data + '%' if form.search_name.data else '%%'
                 type = '%' + form.search_type.data + '%' if form.search_type.data else '%%'
 
-            # .join(EntryWishlist, EntryWishlist.id_book != Book.id) \
-            # .filter(EntryWishlist.id_wishlist == current_user.wishlist.id, ) \
+            book_author_join = None
 
-            book_author_join = Book.query \
-                .filter(Book.name.like(name) & (Book.type.like(type))) \
-                .join(Author, Book.author_id == Author.id) \
-                .filter(Author.name.like(author)) \
-                .order_by(Book.name) \
-                .add_columns(Author.id, Author.name) \
-                .paginate(
-                per_page=3,
-                page=form.page_number.data,
-                error_out=True
-            )
+            if form.only_available.data:
+                entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).all()
+                ids_wishlist = []
+                for entry in entry_wishlist:
+                    ids_wishlist.append(entry.id_book)
+
+                ids_current_books = []
+                log = Log.query.filter_by(id_user=current_user.id).first()
+                entry_logs = db.session().query(EntryLog).filter(
+                    (EntryLog.id_log == log.id)
+                    & ~(EntryLog.status == "Returned")
+                ).all()
+
+                for entry in entry_logs:
+                    ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
+
+                book_author_join = db.session() \
+                    .query(Book) \
+                    .filter(
+                    ~(Book.id.in_(ids_wishlist))
+                    & (Book.type.like(type))
+                    & (Book.name.like(name))
+                    & ~(Book.id.in_(ids_current_books))
+                    & (Book.count_free_books > 3)
+                ) \
+                    .join(Author, Book.author_id == Author.id) \
+                    .filter(Author.name.like(author)) \
+                    .order_by(Book.name) \
+                    .add_columns(Author.id, Author.name) \
+                    .paginate(
+                    per_page=3,
+                    page=form.page_number.data,
+                    error_out=True
+                )
+
+            elif form.exclude_wishlist.data and form.exclude_current_book.data:
+                entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).all()
+                ids_wishlist = []
+                for entry in entry_wishlist:
+                    ids_wishlist.append(entry.id_book)
+
+                ids_current_books = []
+                log = Log.query.filter_by(id_user=current_user.id).first()
+                entry_logs = db.session().query(EntryLog).filter(
+                    (EntryLog.id_log == log.id)
+                    & ~(EntryLog.status == "Returned")
+                ).all()
+
+                for entry in entry_logs:
+                    ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
+
+                book_author_join = db.session() \
+                    .query(Book) \
+                    .filter(
+                    ~(Book.id.in_(ids_wishlist))
+                    & (Book.type.like(type))
+                    & (Book.name.like(name))
+                    & ~(Book.id.in_(ids_current_books))
+                ) \
+                    .join(Author, Book.author_id == Author.id) \
+                    .filter(Author.name.like(author)) \
+                    .order_by(Book.name) \
+                    .add_columns(Author.id, Author.name) \
+                    .paginate(
+                    per_page=3,
+                    page=form.page_number.data,
+                    error_out=True
+                )
+            elif form.exclude_wishlist.data:
+                entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).all()
+                ids = []
+                for entry in entry_wishlist:
+                    ids.append(entry.id_book)
+
+                book_author_join = db.session() \
+                    .query(Book) \
+                    .filter(~(Book.id.in_(ids)) & (Book.type.like(type)) & Book.name.like(name)) \
+                    .join(Author, Book.author_id == Author.id) \
+                    .filter(Author.name.like(author)) \
+                    .order_by(Book.name) \
+                    .add_columns(Author.id, Author.name) \
+                    .paginate(
+                    per_page=3,
+                    page=form.page_number.data,
+                    error_out=True
+                )
+            elif form.exclude_current_book.data:
+                ids_current_books = []
+                log = Log.query.filter_by(id_user=current_user.id).first()
+                entry_logs = db.session().query(EntryLog).filter(
+                    (EntryLog.id_log == log.id)
+                    & ~(EntryLog.status == "Returned")
+                ).all()
+
+                for entry in entry_logs:
+                    ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
+
+                book_author_join = db.session() \
+                    .query(Book) \
+                    .filter(
+                    (Book.type.like(type))
+                    & (Book.name.like(name))
+                    & ~(Book.id.in_(ids_current_books))
+                ) \
+                    .join(Author, Book.author_id == Author.id) \
+                    .filter(Author.name.like(author)) \
+                    .order_by(Book.name) \
+                    .add_columns(Author.id, Author.name) \
+                    .paginate(
+                    per_page=3,
+                    page=form.page_number.data,
+                    error_out=True
+                )
+            else:
+                book_author_join = Book.query \
+                    .filter(Book.name.like(name) & (Book.type.like(type))) \
+                    .join(Author, Book.author_id == Author.id) \
+                    .filter(Author.name.like(author)) \
+                    .order_by(Book.name) \
+                    .add_columns(Author.id, Author.name) \
+                    .paginate(
+                    per_page=3,
+                    page=form.page_number.data,
+                    error_out=True
+                )
+
             if book_author_join:
                 for entry in book_author_join.items:
                     entry_wishlist = EntryWishlist.query.filter_by(
@@ -222,4 +335,3 @@ def mark_notification_read():
             db.session.commit()
 
         return render_template("layout.html", id_user=current_user.id)
-

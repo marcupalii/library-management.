@@ -3,7 +3,6 @@ import hashlib
 from flask_login import UserMixin
 from datetime import datetime
 import pytz
-
 db.metadata.clear()
 
 
@@ -149,30 +148,7 @@ class EntryLog(db.Model):
                                                                                          self.id_book_series,
                                                                                          self.status, self.period_start,
                                                                                          self.period_end)
-#
-#
-# class ReservedBookEntry(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#
-#     id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
-#
-#     id_reserved_book = db.Column(db.Integer, db.ForeignKey('reservedbook.id'), nullable=False)
-#     created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-#         pytz.timezone('Europe/Bucharest')))
-#
-#
-# class ReservedBook(db.Model):
-#     __tablename__ = "reservedbook"
-#     id = db.Column(db.Integer, primary_key=True)
-#
-#     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-#
-#     reserved_book_entryes = db.relationship('ReservedBookEntry', uselist=True, backref='reserved_book')
-#
-#     count = db.Column(db.Integer, nullable=False)
-#     created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-#         pytz.timezone('Europe/Bucharest')))
-#
+
 
 class Notifications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -186,137 +162,78 @@ class Notifications(db.Model):
 import random
 
 if __name__ == "__main__":
-    # db.create_all()
-    #
-    # # ----------------------       ONE TO MANY model   ------------------------------------
-    # author1 = Author(name="author1")
-    # author2 = Author(name="author2")
-    # author3 = Author(name="author3")
-    # author4 = Author(name="author4")
-    # author5 = Author(name="author5")
-    # db.session.add(author1)
-    # db.session.add(author2)
-    # db.session.add(author3)
-    # db.session.add(author4)
-    # db.session.add(author5)
-    # db.session.commit()
-    # authors = [author1, author2, author3, author4, author5]
-    #
-    # for i in range(1, 50):
-    #     total = random.choice([2, 3, 4])
-    #     free = random.choice([0, 1, 2])
-    #     book = Book(
-    #         name="book{}".format(i),
-    #         author=random.choice(authors),
-    #         type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
-    #         count_total=total+2,
-    #         count_free_books=free+2
-    #     )
-    #     db.session.add(book)
-    #     for j in range(1, 4):
-    #         book_series = BookSeries(book=book, series="{}SL{}".format(i,j), status="available")
-    #         db.session.add(book_series)
-    #     db.session.commit()
-    #
-    # #  ---------------------- ------------- ------------------------------------
-    #
-    # admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
-    #              password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
-    #
-    # db.session.add(admin)
-    # db.session.commit()
-    # wishlist = Wishlist(user=admin)
-    # db.session.add(wishlist)
-    # db.session.commit()
-    #
-    # next_book2 = NextBook(user=admin, period=0, status="None")
-    # db.session.add(next_book2)
-    # db.session.commit()
-    #
-    # for i in range(1, 20):
-    #     user = User(
-    #         first_name='first{}'.format(i),
-    #         last_name='last{}'.format(i),
-    #         address="Main str nr 26",
-    #         email='user{}@gmail.com'.format(i), type='user',
-    #         password=hashlib.sha512("user{}".format(i).encode()).hexdigest(), trust_coeff=0
-    #     )
-    #
-    #     db.session.add(user)
-    #     db.session.commit()
-    #     wishlist = Wishlist(user=user)
-    #     db.session.add(wishlist)
-    #     db.session.commit()
-    #
-    #     next_book = NextBook(user=user, period=0, status="None")
-    #     db.session.add(next_book)
-    #     db.session.commit()
-    #
-    # print(User.query.all())
-    # print(Book.query.all())
-    # print(BookSeries.query.all())
-    # print(Wishlist.query.all())
-    # print(EntryWishlist.query.all())
-    #
-    # print(NextBook.query.all())
-    # print("\n\n\n")
-    # entryes = Book.query.filter(Book.name.like('%%'))
-    # form_bool = "book2"
-    # form_bool = False
-    # name = form_bool if form_bool else '%%'
-    # print("name=",name)
-    # entryes = Book.query.filter(Book.name.like(name))
-    # for entry in entryes:
-    #     print(entry)
-    # print(NextBook.query.filter_by(id=1,id_user=1).first())
+    db.create_all()
 
-    # print("\n join: \n")
-    # results = Author.query.join(Book., Author.id == Book.author_id).filter_by(type="type1")
-    # results = Book.query.filter_by(type="type1").join(Author, Author.id== Book.author_id).add_columns(Author.id,Author.name,Author.created_at)
-    # for result in results:
-    #     print(result[0])
+    # ----------------------       ONE TO MANY model   ------------------------------------
+    author1 = Author(name="author1")
+    author2 = Author(name="author2")
+    author3 = Author(name="author3")
+    author4 = Author(name="author4")
+    author5 = Author(name="author5")
+    db.session.add(author1)
+    db.session.add(author2)
+    db.session.add(author3)
+    db.session.add(author4)
+    db.session.add(author5)
+    db.session.commit()
+    authors = [author1, author2, author3, author4, author5]
 
-    # print(Book.query.all())
-    # print(Book.query.filter_by(count_total=2).order_by(Book.created_at.desc()).all())
+    for i in range(1, 50):
+        total = random.choice([2, 3, 4])
+        free = random.choice([0, 1, 2])
+        book = Book(
+            name="book{}".format(i),
+            author=random.choice(authors),
+            type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
+            count_total=total+2,
+            count_free_books=free+2
+        )
+        db.session.add(book)
+        for j in range(1, 4):
+            book_series = BookSeries(book=book, series="{}SL{}".format(i,j), status="available")
+            db.session.add(book_series)
+        db.session.commit()
+
+    #  ---------------------- ------------- ------------------------------------
+
+    admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
+                 password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
+
+    db.session.add(admin)
+    db.session.commit()
+    wishlist = Wishlist(user=admin)
+    db.session.add(wishlist)
+    db.session.commit()
+
+    next_book2 = NextBook(user=admin, period=0, status="None")
+    db.session.add(next_book2)
+    db.session.commit()
+
+    for i in range(1, 20):
+        user = User(
+            first_name='first{}'.format(i),
+            last_name='last{}'.format(i),
+            address="Main str nr 26",
+            email='user{}@gmail.com'.format(i), type='user',
+            password=hashlib.sha512("user{}".format(i).encode()).hexdigest(), trust_coeff=0
+        )
+
+        db.session.add(user)
+        db.session.commit()
+        wishlist = Wishlist(user=user)
+        db.session.add(wishlist)
+        db.session.commit()
+
+        next_book = NextBook(user=user, period=0, status="None")
+        db.session.add(next_book)
+        db.session.commit()
+
+    print(User.query.all())
+    print(Book.query.all())
+    print(BookSeries.query.all())
+    print(Wishlist.query.all())
+    print(EntryWishlist.query.all())
+    print(NextBook.query.all())
 
     # DROP SCHEMA public CASCADE;
     # CREATE SCHEMA public;
-    name = "%%"
-    author = "%%"
-    type = "%%"
-    user= User.query.filter_by(first_name="first2").first()
-    print(id)
-
-    # current_user = 2
-    # subq = (db.session.query(favorites)
-    #         .filter(favorites.user_id == current_user).subquery('ff'))
-    # q = (db.session.query(posts, subq.c.score)
-    #      .outerjoin(subq, subq.c.post_id == posts.post_id))
-    # q = q.order_by(subq.c.score.desc())
-    # for post, score in q:
-    #     print(post, score)
-
-    subq = EntryWishlist.query\
-        .filter_by(id_wishlist=user.wishlist.id)\
-        .subquery('ff')
-    print(subq)
-    results = Book.query \
-        .filter(Book.name.like(name) & (Book.type.like(type))) \
-        .join(subq, subq.id_book == Book.id)
-
-    print(results, "\n\n\n")
-    print(EntryWishlist.query.filter_by(id_wishlist=user.wishlist.id).all())
-    print(results,"\n\n\n")
-    for result in results:
-        print(result)
-
-    # books=Book.query \
-    #     .filter(Book.name.like(name) & (Book.type.like(type))) \
-    #     .join(EntryWishlist, EntryWishlist.id_book != Book.id)\
-    #     .join(Author, Book.author_id == Author.id) \
-    #     .filter(Author.name.like(author)) \
-    #     .order_by(Book.name) \
-    #     .add_columns(Author.id, Author.name).all()
-    #
-    # for book in books:
-    #     print(book)

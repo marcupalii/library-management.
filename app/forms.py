@@ -18,7 +18,9 @@ class Search(FlaskForm):
     search_author = StringField(label='Author Name: ', validators=[Optional()])
     search_type = StringField(label='Type: ', validators=[Optional()])
     search_substring = BooleanField('Search sub-string')
-
+    exclude_wishlist = BooleanField('Exclude wishlist')
+    exclude_current_book = BooleanField('Exclude books that must be returned')
+    only_available = BooleanField('Only available')
     def validate(self):
         if not super(Search, self).validate():
             return False
