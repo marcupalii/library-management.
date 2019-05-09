@@ -3,15 +3,20 @@
     display: none;
 }
 
+.boder-content {
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+}
+
 .has-error {
     border-color: #dc3545
 }
 
 #search_name_error {
-    color: #dc3545!important;
+    color: #dc3545 !important;
 }
 
-#wishlist-form {
+#wishlist-form, .no-padding-row {
     padding-right: 0;
     padding-left: 0;
 }
@@ -33,18 +38,3 @@
     min-width: 100% !important;
     min-height: 17px !important;
 }
-
-
-/*.custom-control.custom-checkbox {*/
-/*padding-left: 0;*/
-/*}*/
-
-/*label.custom-control-label {*/
-/*position: relative;*/
-/*padding-right: 1.5rem;*/
-/*}*/
-
-/*label.custom-control-label::before, label.custom-control-label::after {*/
-/*right: 0;*/
-/*left: auto;*/
-/*}*/

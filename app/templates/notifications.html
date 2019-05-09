@@ -5,29 +5,31 @@
 
 
 {% block content %}
+    <div class="container-fluid mt-5">
+    <h3>Notifications</h3>
 
-    <div class="col-lg-9">
-        <h3>Notifications</h3>
-
-        <table class="table small">
-            <thead>
+    <table class="table small">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>content</th>
+            <th>status</th>
+            <th>created_at</th>
+        </tr>
+        </thead>
+        {% for notification in notifications %}
             <tr>
-                <th>id</th>
-                <th>content</th>
-                <th>status</th>
-                <th>created_at</th>
+                <th> {{ notification[0] }} </th>
+                <th> {{ notification[1] }} </th>
+                <th> {{ notification[2] }} </th>
+                <th> {{ notification[3] }} </th>
             </tr>
-            </thead>
-            {% for notification in notifications %}
-                <tr>
-                    <th> {{ notification[0] }} </th>
-                    <th> {{ notification[1] }} </th>
-                    <th> {{ notification[2] }} </th>
-                    <th> {{ notification[3] }} </th>
-                </tr>
-            {% endfor %}
-        </table>
+        {% endfor %}
+    </table>
+
     </div>
+
+
 
 {% endblock %}
 

@@ -26,19 +26,16 @@
     max-width: 25%;
     min-width: 20%;
     height: 100%;
-}
-
-@media screen and (min-width: 1440px) {
-    #sidebar {
-        width: 80%;
-    }
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
 }
 
 @media screen and (max-width: 1024px) {
 
-    .h-20{
+    .h-20 {
         background-color: #343a40 !important;
     }
+
     #sidebar {
         background-color: grey;
     }

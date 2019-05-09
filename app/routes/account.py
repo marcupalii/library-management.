@@ -85,10 +85,11 @@ def search_book():
                 name = '%' + form.search_name.data + '%' if form.search_name.data else '%%'
                 type = '%' + form.search_type.data + '%' if form.search_type.data else '%%'
 
+            # .join(EntryWishlist, EntryWishlist.id_book != Book.id) \
+            # .filter(EntryWishlist.id_wishlist == current_user.wishlist.id, ) \
+
             book_author_join = Book.query \
                 .filter(Book.name.like(name) & (Book.type.like(type))) \
-                .join(EntryWishlist, EntryWishlist.id_book != Book.id) \
-                .filter(EntryWishlist.id_wishlist==current_user.wishlist.id,)\
                 .join(Author, Book.author_id == Author.id) \
                 .filter(Author.name.like(author)) \
                 .order_by(Book.name) \

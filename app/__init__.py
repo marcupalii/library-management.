@@ -53,5 +53,7 @@ from app.routes.account import account, add_to_reserved, add_to_wishlist, mark_n
 from app.routes.books_log import books_log, reserved_book
 from app.routes.notifications import notifications
 from app.routes.wishlist import wishlist_delete_entry, wishlist, wishlist_book
+from app.routes.profile import profile
 from app.routes.admin import admin
+
 

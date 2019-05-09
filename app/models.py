@@ -284,14 +284,39 @@ if __name__ == "__main__":
     name = "%%"
     author = "%%"
     type = "%%"
-    print(User.query.filter_by(first_name="first2").first())
-    books=Book.query \
-        .filter(Book.name.like(name) & (Book.type.like(type))) \
-        .join(EntryWishlist, EntryWishlist.id_book != Book.id)\
-        .join(Author, Book.author_id == Author.id) \
-        .filter(Author.name.like(author)) \
-        .order_by(Book.name) \
-        .add_columns(Author.id, Author.name).all()
+    user= User.query.filter_by(first_name="first2").first()
+    print(id)
 
-    for book in books:
-        print(book)
+    # current_user = 2
+    # subq = (db.session.query(favorites)
+    #         .filter(favorites.user_id == current_user).subquery('ff'))
+    # q = (db.session.query(posts, subq.c.score)
+    #      .outerjoin(subq, subq.c.post_id == posts.post_id))
+    # q = q.order_by(subq.c.score.desc())
+    # for post, score in q:
+    #     print(post, score)
+
+    subq = EntryWishlist.query\
+        .filter_by(id_wishlist=user.wishlist.id)\
+        .subquery('ff')
+    print(subq)
+    results = Book.query \
+        .filter(Book.name.like(name) & (Book.type.like(type))) \
+        .join(subq, subq.id_book == Book.id)
+
+    print(results, "\n\n\n")
+    print(EntryWishlist.query.filter_by(id_wishlist=user.wishlist.id).all())
+    print(results,"\n\n\n")
+    for result in results:
+        print(result)
+
+    # books=Book.query \
+    #     .filter(Book.name.like(name) & (Book.type.like(type))) \
+    #     .join(EntryWishlist, EntryWishlist.id_book != Book.id)\
+    #     .join(Author, Book.author_id == Author.id) \
+    #     .filter(Author.name.like(author)) \
+    #     .order_by(Book.name) \
+    #     .add_columns(Author.id, Author.name).all()
+    #
+    # for book in books:
+    #     print(book)
