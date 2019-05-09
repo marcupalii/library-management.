@@ -19,7 +19,7 @@ class Search(FlaskForm):
     search_type = StringField(label='Type: ', validators=[Optional()])
     search_substring = BooleanField('Search sub-string')
     exclude_wishlist = BooleanField('Exclude wishlist')
-    exclude_current_book = BooleanField('Exclude books that must be returned')
+    exclude_current_book = BooleanField('Exclude not returned book')
     only_available = BooleanField('Only available')
     def validate(self):
         if not super(Search, self).validate():

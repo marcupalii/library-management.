@@ -336,11 +336,17 @@ $(function () {
     }
 
     $.each($('input'), function () {
-        if ($(this).attr("id").match(/^search_[a-z]+$/)) {
-            if ($(this).attr("id") !== "search_substring") {
-                $(this).addClass("form-control");
-            }
-            $(this).parent().prev().addClass("col-sm-2 col-form-label");
+        if ($(this).attr("id").match(/^search_[a-z]+$/) &&
+            $(this).attr("id") !== "search_substring") {
+
+            $(this).addClass("form-control");
+            $(this).parent().prev().addClass("col-5 col-form-label");
+
+        } else if ($(this).attr("id").match(/^exclude[a-z_]+$/) ||
+            $(this).attr("id") === "search_substring" ||
+            $(this).attr("id") === "only_available")  {
+            $(this).parent().prev().addClass("col-8 col-form-label");
+
         } else if ($(this).attr("id") === "days_number" || $(this).attr("id") === "rank") {
             $(this).css("width", "25%");
             $(this).addClass("form-control");
@@ -388,10 +394,10 @@ $(function () {
     }
 
 
-    $('form').submit(function (e) {
+    $('#search-button').click(function (e) {
         reset_err_tags();
         $('#page_number').val(1);
-        data_form = $('form').serialize();
+        data_form = $('#search-form').serialize();
         get_data();
         e.preventDefault();
     });

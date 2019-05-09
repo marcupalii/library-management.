@@ -80,88 +80,94 @@
                     Advance Search
                 </div>
             </div>
-            <div class="row border-content m-2 mb-3">
+            <div class="container-fluid  border-content  m-2 mb-3">
 
                 <a id="jump-here"></a>
 
-                <form class="container-fluid" method="post" novalidate>
+                <form id="search-form" class="row" method="post" novalidate>
                     {{ form.hidden_tag() }}
-                    {{ form.page_number }}
-                    <div class="form-group row">
-                        {{ form.search_name.label }}
-                        <div class="col-sm-20">
-                            {{ form.search_name }}
+                    <div class="col-md mt-2">
+                        {{ form.page_number }}
+                        <div class="form-group row">
+                            {{ form.search_name.label }}
+                            <div class="col-7">
+                                {{ form.search_name }}
+                            </div>
                         </div>
+                        <div class="form-group row">
+                            {{ form.search_author.label }}
+                            <div class="col-7">
+                                {{ form.search_author }}
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            {{ form.search_type.label }}
+                            <div class="col-7">
+                                {{ form.search_type }}
+                            </div>
+                        </div>
+                        <small class="" id="search_name_error"></small>
                     </div>
-                    <div class="form-group row">
-                        {{ form.search_author.label }}
-                        <div class="col-sm-20">
-                            {{ form.search_author }}
+                    <div class="col-md mt-2">
+                        <div class="form-group row">
+                            {{ form.search_substring.label }}
+                            <div class="col-2 d-flex justify-content-center align-items-center">
+                                {{ form.search_substring }}
+                            </div>
                         </div>
+                        <div class="form-group row">
+                            {{ form.exclude_wishlist.label }}
+                            <div class="col-2 d-flex justify-content-center align-items-center">
+                                {{ form.exclude_wishlist }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            {{ form.exclude_current_book.label }}
+                            <div class="col-2 d-flex justify-content-center align-items-center">
+                                {{ form.exclude_current_book }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            {{ form.only_available.label }}
+                            <div class="col-2 d-flex justify-content-center align-items-center">
+                                {{ form.only_available }}
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="form-group row">
-                        {{ form.search_type.label }}
-                        <div class="col-sm-20">
-                            {{ form.search_type }}
-                        </div>
-                    </div>
 
-                    <div class="form-group row">
-                        {{ form.search_substring.label }}
-                        <div class="col-sm-20 check-container">
-                            {{ form.search_substring }}
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        {{ form.exclude_wishlist.label }}
-                        <div class="col-sm-20 check-container">
-                            {{ form.exclude_wishlist }}
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        {{ form.exclude_current_book.label }}
-                        <div class="col-sm-20 check-container">
-                            {{ form.exclude_current_book }}
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        {{ form.only_available.label }}
-                        <div class="col-sm-20 check-container">
-                            {{ form.only_available }}
-                        </div>
-                    </div>
-
-                    <div class="" id="search_name_error"></div>
-                    <div>
-                        <button class="btn btn-secondary" type="Submit" id="button-collapse-table">
-                            <i class="fa fa-search"></i>
+                </form>
+                <div class="form-group row">
+                    <div class="col-2">
+                        <button class="btn btn-secondary" type="Submit" id="search-button">
+                            Search
                         </button>
                     </div>
-                </form>
-
-
+                </div>
             </div>
+
         </div>
 
         <div class="row">
-            <div id="collapse-table">
-                <div class="col-lg-12">
-                    <table class="table table-bordered" style="border-collapse:collapse;">
-                        <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Book name</th>
-                            <th>Book type</th>
-                            <th class="d-none d-md-block">Author name</th>
-                            <th class="d-none d-lg-block">Status</th>
+            <div id="collapse-table" class="container-fluid">
 
-                        </tr>
-                        </thead>
-                        <tbody id="content-table">
-                        </tbody>
-                    </table>
-                </div>
+                <table class="table table-bordered" style="border-collapse:collapse;">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Book name</th>
+                        <th>Book type</th>
+                        <th class="d-none d-md-block">Author name</th>
+                        <th class="d-none d-lg-block">Status</th>
+
+                    </tr>
+                    </thead>
+                    <tbody id="content-table">
+                    </tbody>
+                </table>
+                
                 <div>
                     <ul class="pagination" id="paginationBox">
                     </ul>
