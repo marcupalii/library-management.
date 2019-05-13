@@ -162,78 +162,88 @@ class Notifications(db.Model):
 import random
 
 if __name__ == "__main__":
-    db.create_all()
+    # db.create_all()
+    #
+    # # ----------------------       ONE TO MANY model   ------------------------------------
+    # author1 = Author(name="author1")
+    # author2 = Author(name="author2")
+    # author3 = Author(name="author3")
+    # author4 = Author(name="author4")
+    # author5 = Author(name="author5")
+    # db.session.add(author1)
+    # db.session.add(author2)
+    # db.session.add(author3)
+    # db.session.add(author4)
+    # db.session.add(author5)
+    # db.session.commit()
+    # authors = [author1, author2, author3, author4, author5]
+    #
+    # for i in range(1, 50):
+    #     total = random.choice([2, 3, 4])
+    #     free = random.choice([0, 1, 2])
+    #     book = Book(
+    #         name="book{}".format(i),
+    #         author=random.choice(authors),
+    #         type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
+    #         count_total=total+2,
+    #         count_free_books=free+2
+    #     )
+    #     db.session.add(book)
+    #     for j in range(1, 4):
+    #         book_series = BookSeries(book=book, series="{}SL{}".format(i,j), status="available")
+    #         db.session.add(book_series)
+    #     db.session.commit()
+    #
+    # #  ---------------------- ------------- ------------------------------------
+    #
+    # admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
+    #              password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
+    #
+    # db.session.add(admin)
+    # db.session.commit()
+    # wishlist = Wishlist(user=admin)
+    # db.session.add(wishlist)
+    # db.session.commit()
+    #
+    # next_book2 = NextBook(user=admin, period=0, status="None")
+    # db.session.add(next_book2)
+    # db.session.commit()
+    #
+    # for i in range(1, 20):
+    #     user = User(
+    #         first_name='first{}'.format(i),
+    #         last_name='last{}'.format(i),
+    #         address="Main str nr 26",
+    #         email='user{}@gmail.com'.format(i), type='user',
+    #         password=hashlib.sha512("user{}".format(i).encode()).hexdigest(), trust_coeff=0
+    #     )
+    #
+    #     db.session.add(user)
+    #     db.session.commit()
+    #     wishlist = Wishlist(user=user)
+    #     db.session.add(wishlist)
+    #     db.session.commit()
+    #
+    #     next_book = NextBook(user=user, period=0, status="None")
+    #     db.session.add(next_book)
+    #     db.session.commit()
+    #
+    # print(User.query.all())
+    # print(Book.query.all())
+    # print(BookSeries.query.all())
+    # print(Wishlist.query.all())
+    # print(EntryWishlist.query.all())
+    # print(NextBook.query.all())
 
-    # ----------------------       ONE TO MANY model   ------------------------------------
-    author1 = Author(name="author1")
-    author2 = Author(name="author2")
-    author3 = Author(name="author3")
-    author4 = Author(name="author4")
-    author5 = Author(name="author5")
-    db.session.add(author1)
-    db.session.add(author2)
-    db.session.add(author3)
-    db.session.add(author4)
-    db.session.add(author5)
-    db.session.commit()
-    authors = [author1, author2, author3, author4, author5]
-
-    for i in range(1, 50):
-        total = random.choice([2, 3, 4])
-        free = random.choice([0, 1, 2])
-        book = Book(
-            name="book{}".format(i),
-            author=random.choice(authors),
-            type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
-            count_total=total+2,
-            count_free_books=free+2
-        )
-        db.session.add(book)
-        for j in range(1, 4):
-            book_series = BookSeries(book=book, series="{}SL{}".format(i,j), status="available")
-            db.session.add(book_series)
-        db.session.commit()
-
-    #  ---------------------- ------------- ------------------------------------
-
-    admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
-                 password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
-
-    db.session.add(admin)
-    db.session.commit()
-    wishlist = Wishlist(user=admin)
-    db.session.add(wishlist)
-    db.session.commit()
-
-    next_book2 = NextBook(user=admin, period=0, status="None")
-    db.session.add(next_book2)
-    db.session.commit()
-
-    for i in range(1, 20):
-        user = User(
-            first_name='first{}'.format(i),
-            last_name='last{}'.format(i),
-            address="Main str nr 26",
-            email='user{}@gmail.com'.format(i), type='user',
-            password=hashlib.sha512("user{}".format(i).encode()).hexdigest(), trust_coeff=0
-        )
-
-        db.session.add(user)
-        db.session.commit()
-        wishlist = Wishlist(user=user)
-        db.session.add(wishlist)
-        db.session.commit()
-
-        next_book = NextBook(user=user, period=0, status="None")
-        db.session.add(next_book)
-        db.session.commit()
-
-    print(User.query.all())
-    print(Book.query.all())
-    print(BookSeries.query.all())
-    print(Wishlist.query.all())
-    print(EntryWishlist.query.all())
-    print(NextBook.query.all())
-
+    types = {
+        "zero":0,
+        "zece":10,
+        "patru":4,
+        "unu": 1,
+        "doi": 2
+    }
+    print(types)
+    types = {item[0]:item[1] for item in sorted(types.items(), key=lambda kv: kv[1])}
+    print(types)
     # DROP SCHEMA public CASCADE;
     # CREATE SCHEMA public;

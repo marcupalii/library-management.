@@ -9,31 +9,52 @@ from flask import jsonify
 @app.route("/account")
 @login_required
 def account():
-    _email = current_user.email
 
-    if _email:
-        _user = User.query.filter_by(email=_email).first()
+    types = {}
+    log = Log.query.filter_by(id_user=current_user.id).first()
+    entry_logs = None
+    if log:
+        entry_logs = EntryLog.query.filter_by(id_log=log.id).all()
 
-        advanced_search_form = Advanced_search(search_by_name=False, search_by_type=False, search_by_author=False)
-        basic_search_form = Basic_search()
-        wishlist_form = Wishlist_form()
-        reserved_book_date = Reserved_book_date()
-        nr = EntryWishlist.query.filter_by(id_wishlist=_user.wishlist.id).count()
+    if entry_logs:
+        for entry_log in entry_logs:
+            book_series = BookSeries.query.filter_by(id=entry_log.id_book_series).first()
+            book = Book.query.filter_by(id=book_series.book_id).first()
+            if book.type not in types.keys():
+                types.update({book.type: 1})
+            else:
+                types[book.name] += 1
 
-        if nr:
-            wishlist_form.rank.label = "Rank({}-{})".format(1, nr + 1)
-        else:
-            wishlist_form.rank.label = "Rank({})".format(1)
+    types = {item[0]:item[1] for item in sorted(types.items(), key=lambda kv: kv[1])}
+    response_type = {}
+    if len(types) > 5:
+        for k in types.keys():
+            if len(response_type) == 4:
+                response_type.update({'others': 0})
+            elif len(response_type) == 5:
+                response_type['others'] += types[k]
+            else:
+                response_type.update({k: types[k]})
 
-        return render_template(
-            'account.html',
-            advanced_search_form=advanced_search_form,
-            basic_search_form=basic_search_form,
-            wishlist_form=wishlist_form,
-            reserved_book_date=reserved_book_date
-        )
+    advanced_search_form = Advanced_search(search_by_name=False, search_by_type=False, search_by_author=False)
+    basic_search_form = Basic_search()
+    wishlist_form = Wishlist_form()
+    reserved_book_date = Reserved_book_date()
+    nr = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
+
+    if nr:
+        wishlist_form.rank.label = "Rank({}-{})".format(1, nr + 1)
     else:
-        return redirect(url_for('about'))
+        wishlist_form.rank.label = "Rank({})".format(1)
+
+    return render_template(
+        'account.html',
+        advanced_search_form=advanced_search_form,
+        basic_search_form=basic_search_form,
+        wishlist_form=wishlist_form,
+        reserved_book_date=reserved_book_date,
+        statistics_books_type=response_type if len(response_type) != 0 else types
+    )
 
 
 @app.route("/add_to_wishlist/", methods=['POST'])
