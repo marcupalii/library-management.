@@ -14,7 +14,7 @@ $(function () {
     $('#basic_page_number')
         .css("display", "none")
         .val(1);
-    $('#basic_search_name').addClass("form-control mr-3 w-50");
+    $('#basic_search_name').addClass("form-control mr-3 w-75");
 
     var nr_rows = 0;
     var data_form = "";

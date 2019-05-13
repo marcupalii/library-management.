@@ -36,21 +36,33 @@
 }
 
 
-
-
-
 .chartWrapper {
- position: relative;
+    position: relative;
 }
 
 .chartWrapper > canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
 }
 
+/* min-width produce overflow pe layout*/
 .chartAreaWrapper {
-  min-width: 600px;
-  overflow-x: scroll!important;
+    width: 99%;
+    overflow-x: scroll;
 }
+
+@media screen and (max-width: 768px) {
+    /*#chart-Test {*/
+        /*width: 768px !important;*/
+    /*}*/
+
+    .no-padding {
+        padding: 0 !important;
+        max-width: 250px;
+        max-height: 250px;
+    }
+
+}
+

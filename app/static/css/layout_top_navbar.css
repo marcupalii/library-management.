@@ -22,7 +22,9 @@ footer {
 #navar-right {
     margin-right: 30px;
 }
-
+.navbar-brand{
+    margin-right: 0!important;
+}
 .content {
     margin-left: 0;
     flex-basis: 0;

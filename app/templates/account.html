@@ -22,12 +22,10 @@
 {% endblock %}
 
 {% block content %}
-    <div id="calendar"></div>
-
     <div class="container-fluid">
         <div class="row py-2">
             <div class="col-sm-4 py-1">
-                <div class="card">
+                <div class="card d-flex justify-content-center align-items-center">
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Book type preferred
                     </div>
@@ -37,7 +35,7 @@
                 </div>
             </div>
             <div class="col-sm-4 py-1">
-                <div class="card">
+                <div class="card d-flex justify-content-center align-items-center">
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Title
                     </div>
@@ -47,7 +45,7 @@
                 </div>
             </div>
             <div class="col-sm-4 py-1">
-                <div class="card">
+                <div class="card d-flex justify-content-center align-items-center">
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Title
                     </div>
@@ -65,17 +63,15 @@
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Title
                     </div>
-                    <div class="chartWrapper">
-                        <div class="chartAreaWrapper">
-                            <div class="chartAreaWrapper2">
-                                <canvas id="chart-Test" height="300" width="1200"></canvas>
-                            </div>
-                        </div>
-                        <canvas id="axis-Test" height="300" width="0"></canvas>
-                    </div>
-                    {#                    <div class="card-body">#}
-                    {#                        <canvas id="chLine" height="100"></canvas>#}
-                    {#                    </div>#}
+{#                    <div class="chartWrapper">#}
+{#                        <div class="chartAreaWrapper">#}
+{#                            <div class="chartAreaWrapper2">#}
+{#                                <canvas id="chart-Test" height="300" width="1200"></canvas>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <canvas id="axis-Test" height="300" width="0"></canvas>#}
+{#                    </div>#}
+
                 </div>
             </div>
         </div>
@@ -95,12 +91,14 @@
                 <form id="basic-search-form" class="row" method="post" novalidate>
                     {{ basic_search_form.hidden_tag() }}
                     {{ basic_search_form.basic_page_number }}
-                    <div class="col-7 mt-5 ml-3">
+                    <div class="col-md-5 mt-2 ml-4">
                         <div class="form-group form-inline row">
                             {{ basic_search_form.basic_search_name(placeholder="Book name") }}
                             <i class="fas fa-search" id="basic-search-button" aria-hidden="true"></i>
                         </div>
                         <small class="form-group row err-msg" id="basic_search_name_error"></small>
+                    </div>
+                    <div class="col-md-5 mt-2 ml-4">
                         <div class="form-group row">
                             {{ basic_search_form.basic_search_substring.label }}
                             <div class="col-2 d-flex justify-content-center align-items-center">
