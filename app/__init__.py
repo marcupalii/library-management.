@@ -49,7 +49,7 @@ app, db, celery, login_manager = create_app()
 from app import errors_loader
 from app.routes.login import login, process_login_form, logout
 from app.routes.about import about
-from app.routes.account import account, add_to_reserved, add_to_wishlist, mark_notification_read, search_book, get_notification
+from app.routes.account import account, add_to_reserved, add_to_wishlist, mark_notification_read, Advanced_search, Basic_search, get_notification
 from app.routes.books_log import books_log, reserved_book
 from app.routes.notifications import notifications
 from app.routes.wishlist import wishlist_delete_entry, wishlist, wishlist_book

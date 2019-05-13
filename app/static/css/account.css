@@ -12,6 +12,11 @@
     border-color: #dc3545
 }
 
+.err-msg {
+    margin-top: -15px;
+    color: #dc3545 !important;
+}
+
 #search_name_error {
     color: #dc3545 !important;
 }

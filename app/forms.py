@@ -11,8 +11,12 @@ class LoginForm(FlaskForm):
                              validators=[InputRequired("Please insert a valid password."), Length(min=3, max=80)])
     remember = BooleanField('remember me')
 
+class Basic_search(FlaskForm):
+    basic_page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
+    basic_search_name = StringField(label='Book Name: ', validators=[InputRequired("Book name is required!")])
+    basic_search_substring = BooleanField('Search sub-string')
 
-class Search(FlaskForm):
+class Advanced_search(FlaskForm):
     page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
     search_name = StringField(label='Book Name: ', validators=[Optional()])
     search_author = StringField(label='Author Name: ', validators=[Optional()])
@@ -22,7 +26,7 @@ class Search(FlaskForm):
     exclude_current_book = BooleanField('Exclude not returned book')
     only_available = BooleanField('Only available')
     def validate(self):
-        if not super(Search, self).validate():
+        if not super(Advanced_search, self).validate():
             return False
         if not self.search_name.data and not self.search_author.data and not self.search_type.data:
             msg = 'At least one of fields can not be empty!'

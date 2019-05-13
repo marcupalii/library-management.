@@ -1,6 +1,7 @@
-tr:focus{
+tr:focus {
     border: 2px solid blue;
 }
+
 .table {
     background-color: #fff !important;
 }
@@ -14,7 +15,8 @@ tr:focus{
 }
 
 .last-td {
-    border: 0 !important;
+    /*border: 0 !important;*/
+    width: 10%!important;
 }
 
 .table-bordered {

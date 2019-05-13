@@ -8,115 +8,14 @@ String.prototype.format = function () {
 
 $(function () {
 
-
-    var colors = ['#007bff', '#28a745', '#333333', '#c3e6cb', '#dc3545', '#6c757d'];
-
-    /* 3 donut charts */
-    var donutOptions = {
-        cutoutPercentage: 85,
-        legend: {position: 'bottom', padding: 5, labels: {pointStyle: 'circle', usePointStyle: true}}
-    };
-
-// donut 1
-    var chDonutData1 = {
-        labels: ['Science', 'Literature', 'Other'],
-        datasets: [
-            {
-                backgroundColor: colors.slice(0, 3),
-                borderWidth: 0,
-                data: [74, 11, 40]
-            }
-        ]
-    };
-
-    var chDonut1 = document.getElementById("chDonut1");
-    if (chDonut1) {
-        new Chart(chDonut1, {
-            type: 'pie',
-            data: chDonutData1,
-            options: donutOptions
-        });
-    }
-
-// donut 2
-    var chDonutData2 = {
-        labels: ['Science', 'Literature', 'Other'],
-        datasets: [
-            {
-                backgroundColor: colors.slice(0, 3),
-                borderWidth: 0,
-                data: [40, 45, 30]
-            }
-        ]
-    };
-    var chDonut2 = document.getElementById("chDonut2");
-    if (chDonut2) {
-        new Chart(chDonut2, {
-            type: 'pie',
-            data: chDonutData2,
-            options: donutOptions
-        });
-    }
-
-// donut 3
-    var chDonutData3 = {
-        labels: ['Science', 'Literature', 'Other'],
-        datasets: [
-            {
-                backgroundColor: colors.slice(0, 3),
-                borderWidth: 0,
-                data: [21, 45, 55, 33]
-            }
-        ]
-    };
-    var chDonut3 = document.getElementById("chDonut3");
-    if (chDonut3) {
-        new Chart(chDonut3, {
-            type: 'pie',
-            data: chDonutData3,
-            options: donutOptions
-        });
-    }
-
-
-    var colors = ['#007bff', '#28a745', '#333333', '#c3e6cb', '#dc3545', '#6c757d'];
-
-    /* large line chart */
-    var chLine = document.getElementById("chLine");
-    var chartData = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
-        datasets: [{
-            data: [1, 5, 0, 2, 10, 3, 4],
-            backgroundColor: 'transparent',
-            borderColor: colors[0],
-            borderWidth: 4,
-            pointBackgroundColor: colors[0]
-        }]
-    };
-
-    if (chLine) {
-        new Chart(chLine, {
-            type: 'line',
-            data: chartData,
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: false
-                        }
-                    }]
-                },
-                legend: {
-                    display: false
-                }
-            }
-        });
-    }
-
-
     $('#page_number')
         .css("display", "none")
         .val(1);
+    $('#basic_page_number')
+        .css("display", "none")
+        .val(1);
+    $('#basic_search_name').addClass("form-control mr-3 w-50");
+
     var nr_rows = 0;
     var data_form = "";
     var nr_of_pages = 1;
@@ -126,7 +25,6 @@ $(function () {
         $('#search_name_error').css("visibility", "hidden");
         $('.form-control').removeClass("has-error");
     }
-
 
     function write_row(row, row_index, book_id) {
 
@@ -292,25 +190,26 @@ $(function () {
                 )
         );
         $('.page-link').parent().removeClass("active");
-        $('#' + $('#page_number').val() + '.page-link').parent().addClass("active");
+
+        if ($('#basic-search-container').hasClass('hide')) {
+            $('#' + $('#page_number').val() + '.page-link').parent().addClass("active");
+        } else {
+            $('#' + $('#basic_page_number').val() + '.page-link').parent().addClass("active");
+
+        }
+
 
     }
 
-    function clear_form() {
-        $.each($('input'), function () {
-            if ($(this).attr('id').match(/^search_[a-z]+$/)) {
-                if ($(this).attr("id") === "search_substring") {
-                    $(this).prop("checked", false)
-                } else {
-                    $(this).val('');
-                }
-
-            }
-        })
-    }
 
     function create_table(data) {
-        let index_start = 3 * (parseInt($('#page_number').val()) - 1);
+        let index_start = 1;
+        if ($('#basic-search-container').hasClass('hide')) {
+            index_start = 3 * (parseInt($('#page_number').val()) - 1);
+        } else {
+            index_start = 3 * (parseInt($('#basic_page_number').val()) - 1);
+        }
+
         for (key in data['data']) {
             index_start += 1;
             write_row(data['data'][key], index_start, key);
@@ -319,7 +218,18 @@ $(function () {
         $('#paginationBox').empty();
         if (index_start !== 0) {
             show_page_numbers(data['pages_lst']);
-            clear_form();
+            if ($('#advanced-search-container').hasClass('hide')) {
+                let page = $('#basic_page_number').val();
+                $('#advanced-search-form').trigger('reset');
+                $('#basic-search-form').trigger('reset');
+                $('#basic_page_number').val(page);
+            } else {
+                let page = $('#page_number').val();
+                $('#advanced-search-form').trigger('reset');
+                $('#basic-search-form').trigger('reset');
+                $('#page_number').val(page);
+            }
+
         } else {
             $('#content-table')
                 .css("text-align", "center")
@@ -344,7 +254,7 @@ $(function () {
 
         } else if ($(this).attr("id").match(/^exclude[a-z_]+$/) ||
             $(this).attr("id") === "search_substring" ||
-            $(this).attr("id") === "only_available")  {
+            $(this).attr("id") === "only_available") {
             $(this).parent().prev().addClass("col-8 col-form-label");
 
         } else if ($(this).attr("id") === "days_number" || $(this).attr("id") === "rank") {
@@ -356,48 +266,86 @@ $(function () {
     });
 
     function get_data() {
-        data_form = data_form.replace(/&page_number=\d+&/, "&page_number=" + $('#page_number').val() + "&");
-        $.ajax({
-            type: "POST",
-            url: "/search_book/",
-            data: data_form,
-            success: function (data) {
-                $('#content-table').empty();
+        if ($('#advanced-search-container').hasClass('hide')) {
+            data_form = data_form.replace(/&basic_page_number=\d+&/, "&basic_page_number=" + $('#basic_page_number').val() + "&");
+            $.ajax({
+                type: "POST",
+                url: "/basic_search_book/",
+                data: data_form,
+                success: function (data) {
 
-                if (data['data'].hasOwnProperty("search_name")) {
+                    // $('#basic-search-form').trigger('reset');
+                    $('#content-table').empty();
+                    if (data['data'].hasOwnProperty("basic_search_name")) {
 
-                    if ($('#search_name.form-control').hasClass('has-error') === false) {
-                        $('#search_name.form-control').addClass('has-error');
+                        if ($('#basic_search_name.form-control').hasClass('has-error') === false) {
+                            $('#basic_search_name.form-control').addClass('has-error');
+                        }
+
+                        $('#basic_search_name_error')
+                            .text(data['data']['basic_search_name']['0'])
+                            .css("visibility", "visible");
+
+                        if ($('#collapse-table').css("display") !== "none") {
+                            $('#collapse-table').slideToggle(0);
+                        }
+                    } else {
+                        create_table(data);
                     }
-
-                    if ($('#search_type.form-control').hasClass('has-error') === false) {
-                        $('#search_type.form-control').addClass('has-error');
-                    }
-
-                    if ($('#search_author.form-control').hasClass('has-error') === false) {
-                        $('#search_author.form-control').addClass('has-error');
-                    }
-
-
-                    $('#search_name_error').text(data['data']['search_name']['0']);
-                    $('#search_name_error').css("visibility", "visible");
-
-                    if ($('#collapse-table').css("display") !== "none") {
-                        $('#collapse-table').slideToggle(0);
-                    }
-                } else {
-                    create_table(data);
                 }
-            }
 
-        });
+            });
+        } else {
+            data_form = data_form.replace(/&page_number=\d+&/, "&page_number=" + $('#page_number').val() + "&");
+            $.ajax({
+                type: "POST",
+                url: "/advanced_search_book/",
+                data: data_form,
+                success: function (data) {
+                    $('#content-table').empty();
+
+                    if (data['data'].hasOwnProperty("search_name")) {
+
+                        if ($('#search_name.form-control').hasClass('has-error') === false) {
+                            $('#search_name.form-control').addClass('has-error');
+                        }
+
+                        if ($('#search_type.form-control').hasClass('has-error') === false) {
+                            $('#search_type.form-control').addClass('has-error');
+                        }
+
+                        if ($('#search_author.form-control').hasClass('has-error') === false) {
+                            $('#search_author.form-control').addClass('has-error');
+                        }
+
+
+                        $('#search_name_error').text(data['data']['search_name']['0']);
+                        $('#search_name_error').css("visibility", "visible");
+
+                        if ($('#collapse-table').css("display") !== "none") {
+                            $('#collapse-table').slideToggle(0);
+                        }
+                    } else {
+                        create_table(data);
+                    }
+                }
+
+            });
+        }
+
     }
 
+    $('#basic-search-button').click(function (e) {
+        $('#basic_page_number').val(1);
+        data_form = $('#basic-search-form').serialize();
+        get_data();
+        e.preventDefault();
+    });
 
-    $('#search-button').click(function (e) {
+    $('#advanced-search-button').click(function (e) {
         reset_err_tags();
         $('#page_number').val(1);
-        data_form = $('#search-form').serialize();
+        data_form = $('#advanced-search-form').serialize();
         get_data();
         e.preventDefault();
     });
@@ -414,7 +362,12 @@ $(function () {
 
     $(document).on("click", ".page_num_link", function () {
 
-        let page_nr = $('#page_number');
+        let page_nr = 0;
+        if ($('#basic-search-container').hasClass('hide')) {
+            page_nr = $('#page_number');
+        } else {
+            page_nr = $('#basic_page_number');
+        }
 
         if ($(this).attr("id") === "prev") {
             page_nr.val(parseInt(page_nr.val()) <= 1 ? 1 : parseInt(page_nr.val()) - 1);
@@ -471,14 +424,10 @@ $(function () {
                         .css("visibility", "visible")
                         .text(data['data']["rank"][0]);
                 } else {
-
                     $('#rank-range').text("Range(1-{0})".format(data['data']));
-
-                    console.log("data=", data);
                     $('#days_number').val('');
                     $('#myModal').modal('hide');
                 }
-
                 get_data();
             }
         });
@@ -486,20 +435,33 @@ $(function () {
 
 
     $('#add-to-reserved-button').click(function () {
-        console.log("before post=", $('#book-id').text());
         $('#book_id_reserved').val($('#book-id').text());
-        console.log($('#reserved-date-form').serialize());
         $.ajax({
             type: "POST",
             url: "/add_to_reserved/",
             data: $('#reserved-date-form').serialize(),
             success: function (data) {
-                console.log("succes");
                 $('#reserved-date-form').trigger('reset');
                 $('#myModal').modal('hide');
                 get_data();
             }
         });
+    });
+
+    $('.search').click(function () {
+
+        $('#collapse-table')
+            .css("display", "none");
+        $('#content-table').empty();
+        $('#paginationBox').empty();
+
+        if ($(this).attr("id") === "basic-search-change-container") {
+            $('#basic-search-container').removeClass("hide");
+            $('#advanced-search-container').addClass("hide");
+        } else {
+            $('#basic-search-container').addClass("hide");
+            $('#advanced-search-container').removeClass("hide");
+        }
     });
 })
 ;
@@ -573,7 +535,6 @@ $(document).on("click", ".modal-button", function () {
         $('#status').text($("#status-book-row-content-" + id).text());
         $('#book-id').text($("#book-id-row-content-" + id).text());
         $('#myModal').modal('toggle');
-        console.log("book-id=", $('#book-id').text());
     }
 
 });

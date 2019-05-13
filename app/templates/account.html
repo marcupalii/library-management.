@@ -17,6 +17,7 @@
             integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">
     </script>
     <script src="{{ url_for('.static', filename='js/account.js') }}"></script>
+    <script src="{{ url_for('.static', filename='js/account_statistics.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 {% endblock %}
 
@@ -73,75 +74,93 @@
     <div class="container-fluid">
         <div class="container-fluid border-content mt-5">
             <div class="row m-2">
-                <div class="col-sm-3 btn border-content" id="basic-search-container">
+                <div class="col-sm-3 btn border-content search" id="basic-search-change-container">
                     Basic Search
                 </div>
-                <div class="col-sm-3 btn border-content" id="advance-search-container">
+                <div class="col-sm-3 btn border-content search" id="advance-search-change-container">
                     Advance Search
                 </div>
             </div>
-            <div class="container-fluid  border-content  m-2 mb-3">
+            <div class="container-fluid  border-content  m-2 mb-3" id="basic-search-container">
+                <form id="basic-search-form" class="row" method="post" novalidate>
+                    {{ basic_search_form.hidden_tag() }}
+                    {{ basic_search_form.basic_page_number }}
+                    <div class="col-7 mt-5 ml-3">
+                        <div class="form-group form-inline row">
+                            {{ basic_search_form.basic_search_name(placeholder="Book name") }}
+                            <i class="fas fa-search" id="basic-search-button" aria-hidden="true"></i>
+                        </div>
+                        <small class="form-group row err-msg" id="basic_search_name_error"></small>
+                        <div class="form-group row">
+                            {{ basic_search_form.basic_search_substring.label }}
+                            <div class="col-2 d-flex justify-content-center align-items-center">
+                                {{ basic_search_form.basic_search_substring }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="container-fluid  border-content  m-2 mb-3 hide" id="advanced-search-container">
 
                 <a id="jump-here"></a>
 
-                <form id="search-form" class="row" method="post" novalidate>
-                    {{ form.hidden_tag() }}
+                <form id="advanced-search-form" class="row" method="post" novalidate>
+                    {{ advanced_search_form.hidden_tag() }}
                     <div class="col-md mt-2">
-                        {{ form.page_number }}
+                        {{ advanced_search_form.page_number }}
                         <div class="form-group row">
-                            {{ form.search_name.label }}
+                            {{ advanced_search_form.search_name.label }}
                             <div class="col-7">
-                                {{ form.search_name }}
+                                {{ advanced_search_form.search_name }}
                             </div>
                         </div>
                         <div class="form-group row">
-                            {{ form.search_author.label }}
+                            {{ advanced_search_form.search_author.label }}
                             <div class="col-7">
-                                {{ form.search_author }}
+                                {{ advanced_search_form.search_author }}
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            {{ form.search_type.label }}
+                            {{ advanced_search_form.search_type.label }}
                             <div class="col-7">
-                                {{ form.search_type }}
+                                {{ advanced_search_form.search_type }}
                             </div>
                         </div>
                         <small class="" id="search_name_error"></small>
                     </div>
                     <div class="col-md mt-2">
                         <div class="form-group row">
-                            {{ form.search_substring.label }}
+                            {{ advanced_search_form.search_substring.label }}
                             <div class="col-2 d-flex justify-content-center align-items-center">
-                                {{ form.search_substring }}
+                                {{ advanced_search_form.search_substring }}
                             </div>
                         </div>
                         <div class="form-group row">
-                            {{ form.exclude_wishlist.label }}
+                            {{ advanced_search_form.exclude_wishlist.label }}
                             <div class="col-2 d-flex justify-content-center align-items-center">
-                                {{ form.exclude_wishlist }}
+                                {{ advanced_search_form.exclude_wishlist }}
                             </div>
                         </div>
                         <div class="form-group row">
-                            {{ form.exclude_current_book.label }}
+                            {{ advanced_search_form.exclude_current_book.label }}
                             <div class="col-2 d-flex justify-content-center align-items-center">
-                                {{ form.exclude_current_book }}
+                                {{ advanced_search_form.exclude_current_book }}
                             </div>
                         </div>
                         <div class="form-group row">
-                            {{ form.only_available.label }}
+                            {{ advanced_search_form.only_available.label }}
                             <div class="col-2 d-flex justify-content-center align-items-center">
-                                {{ form.only_available }}
+                                {{ advanced_search_form.only_available }}
                             </div>
                         </div>
-
                     </div>
-
-
                 </form>
+
                 <div class="form-group row">
                     <div class="col-2">
-                        <button class="btn btn-secondary" type="Submit" id="search-button">
+                        <button class="btn btn-secondary" type="Submit" id="advanced-search-button">
                             Search
                         </button>
                     </div>
@@ -167,7 +186,7 @@
                     <tbody id="content-table">
                     </tbody>
                 </table>
-                
+
                 <div>
                     <ul class="pagination" id="paginationBox">
                     </ul>
