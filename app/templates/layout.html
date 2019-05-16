@@ -1,33 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    {#    <meta content="width=device-width, initial-scale=1" name="viewport"/>#}
     {% block head %}
-        <link rel="shortcut icon" href="#">
-        {% block styles %}
-
-            <link rel="stylesheet" type="text/css"
-                  href="{{ url_for('.static', filename='css/layout_top_navbar.css') }}">
-
-            {% if current_user.is_authenticated %}
-                {% if current_user.type == "user" %}
-
-                    <link rel="stylesheet" type="text/css"
-                          href="{{ url_for('.static', filename='css/layout_notification.css') }}">
-                    <link rel="stylesheet" type="text/css"
-                          href="{{ url_for('.static', filename='css/layout_sidebar.css') }}">
-                {% endif %}
-            {% endif %}
-
-
-            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-                  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-                  crossorigin="anonymous">
-            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-                  integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
-                  crossorigin="anonymous">
-        {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% endblock %}
+    <link rel="shortcut icon" href="#">
+    {% block styles %}
+
+        <link rel="stylesheet" type="text/css"
+              href="{{ url_for('.static', filename='css/layout_top_navbar.css') }}">
+
+        {% if current_user.is_authenticated %}
+            {% if current_user.type == "user" %}
+
+                <link rel="stylesheet" type="text/css"
+                      href="{{ url_for('.static', filename='css/layout_notification.css') }}">
+                <link rel="stylesheet" type="text/css"
+                      href="{{ url_for('.static', filename='css/layout_sidebar.css') }}">
+            {% endif %}
+        {% endif %}
+
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+              integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+              crossorigin="anonymous">
+    {% endblock %}
+
 </head>
 
 <body>

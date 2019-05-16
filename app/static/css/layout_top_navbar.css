@@ -3,6 +3,7 @@ html, body {
     height: 100%;
     width: 100%;
     padding-top: 30px;
+    overflow-x: hidden;
     /*background: rgba(203, 203, 210, 0.15);*/
 }
 
@@ -40,10 +41,10 @@ footer {
     }
 
     .content {
-        margin-left: 25%;
+        margin-left: 22%;
         flex-basis: 0;
         -ms-flex-positive: 1;
         flex-grow: 1;
-        max-width: 75%;
+        max-width: 78%;
     }
 }

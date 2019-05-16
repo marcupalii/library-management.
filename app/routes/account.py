@@ -5,11 +5,9 @@ from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_boo
 from flask_login import login_required, current_user
 from flask import jsonify
 
-
-@app.route("/account")
+@app.route('/book_type_statistics/',methods=["GET"])
 @login_required
-def account():
-
+def book_type_statistics():
     types = {}
     log = Log.query.filter_by(id_user=current_user.id).first()
     entry_logs = None
@@ -23,19 +21,26 @@ def account():
             if book.type not in types.keys():
                 types.update({book.type: 1})
             else:
-                types[book.name] += 1
+                types[book.type] += 1
 
-    types = {item[0]:item[1] for item in sorted(types.items(), key=lambda kv: kv[1])}
+    types = {item[0]: item[1] for item in sorted(types.items(), key=lambda kv: kv[1])}
     response_type = {}
-    if len(types) > 5:
+    if len(types) > 2:
         for k in types.keys():
-            if len(response_type) == 4:
+            if len(response_type) == 2:
                 response_type.update({'others': 0})
-            elif len(response_type) == 5:
+            elif len(response_type) == 3:
                 response_type['others'] += types[k]
             else:
                 response_type.update({k: types[k]})
 
+    return jsonify({
+        "types": response_type if len(response_type) != 0 else types
+    })
+
+@app.route("/account")
+@login_required
+def account():
     advanced_search_form = Advanced_search(search_by_name=False, search_by_type=False, search_by_author=False)
     basic_search_form = Basic_search()
     wishlist_form = Wishlist_form()
@@ -53,7 +58,6 @@ def account():
         basic_search_form=basic_search_form,
         wishlist_form=wishlist_form,
         reserved_book_date=reserved_book_date,
-        statistics_books_type=response_type if len(response_type) != 0 else types
     )
 
 

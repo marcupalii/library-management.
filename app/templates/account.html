@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 
 {% block page_title %}Account Page {% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
 
 {% block styles %}
     {{ super() }}
@@ -13,9 +16,6 @@
 
 {% block scripts %}
     {{ super() }}
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">
-    </script>
     <script src="{{ url_for('.static', filename='js/account.js') }}"></script>
     <script src="{{ url_for('.static', filename='js/account_statistics.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
@@ -24,17 +24,17 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row py-2">
-            <div class="col-sm-4 py-1">
+            <div class="col-md-4 py-1">
                 <div class="card d-flex justify-content-center align-items-center">
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Book type preferred
                     </div>
                     <div class="card-body no-padding">
-                        <canvas id="chDonut1"></canvas>
+                        <canvas id="chart-type-book"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4 py-1">
+            <div class="col-md-4 py-1">
                 <div class="card d-flex justify-content-center align-items-center">
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Title
@@ -44,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4 py-1">
+            <div class="col-md-4 py-1">
                 <div class="card d-flex justify-content-center align-items-center">
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Title
@@ -63,15 +63,9 @@
                     <div class="d-flex justify-content-center align-items-center p-2">
                         Title
                     </div>
-{#                    <div class="chartWrapper">#}
-{#                        <div class="chartAreaWrapper">#}
-{#                            <div class="chartAreaWrapper2">#}
-{#                                <canvas id="chart-Test" height="300" width="1200"></canvas>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <canvas id="axis-Test" height="300" width="0"></canvas>#}
-{#                    </div>#}
-
+                    <div id="chartWrapper">
+                        <canvas id="chart-canvas"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,10 +74,10 @@
     <div class="container-fluid">
         <div class="container-fluid border-content mt-5">
             <div class="row m-2">
-                <div class="col-sm-3 btn border-content search" id="basic-search-change-container">
+                <div class="col-sm-3 btn border-content search btn btn-secondary" id="basic-search-change-container">
                     Basic Search
                 </div>
-                <div class="col-sm-3 btn border-content search" id="advance-search-change-container">
+                <div class="col-sm-3 btn border-content search btn btn-secondary" id="advance-search-change-container">
                     Advance Search
                 </div>
             </div>
@@ -206,12 +200,6 @@
     </div>
 
     <div class="btn btn-default"><a href="#jump-here"><i class="fa fa-chevron-up"></i></a>
-    </div>
-
-    <div class="hidden-content">
-        {% for key in statistics_books_type.keys() %}
-            <div class="statitics-type" id="{{ key }}">{{ statistics_books_type[key] }}</div>
-        {% endfor %}
     </div>
 
 {% endblock %}

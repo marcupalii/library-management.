@@ -31,37 +31,25 @@
     margin-right: 0;
 }
 
-.no-padding {
-    padding: 0 !important;
+#basic-search-change-container, #advance-search-change-container {
+    cursor: pointer;
+    margin-right: 3px;
 }
 
 
-.chartWrapper {
-    position: relative;
+#chartWrapper {
+    width: 100%;
+    min-height: 200px !important;
+    /*max-height: 500px !important;*/
 }
 
-.chartWrapper > canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
-    pointer-events: none;
-}
-
-/* min-width produce overflow pe layout*/
-.chartAreaWrapper {
-    width: 99%;
-    overflow-x: scroll;
-}
 
 @media screen and (max-width: 768px) {
-    /*#chart-Test {*/
-        /*width: 768px !important;*/
-    /*}*/
 
     .no-padding {
-        padding: 0 !important;
-        max-width: 250px;
-        max-height: 250px;
+        /*padding: 0!important;*/
+        max-width: 300px;
+        max-height: 300px;
     }
 
 }
