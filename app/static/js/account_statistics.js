@@ -15,7 +15,6 @@ $(function () {
             success: function (data) {
                 create_books_type_statistics(data['types']);
             }
-
         });
     }
 
@@ -23,6 +22,7 @@ $(function () {
 
         let label_types = [];
         let data_types = [];
+        // let data_received = get_data_book_type_statistics();
         for (key in data_received) {
             label_types.push(key);
             data_types.push(data_received[key]);
@@ -65,25 +65,76 @@ $(function () {
             });
         }
     }
+    function get_data_user_trust_coeff() {
+        $.ajax({
+            type: "GET",
+            url: "/user_trust_coeff_statistics/",
+            dataType: "json",
+            success: function (data) {
+                create_user_trust_coeff_statistics(data['coeff']);
+            }
+        });
+    }
+    function create_user_trust_coeff_statistics(coeff) {
+        let labels = [];
+        let data = [Math.abs(coeff),100-Math.abs(coeff)];
+        let backgroundColor = '#C0C0C0';
+        if (coeff<0){
+            labels.push("late");
+            backgroundColor = "red";
+        }else if (coeff >0){
+            labels.push("earlier");
+            backgroundColor = "green";
+        }else{
+            labels.push("no data")
+        }
 
-    function create_statistics_2() {
-        let chartData = {
-            labels: ['Science', 'Literature'],
-            datasets: [
-                {
-                    backgroundColor: colors.slice(0, 3),
-                    borderWidth: 0,
-                    data: [40, 45]
-                }
-            ]
+        let options = {
+            legend: {position: 'bottom', padding: 5, labels: {pointStyle: 'circle', usePointStyle: true}},
+            responsive: true,
+            maintainAspectRatio: false,
+            cutoutPercentage: 85,
+            tooltips: {enabled: false},
+            hover: {mode: null}
         };
-        let chart = document.getElementById("chDonut2");
+        let chartData = {
+            labels: labels,
+            datasets: [{
+                backgroundColor: [backgroundColor],
+                data: data
+            }]
+        };
+
+        let plugin_setting = [{
+            beforeDraw: function (chart) {
+                let width = chart.chart.width,
+                    height = chart.chart.height,
+                    ctx = chart.chart.ctx;
+
+                ctx.restore();
+                let fontSize = (height / 150).toFixed(2);
+                ctx.font = fontSize + "em sans-serif";
+                ctx.fillStyle = "#9b9b9b";
+                ctx.textBaseline = "middle";
+
+                let text = Math.abs(coeff).toString()+'%',
+                    textX = Math.round((width - ctx.measureText(text).width) / 2),
+                    textY = height / 2.4;
+
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+            }
+        }];
+
+        var chart = document.getElementById("chart-user-trust-coeff");
         chart.height = 200;
+
         if (chart) {
             new Chart(chart, {
                 type: 'pie',
                 data: chartData,
-                options: options_pie_chart
+                plugins: plugin_setting,
+                options: options
             });
         }
     }
@@ -112,7 +163,7 @@ $(function () {
     }
 
     get_data_book_type_statistics();
-    create_statistics_2();
+    get_data_user_trust_coeff();
     create_statistics_3();
 
 
@@ -143,8 +194,20 @@ $(function () {
             data: generateData(),
             backgroundColor: 'transparent',
             borderColor: colors[0],
-            borderWidth: 4,
+            borderWidth: 2,
             pointBackgroundColor: colors[0]
+        }, {
+            data: generateData(),
+            backgroundColor: 'transparent',
+            borderColor: colors[1],
+            borderWidth: 2,
+            pointBackgroundColor: colors[1]
+        }, {
+            data: generateData(),
+            backgroundColor: 'transparent',
+            borderColor: colors[2],
+            borderWidth: 2,
+            pointBackgroundColor: colors[2]
         }]
     };
 
@@ -158,7 +221,7 @@ $(function () {
             tooltips: {
                 titleFontSize: 0,
                 titleMarginBottom: 0,
-                bodyFontSize: 14
+                bodyFontSize: 14,
             },
             legend: {
                 display: false

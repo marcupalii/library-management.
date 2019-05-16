@@ -5,6 +5,15 @@ from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_boo
 from flask_login import login_required, current_user
 from flask import jsonify
 
+
+@app.route('/user_trust_coeff_statistics/',methods=["GET"])
+@login_required
+def user_trust_coeff_statistics():
+    return jsonify({
+        'coeff': current_user.trust_coeff
+    })
+
+
 @app.route('/book_type_statistics/',methods=["GET"])
 @login_required
 def book_type_statistics():

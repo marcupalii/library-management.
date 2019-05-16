@@ -34,12 +34,13 @@
 #basic-search-change-container, #advance-search-change-container {
     cursor: pointer;
     margin-right: 3px;
+    margin-bottom: 3px;
 }
 
 
 #chartWrapper {
     width: 100%;
-    min-height: 200px !important;
+    min-height: 200px!important;
     /*max-height: 500px !important;*/
 }
 
