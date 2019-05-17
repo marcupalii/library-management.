@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, DecimalField, DateField
+from wtforms import StringField, PasswordField, BooleanField, DecimalField, DateField, RadioField
 from wtforms.validators import InputRequired, Email, Length, NumberRange, Optional
 
 
@@ -55,3 +55,6 @@ class Reserved_book_date(FlaskForm):
             self.startdate.errors.append(msg)
             return False
         return True
+
+class Wishlist_settings(FlaskForm):
+    setting_option = RadioField('After failed to accept the given book : ', choices=[('1',"Don`t change the wishlist state"), ('2','Remove the book'),('3','Add it to the end of the wishlist')],validators=[InputRequired()])

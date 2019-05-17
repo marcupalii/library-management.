@@ -12,6 +12,7 @@
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('.static', filename='js/books_log.js') }}"></script>
+    <script src="{{ url_for('.static', filename='js/sidebar_modal_settings.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -109,5 +110,47 @@
             </div>
         </div>
 
+    </div>
+{% endblock %}
+
+{% block sidebar_settings %}
+    <div class="container">
+        <div class="modal fade" id="sidebar-modal-settings" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Wishlist settings</h4>
+                        <button type="button" class="close" id="close-settings">&times;
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <form id="sidebar-settings-form" class="container-fluid" method="post" novalidate>
+                                {{ wishlist_settings.hidden_tag() }}
+                                <div class="row mb-4">
+                                    {{ wishlist_settings.setting_option.label }}
+                                </div>
+                                {% for option in wishlist_settings.setting_option %}
+                                    <div class="row mb-2">
+                                        <div class="col-9">
+                                            {{ option.label }}
+                                        </div>
+                                        <div class="col">
+                                            {{ option }}
+                                        </div>
+
+                                    </div>
+                                {% endfor %}
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="Submit" id="sidebar-save-settings-button" class="btn btn-secondary"><i
+                                class="">Save</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

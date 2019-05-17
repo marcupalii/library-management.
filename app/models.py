@@ -20,6 +20,7 @@ class User(UserMixin, db.Model):
     trust_coeff = db.Column(db.Integer, nullable=False)
 
     next_book = db.relationship('NextBook', uselist=False, backref='user')
+    settings = db.relationship('User_settings',uselist=False,backref='user')
     wishlist = db.relationship('Wishlist', backref='user', uselist=False)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
@@ -110,6 +111,7 @@ class NextBook(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     id_book = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=True)
     id_series_book = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=True)
+    rank = db.Column(db.Integer,default=0)
     period = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(20), nullable=False)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
@@ -122,7 +124,6 @@ class NextBook(db.Model):
                                                                                                 self.id_series_book,
                                                                                                 self.period,
                                                                                                 self.status)
-
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -168,153 +169,168 @@ class Notifications(db.Model):
         pytz.timezone('Europe/Bucharest')))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
+class User_settings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    wishlist_option = db.Column(db.Integer, default=1)
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+        pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
 import random
 
 if __name__ == "__main__":
-    # db.create_all()
-    #
-    # # ----------------------       ONE TO MANY model   ------------------------------------
-    # author1 = Author(
-    #     name="author1",
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest'))
-    # )
-    # author2 = Author(
-    #     name="author2",
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest'))
-    # )
-    # author3 = Author(
-    #     name="author3",
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest'))
-    # )
-    # author4 = Author(
-    #     name="author4",
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest'))
-    # )
-    # author5 = Author(
-    #     name="author5",
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest'))
-    # )
-    # db.session.add(author1)
-    # db.session.add(author2)
-    # db.session.add(author3)
-    # db.session.add(author4)
-    # db.session.add(author5)
-    # db.session.commit()
-    # authors = [author1, author2, author3, author4, author5]
-    #
-    # for i in range(1, 50):
-    #     total = random.choice([2, 3, 4])
-    #     free = random.choice([0, 1, 2])
-    #     book = Book(
-    #         name="book{}".format(i),
-    #         author=random.choice(authors),
-    #         type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
-    #         count_total=total + 2,
-    #         count_free_books=free + 2,
-    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #             pytz.timezone('Europe/Bucharest'))
-    #     )
-    #     db.session.add(book)
-    #     for j in range(1, 4):
-    #         book_series = BookSeries(
-    #             book=book,
-    #             series="{}SL{}".format(i, j),
-    #             status="available",
-    #             created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #                 pytz.timezone('Europe/Bucharest'))
-    #         )
-    #         db.session.add(book_series)
-    #     db.session.commit()
-    #
-    # #  ---------------------- ------------- ------------------------------------
-    #
-    # admin = User(
-    #     first_name='Jhon',
-    #     last_name='Doe',
-    #     address="Main str nr 26",
-    #     email='admin@gmail.com',
-    #     type='admin',
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest')),
-    #     password=hashlib.sha512("admin".encode()).hexdigest(),
-    #     trust_coeff=0
-    # )
-    #
-    # db.session.add(admin)
-    # db.session.commit()
-    # wishlist = Wishlist(
-    #     user=admin,
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest'))
-    # )
-    # db.session.add(wishlist)
-    # db.session.commit()
-    #
-    # next_book2 = NextBook(
-    #     user=admin,
-    #     period=0,
-    #     status="None",
-    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #         pytz.timezone('Europe/Bucharest')
-    #     )
-    # )
-    # db.session.add(next_book2)
-    # db.session.commit()
-    #
-    # for i in range(1, 20):
-    #     user = User(
-    #         first_name='first{}'.format(i),
-    #         last_name='last{}'.format(i),
-    #         address="Main str nr 26",
-    #         email='user{}@gmail.com'.format(i), type='user',
-    #         password=hashlib.sha512("user{}".format(i).encode()).hexdigest(),
-    #         trust_coeff=random.choice([-20, -10, 10, 0, 20, 40]),
-    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #             pytz.timezone('Europe/Bucharest'))
-    #     )
-    #
-    #     db.session.add(user)
-    #     db.session.commit()
-    #     wishlist = Wishlist(
-    #         user=user,
-    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #             pytz.timezone('Europe/Bucharest'))
-    #     )
-    #     db.session.add(wishlist)
-    #     db.session.commit()
-    #
-    #     next_book = NextBook(
-    #         user=user,
-    #         period=0,
-    #         status="None",
-    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #             pytz.timezone('Europe/Bucharest'))
-    #     )
-    #     db.session.add(next_book)
-    #     db.session.commit()
-    #
-    # print(User.query.all())
-    # print(Book.query.all())
-    # print(BookSeries.query.all())
-    # print(Wishlist.query.all())
-    # print(EntryWishlist.query.all())
-    # print(NextBook.query.all())
+    db.create_all()
+
+    # ----------------------       ONE TO MANY model   ------------------------------------
+    author1 = Author(
+        name="author1",
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
+    )
+    author2 = Author(
+        name="author2",
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
+    )
+    author3 = Author(
+        name="author3",
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
+    )
+    author4 = Author(
+        name="author4",
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
+    )
+    author5 = Author(
+        name="author5",
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
+    )
+    db.session.add(author1)
+    db.session.add(author2)
+    db.session.add(author3)
+    db.session.add(author4)
+    db.session.add(author5)
+    db.session.commit()
+    authors = [author1, author2, author3, author4, author5]
+
+    for i in range(1, 50):
+        total = random.choice([2, 3, 4])
+        free = random.choice([0, 1, 2])
+        book = Book(
+            name="book{}".format(i),
+            author=random.choice(authors),
+            type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
+            count_total=total + 2,
+            count_free_books=free + 2,
+            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+        )
+        db.session.add(book)
+        for j in range(1, 4):
+            book_series = BookSeries(
+                book=book,
+                series="{}SL{}".format(i, j),
+                status="available",
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                    pytz.timezone('Europe/Bucharest'))
+            )
+            db.session.add(book_series)
+        db.session.commit()
+
+    #  ---------------------- ------------- ------------------------------------
+
+    admin = User(
+        first_name='Jhon',
+        last_name='Doe',
+        address="Main str nr 26",
+        email='admin@gmail.com',
+        type='admin',
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest')),
+        password=hashlib.sha512("admin".encode()).hexdigest(),
+        trust_coeff=0
+    )
+
+    db.session.add(admin)
+    db.session.commit()
+    wishlist = Wishlist(
+        user=admin,
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
+    )
+    db.session.add(wishlist)
+    db.session.commit()
+
+    next_book2 = NextBook(
+        user=admin,
+        period=0,
+        status="None",
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest')
+        )
+    )
+    db.session.add(next_book2)
+    db.session.commit()
+
+    settings = User_settings(
+        user=admin,
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest')
+        )
+    )
+    db.session.add(settings)
+    db.session.commit()
+    for i in range(1, 20):
+        user = User(
+            first_name='first{}'.format(i),
+            last_name='last{}'.format(i),
+            address="Main str nr 26",
+            email='user{}@gmail.com'.format(i), type='user',
+            password=hashlib.sha512("user{}".format(i).encode()).hexdigest(),
+            trust_coeff=random.choice([-20, -10, 10, 0, 20, 40]),
+            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+        )
+
+        db.session.add(user)
+        db.session.commit()
+        wishlist = Wishlist(
+            user=user,
+            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+        )
+        db.session.add(wishlist)
+        db.session.commit()
+
+        next_book = NextBook(
+            user=user,
+            period=0,
+            status="None",
+            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+        )
+        db.session.add(next_book)
+        db.session.commit()
+
+        settings = User_settings(
+            user=user,
+            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest')
+            )
+        )
+        db.session.add(settings)
+        db.session.commit()
+
+
+    print(User.query.all())
+    print(Book.query.all())
+    print(BookSeries.query.all())
+    print(Wishlist.query.all())
+    print(EntryWishlist.query.all())
+    print(NextBook.query.all())
 
     # DROP SCHEMA public CASCADE;
     # CREATE SCHEMA public;
-
-
-    next_book = NextBook.query.filter_by(status="Pending").all()
-
-    for entry in next_book:
-        time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
-        time_entry = entry.updated_at
-        print("time_entry=", time_entry, "   time_now=", time_now)
-        if (time_now - (time_entry + timedelta(seconds=50))) >= timedelta(seconds=0):
-            print("lost the book")

@@ -1,5 +1,5 @@
 from app import celery, logger, db
-from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications
+from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications, User_settings, User
 from app.Stable_matching_algorithm.algorithm import Stable_matching
 from datetime import datetime, timedelta
 import pytz
@@ -68,72 +68,113 @@ def write_result_of_matching(matched):
 
         # check if user still wanted the book
         wishList = Wishlist.query.filter_by(id_user=user_id).first()
-        _entry_wishlit = EntryWishlist.query.filter_by(
+        entry_wishlit = EntryWishlist.query.filter_by(
             id_wishlist=wishList.id,
             id_book=matched[user_id]['book_id'],
             period=matched[user_id]['nr_of_days'],
         ).first()
 
-        _next_book = NextBook.query.filter_by(id_user=user_id).first()
+        next_book = NextBook.query.filter_by(id_user=user_id).first()
 
-        if _entry_wishlit:
-            rank = _entry_wishlit.rank
+        if entry_wishlit:
+            rank = entry_wishlit.rank
 
-            db.session.delete(_entry_wishlit)
+            db.session.delete(entry_wishlit)
 
-            _book_series = BookSeries.query.filter_by(
+            book_series = BookSeries.query.filter_by(
                 book_id=matched[user_id]['book_id'],
                 status="available"
             ).first()
 
-            _book_series.status = "taken"
+            book_series.status = "taken"
 
-            _book = Book.query.filter_by(id=matched[user_id]['book_id']).first()
-            _book.count_free_books -= 1
+            book = Book.query.filter_by(id=matched[user_id]['book_id']).first()
+            book.count_free_books -= 1
 
-            _next_book.id_book = matched[user_id]['book_id']
-            _next_book.id_series_book = _book_series.id
-            _next_book.period = matched[user_id]['nr_of_days']
-            _next_book.status = "Pending"
+            next_book.id_book = matched[user_id]['book_id']
+            next_book.id_series_book = book_series.id
+            next_book.period = matched[user_id]['nr_of_days']
+            next_book.status = "Pending"
+            next_book.rank = rank
 
             db.session.commit()
 
-            print("_next_book", _next_book.id_book, _next_book.period, _next_book.status, _next_book.id_series_book)
+            print("_next_book", next_book.id_book, next_book.period, next_book.status, next_book.id_series_book)
 
             update_ranks(rank, wishList.id)
             generate_notification(matched[user_id], user_id)
 
 
 def clean_unaccepted_books():
-    _next_book = NextBook.query.filter_by(status="Pending").all()
+    next_book = NextBook.query.filter_by(status="Pending").all()
 
-    for entry in _next_book:
+    for entry in next_book:
         time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
         time_entry = entry.updated_at
-        print("time_entry=", time_entry, "   time_now=", time_now)
+        # timedelta(hours=3)
         if (time_now - (time_entry + timedelta(seconds=50))) >= timedelta(seconds=0):
-            print("lost the book")
-            _book = Book.query.filter_by(id=entry.id_book).first()
-            _book.count_free_books += 1
-            _book_series = BookSeries.query.filter_by(id=entry.id_series_book).first()
-            _book_series.status = "available"
+
+            book = Book.query.filter_by(id=entry.id_book).first()
+            book.count_free_books += 1
+            book_series = BookSeries.query.filter_by(id=entry.id_series_book).first()
+            book_series.status = "available"
+
+            rank = entry.rank
+            id_user = entry.id_user
+            period = entry.period
+            id_book = entry.id_book
 
             entry.updated_at = time_now
             entry.id_book = None
             entry.id_series_book = None
             entry.period = None
             entry.status = "None"
+            entry.rank = 0
 
             notification = Notifications(
                 id_user=entry.id_user,
-                content="You lost the {} book, because u did not accept within 3hrs ".format(_book.name),
+                content="You lost the {} book, because u did not accept within 3hrs ".format(book.name),
                 status="unread",
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                     pytz.timezone('Europe/Bucharest'))
             )
             db.session.add(notification)
-
             db.session.commit()
+
+            settings = User_settings.query.filter_by(id_user=id_user).first()
+
+            if settings.wishlist_option == 1:
+                id_wishlist = User.query.filter_by(id=id_user).first().wishlist.id
+                entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=id_wishlist).all()
+
+                for entry in entry_wishlist:
+                    if entry.rank >= rank:
+                        entry.rank += 1
+                        db.session.commit()
+
+                entry_wishlist = EntryWishlist(
+                    id_wishlist=id_wishlist,
+                    id_book=id_book,
+                    rank=rank,
+                    period=period,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(entry_wishlist)
+                db.session.commit()
+            elif settings.wishlist_option == 3:
+                id_wishlist = User.query.filter_by(id=id_user).first().wishlist.id
+                last_rank = EntryWishlist.query.filter_by(id_wishlist=id_wishlist).count()
+                entry_wishlist = EntryWishlist(
+                    id_wishlist=id_wishlist,
+                    id_book=id_book,
+                    rank=last_rank+1,
+                    period=period,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(entry_wishlist)
+                db.session.commit()
 
 
 @celery.task()

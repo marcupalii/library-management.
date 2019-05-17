@@ -1,7 +1,7 @@
 from flask import render_template, request, url_for, redirect
 from app import app, db
-from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Author, Log, EntryLog
-from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_book_date
+from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Author, Log, EntryLog, User_settings
+from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_book_date, Wishlist_settings
 from flask_login import login_required, current_user
 from flask import jsonify
 from datetime import datetime
@@ -63,12 +63,17 @@ def account():
     else:
         wishlist_form.rank.label = "Rank({})".format(1)
 
+    wishlist_settings = Wishlist_settings()
+    wishlist_settings.setting_option.default = str(current_user.settings.wishlist_option)
+    wishlist_settings.process()
+
     return render_template(
         'account.html',
         advanced_search_form=advanced_search_form,
         basic_search_form=basic_search_form,
         wishlist_form=wishlist_form,
         reserved_book_date=reserved_book_date,
+        wishlist_settings=wishlist_settings
     )
 
 
@@ -458,3 +463,17 @@ def mark_notification_read():
             db.session.commit()
 
         return render_template("layout.html", id_user=current_user.id)
+
+@app.route("/save_settings/",methods=["POST"])
+@login_required
+def save_settings():
+
+    form = Wishlist_settings()
+    if form.validate_on_submit():
+        settings = User_settings.query.filter_by(id_user=current_user.id).first()
+        settings.wishlist_option = int(form.setting_option.data)
+        db.session.commit()
+        return jsonify({
+            'option': form.setting_option.data
+        })
+    return jsonify(data=form.errors)

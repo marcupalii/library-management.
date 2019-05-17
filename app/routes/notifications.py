@@ -2,7 +2,7 @@ from flask import render_template, url_for
 from app import app
 from app.models import User, Notifications
 from flask_login import login_required, current_user
-
+from app.forms import Wishlist_settings
 
 @app.route("/notifications/page/<page>/focus=<id>/")
 @login_required
@@ -46,6 +46,10 @@ def notifications(page, id):
         if len(num_list) != 0:
             nr_of_pages = num_list[-1]
 
+    wishlist_settings = Wishlist_settings()
+    wishlist_settings.setting_option.default = str(current_user.settings.wishlist_option)
+    wishlist_settings.process()
+
     return render_template(
         "notifications.html",
         notifications=response,
@@ -53,5 +57,6 @@ def notifications(page, id):
         next_url=next_url,
         prev_url=prev_url,
         num_list=num_list,
-        nr_of_pages=nr_of_pages
+        nr_of_pages=nr_of_pages,
+        wishlist_settings=wishlist_settings
     )

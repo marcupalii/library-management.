@@ -3,7 +3,7 @@ from app import app, db
 from app.models import User, EntryWishlist, Book, Author
 from flask_login import login_required, current_user
 from flask import jsonify
-
+from app.forms import Wishlist_settings
 
 @app.route("/wishlist_delete_entry/<entry_id>", methods=["GET"])
 @login_required
@@ -91,6 +91,10 @@ def wishlist(page, book_id):
             if len(num_list) != 0:
                 nr_of_pages = num_list[-1]
 
+        wishlist_settings = Wishlist_settings()
+        wishlist_settings.setting_option.default = str(current_user.settings.wishlist_option)
+        wishlist_settings.process()
+
         return render_template(
             'wishlist.html',
             wishlist=response,
@@ -98,7 +102,8 @@ def wishlist(page, book_id):
             next_url=next_url,
             prev_url=prev_url,
             num_list=num_list,
-            nr_of_pages=nr_of_pages
+            nr_of_pages=nr_of_pages,
+            wishlist_settings=wishlist_settings
         )
 
 
