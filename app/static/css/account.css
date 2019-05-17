@@ -31,13 +31,15 @@
     margin-right: 0;
 }
 
-#basic-search-change-container, #advance-search-change-container {
+#basic-search-change-container, #advance-search-change-container{
     cursor: pointer;
     margin-right: 3px;
     margin-bottom: 3px;
 }
 
-
+#basic-search-button,#advanced-search-button{
+    cursor: pointer;
+}
 #chartWrapper {
     width: 100%;
     min-height: 200px!important;

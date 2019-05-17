@@ -1,8 +1,9 @@
 from app import db
 import hashlib
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime,timedelta
 import pytz
+
 db.metadata.clear()
 
 
@@ -20,8 +21,9 @@ class User(UserMixin, db.Model):
 
     next_book = db.relationship('NextBook', uselist=False, backref='user')
     wishlist = db.relationship('Wishlist', backref='user', uselist=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return '(Id {} First_name {},Last_Name {} Email {}, Type {}, Pass {} )'.format(self.id, self.first_name,
@@ -35,11 +37,13 @@ class Book(db.Model):
     type = db.Column(db.String(30), nullable=False)
     count_total = db.Column(db.Integer, nullable=False)
     count_free_books = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
     book_series = db.relationship('BookSeries', backref='book', uselist=True)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
     lazy = "dynamic"
+
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+        pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return '( Book {}, Type {}, Count {} {} )  '.format(self.name, self.type, self.count_total,
@@ -50,8 +54,9 @@ class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     books = db.relationship('Book', backref='author', uselist=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
     lazy = "dynamic"
 
     def __repr__(self):
@@ -64,8 +69,9 @@ class BookSeries(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     series = db.Column(db.String(100), unique=True, nullable=False)
     status = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return '( id {}, book_id {}, series {}, status {} )'.format(self.id, self.book_id, self.series, self.status)
@@ -76,8 +82,9 @@ class Wishlist(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     entry_wishlists = db.relationship('EntryWishlist', uselist=True, backref='wishlist')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return "( id {},id_user {})  ".format(self.id, self.id_user)
@@ -89,8 +96,9 @@ class EntryWishlist(db.Model):
     id_book = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     rank = db.Column(db.Integer, nullable=False)
     period = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return "( id {}, id_wishlist {}, id_book {}, rank {}, period {})  ".format(self.id, self.id_wishlist,
@@ -104,10 +112,9 @@ class NextBook(db.Model):
     id_series_book = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=True)
     period = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return "(id {}, id_user {}, id_book {}, id_series_book {}, period {}, status {}".format(self.id, self.id_user,
@@ -122,8 +129,9 @@ class Log(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     entryes_log = db.relationship('EntryLog', uselist=True, backref='log')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return "(id {}, id_user {}, id_entrylog {})  ".format(self.id, self.id_user, self.id_entryLog)
@@ -136,12 +144,13 @@ class EntryLog(db.Model):
     id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
 
     status = db.Column(db.String(30), nullable=False)
-    period_start = db.Column(db.DateTime, nullable=False, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    period_start = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
-    period_end = db.Column(db.DateTime, nullable=False)
+    period_end = db.Column(db.DateTime(timezone=True), nullable=False)
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return "(id {}, id_log {}, id_book_series {}, status {}, period {} {})  ".format(self.id, self.id_log,
@@ -155,8 +164,9 @@ class Notifications(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(10), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
 
 import random
@@ -165,11 +175,31 @@ if __name__ == "__main__":
     # db.create_all()
     #
     # # ----------------------       ONE TO MANY model   ------------------------------------
-    # author1 = Author(name="author1")
-    # author2 = Author(name="author2")
-    # author3 = Author(name="author3")
-    # author4 = Author(name="author4")
-    # author5 = Author(name="author5")
+    # author1 = Author(
+    #     name="author1",
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest'))
+    # )
+    # author2 = Author(
+    #     name="author2",
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest'))
+    # )
+    # author3 = Author(
+    #     name="author3",
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest'))
+    # )
+    # author4 = Author(
+    #     name="author4",
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest'))
+    # )
+    # author5 = Author(
+    #     name="author5",
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest'))
+    # )
     # db.session.add(author1)
     # db.session.add(author2)
     # db.session.add(author3)
@@ -185,27 +215,55 @@ if __name__ == "__main__":
     #         name="book{}".format(i),
     #         author=random.choice(authors),
     #         type="type{}".format(random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
-    #         count_total=total+2,
-    #         count_free_books=free+2
+    #         count_total=total + 2,
+    #         count_free_books=free + 2,
+    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #             pytz.timezone('Europe/Bucharest'))
     #     )
     #     db.session.add(book)
     #     for j in range(1, 4):
-    #         book_series = BookSeries(book=book, series="{}SL{}".format(i,j), status="available")
+    #         book_series = BookSeries(
+    #             book=book,
+    #             series="{}SL{}".format(i, j),
+    #             status="available",
+    #             created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #                 pytz.timezone('Europe/Bucharest'))
+    #         )
     #         db.session.add(book_series)
     #     db.session.commit()
     #
     # #  ---------------------- ------------- ------------------------------------
     #
-    # admin = User(first_name='Jhon', last_name='Doe', address="Main str nr 26", email='admin@gmail.com', type='admin',
-    #              password=hashlib.sha512("admin".encode()).hexdigest(), trust_coeff=0)
+    # admin = User(
+    #     first_name='Jhon',
+    #     last_name='Doe',
+    #     address="Main str nr 26",
+    #     email='admin@gmail.com',
+    #     type='admin',
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest')),
+    #     password=hashlib.sha512("admin".encode()).hexdigest(),
+    #     trust_coeff=0
+    # )
     #
     # db.session.add(admin)
     # db.session.commit()
-    # wishlist = Wishlist(user=admin)
+    # wishlist = Wishlist(
+    #     user=admin,
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest'))
+    # )
     # db.session.add(wishlist)
     # db.session.commit()
     #
-    # next_book2 = NextBook(user=admin, period=0, status="None")
+    # next_book2 = NextBook(
+    #     user=admin,
+    #     period=0,
+    #     status="None",
+    #     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #         pytz.timezone('Europe/Bucharest')
+    #     )
+    # )
     # db.session.add(next_book2)
     # db.session.commit()
     #
@@ -215,16 +273,29 @@ if __name__ == "__main__":
     #         last_name='last{}'.format(i),
     #         address="Main str nr 26",
     #         email='user{}@gmail.com'.format(i), type='user',
-    #         password=hashlib.sha512("user{}".format(i).encode()).hexdigest(), trust_coeff=0
+    #         password=hashlib.sha512("user{}".format(i).encode()).hexdigest(),
+    #         trust_coeff=random.choice([-20, -10, 10, 0, 20, 40]),
+    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #             pytz.timezone('Europe/Bucharest'))
     #     )
     #
     #     db.session.add(user)
     #     db.session.commit()
-    #     wishlist = Wishlist(user=user)
+    #     wishlist = Wishlist(
+    #         user=user,
+    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #             pytz.timezone('Europe/Bucharest'))
+    #     )
     #     db.session.add(wishlist)
     #     db.session.commit()
     #
-    #     next_book = NextBook(user=user, period=0, status="None")
+    #     next_book = NextBook(
+    #         user=user,
+    #         period=0,
+    #         status="None",
+    #         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+    #             pytz.timezone('Europe/Bucharest'))
+    #     )
     #     db.session.add(next_book)
     #     db.session.commit()
     #
@@ -235,15 +306,15 @@ if __name__ == "__main__":
     # print(EntryWishlist.query.all())
     # print(NextBook.query.all())
 
-    types = {
-        "zero":0,
-        "zece":10,
-        "patru":4,
-        "unu": 1,
-        "doi": 2
-    }
-    print(types)
-    types = {item[0]:item[1] for item in sorted(types.items(), key=lambda kv: kv[1])}
-    print(types)
     # DROP SCHEMA public CASCADE;
     # CREATE SCHEMA public;
+
+
+    next_book = NextBook.query.filter_by(status="Pending").all()
+
+    for entry in next_book:
+        time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+        time_entry = entry.updated_at
+        print("time_entry=", time_entry, "   time_now=", time_now)
+        if (time_now - (time_entry + timedelta(seconds=50))) >= timedelta(seconds=0):
+            print("lost the book")

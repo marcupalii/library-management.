@@ -1,35 +1,118 @@
+
 {% extends "layout.html" %}
 
+{% block page_title %}Notifications{% endblock %}
 
-{% block page_title %}Notification {% endblock %}
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/notifications.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/table.css') }}">
+{% endblock %}
 
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('.static', filename='js/notifications.js') }}"></script>
+{% endblock %}
 
 {% block content %}
     <div class="container-fluid mt-5">
-    <h3>Notifications</h3>
 
-    <table class="table small">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th>content</th>
-            <th>status</th>
-            <th>created_at</th>
-        </tr>
-        </thead>
-        {% for notification in notifications %}
-            <tr>
-                <th> {{ notification[0] }} </th>
-                <th> {{ notification[1] }} </th>
-                <th> {{ notification[2] }} </th>
-                <th> {{ notification[3] }} </th>
-            </tr>
-        {% endfor %}
-    </table>
+        <h3>Notifications</h3>
+
+        <div id="collapse-table">
+            <div class="container-fluid no-padding">
+                <table class="table table-bordered" style="border-collapse:collapse;">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Content</th>
+                        <th class="d-none d-md-block">Status</th>
+{#                        <th>Author name</th>#}
+{#                        <th>Period</th>#}
+                        <th class="d-none d-lg-block">Created At</th>
+                    </tr>
+                    </thead>
+                    <tbody id="content-table">
+
+                    {% for entry in notifications %}
+                        <tr colspan="7">
+                            <td class="" id="nr-row-content-{{ entry[0] }}">
+                                {{ entry[0] }}
+                            </td>
+                            <td id="content-row-content-{{ entry[0] }}">
+                                {{ entry[1] }}
+                            </td>
+{#                            <td class="d-none d-md-block" id="book-type-row-content-{{ entry[0] }}">#}
+{#                                {{ entry[2] }}#}
+{#                            </td>#}
+                            <td id="status-row-content-{{ entry[0] }}">
+                                {{ entry[2] }}
+                            </td>
+                            <td id="created-at-row-content-{{ entry[0] }}">
+                                {{ entry[3] }}
+                            </td>
+{#                            <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">#}
+{#                                {{ entry[5] }}#}
+{#                            </td>#}
+                            <td class="hidden-content" id="id-notification-row-content-{{ entry[0] }}">{{ entry[4] }}</td>
+{#                            <td class="last-td">#}
+{#                                <button class="btn accordion-toggle d-lg-none" data-toggle="collapse"#}
+{#                                        data-target="#tr-collapse-id-{{ entry[0] }}"#}
+{#                                        aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}" type="button">#}
+{#                                    <i class="fas fa-expand-arrows-alt"></i>#}
+{#                                </button>#}
+{#                                <button class="btn" type="button">#}
+{#                                    <i class="delete-from-wishlist fa fa-times red"#}
+{#                                       id="/wishlist_delete_entry/{{ entry[6] }}"></i>#}
+{#                                </button>#}
+{#                            </td>#}
+                        </tr>
+
+{#                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"#}
+{#                            id="tr-collapse-id-{{ entry[0] }}">#}
+{#                            <td colspan="6" class="hiddenRow">#}
+{#                                <div class="accordian-body">#}
+{#                                    <p class="d-md-none">Book type: <span>{{ entry[2] }}</span>#}
+{#                                    </p>#}
+{#                                    <p class="d-lg-none">Created at: <span>{{ entry[5] }}</span>#}
+{#                                    </p>#}
+{#                                </div>#}
+{#                            </td>#}
+{#                        </tr>#}
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <ul class="pagination" id="paginationBox">
+                    <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
+                    <li class="page-item">
+                        <button id="prev" class="btn btn-secondary page_num_link page-link">
+                            <a href="{{ prev_url }}">&laquo;</a>
+                        </button>
+                    </li>
+                    {% for nr in num_list %}
+                        {% if nr %}
+                            <li class="page-item">
+                                <button id="{{ nr }}"
+                                        class="btn btn-secondary page_num_link page-link">{{ nr }}</button>
+                            </li>
+                        {% else %}
+                            <li class="page-item">...</li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item">
+                        <button id="next" class="btn btn-secondary page_num_link page-link">
+                            <a href="{{ next_url }}">&raquo;</a>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
     </div>
-
-
-
 {% endblock %}
-

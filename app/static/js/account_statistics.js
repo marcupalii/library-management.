@@ -81,10 +81,10 @@ $(function () {
         let backgroundColor = '#C0C0C0';
         if (coeff<0){
             labels.push("late");
-            backgroundColor = "red";
+            backgroundColor = "#dc3545";
         }else if (coeff >0){
             labels.push("earlier");
-            backgroundColor = "green";
+            backgroundColor = colors[1];
         }else{
             labels.push("no data")
         }

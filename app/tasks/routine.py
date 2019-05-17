@@ -50,12 +50,14 @@ def update_ranks(rank, id_wishlist):
             db.session.commit()
 
 
-def generate_notification(match,user_id):
+def generate_notification(match, user_id):
     notification = Notifications(
         id_user=user_id,
         content="You received the {} book, you have 3hrs to accept or deny!".format(
             Book.query.filter_by(id=match['book_id']).first().name),
-        status="unread"
+        status="unread",
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
     )
     db.session.add(notification)
     db.session.commit()
@@ -69,7 +71,7 @@ def write_result_of_matching(matched):
         _entry_wishlit = EntryWishlist.query.filter_by(
             id_wishlist=wishList.id,
             id_book=matched[user_id]['book_id'],
-            period=matched[user_id]['nr_of_days']
+            period=matched[user_id]['nr_of_days'],
         ).first()
 
         _next_book = NextBook.query.filter_by(id_user=user_id).first()
@@ -91,7 +93,7 @@ def write_result_of_matching(matched):
 
             _next_book.id_book = matched[user_id]['book_id']
             _next_book.id_series_book = _book_series.id
-            _next_book.period =matched[user_id]['nr_of_days']
+            _next_book.period = matched[user_id]['nr_of_days']
             _next_book.status = "Pending"
 
             db.session.commit()
@@ -99,7 +101,7 @@ def write_result_of_matching(matched):
             print("_next_book", _next_book.id_book, _next_book.period, _next_book.status, _next_book.id_series_book)
 
             update_ranks(rank, wishList.id)
-            generate_notification(matched[user_id],user_id)
+            generate_notification(matched[user_id], user_id)
 
 
 def clean_unaccepted_books():
@@ -107,8 +109,10 @@ def clean_unaccepted_books():
 
     for entry in _next_book:
         time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
-        time_entry = entry.updated_at.replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
-        if (time_entry + timedelta(seconds=50)) - time_now >= timedelta(seconds=0):
+        time_entry = entry.updated_at
+        print("time_entry=", time_entry, "   time_now=", time_now)
+        if (time_now - (time_entry + timedelta(seconds=50))) >= timedelta(seconds=0):
+            print("lost the book")
             _book = Book.query.filter_by(id=entry.id_book).first()
             _book.count_free_books += 1
             _book_series = BookSeries.query.filter_by(id=entry.id_series_book).first()
@@ -123,7 +127,9 @@ def clean_unaccepted_books():
             notification = Notifications(
                 id_user=entry.id_user,
                 content="You lost the {} book, because u did not accept within 3hrs ".format(_book.name),
-                status="unread"
+                status="unread",
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                    pytz.timezone('Europe/Bucharest'))
             )
             db.session.add(notification)
 

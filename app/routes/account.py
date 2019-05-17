@@ -4,9 +4,10 @@ from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Aut
 from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_book_date
 from flask_login import login_required, current_user
 from flask import jsonify
+from datetime import datetime
+import pytz
 
-
-@app.route('/user_trust_coeff_statistics/',methods=["GET"])
+@app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
 def user_trust_coeff_statistics():
     return jsonify({
@@ -14,7 +15,7 @@ def user_trust_coeff_statistics():
     })
 
 
-@app.route('/book_type_statistics/',methods=["GET"])
+@app.route('/book_type_statistics/', methods=["GET"])
 @login_required
 def book_type_statistics():
     types = {}
@@ -46,6 +47,7 @@ def book_type_statistics():
     return jsonify({
         "types": response_type if len(response_type) != 0 else types
     })
+
 
 @app.route("/account")
 @login_required
@@ -88,8 +90,14 @@ def add_to_wishlist():
                         entry.rank += 1
                         db.session.commit()
 
-                new_entry = EntryWishlist(wishlist=wishlist, id_book=book.id, rank=form.rank.data,
-                                          period=form.days_number.data)
+                new_entry = EntryWishlist(
+                    wishlist=wishlist,
+                    id_book=book.id,
+                    rank=form.rank.data,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest')),
+                    period=form.days_number.data
+                )
 
                 db.session.add(new_entry)
                 db.session.commit()
@@ -133,14 +141,17 @@ def basic_search_book():
                     book_series = BookSeries.query.filter_by(book_id=entry[0].id).all()
 
                     status = ""
-                    for series in book_series:
-                        entry_log = EntryLog.query.filter_by(
-                            id_book_series=series.id,
-                            status="Reserved"
-                        ).all()
-                        if entry_log:
-                            status = "Reserved"
-                            break
+                    log = Log.query.filter_by(id_user=current_user.id).first()
+                    if log:
+                        for series in book_series:
+                            entry_log = EntryLog.query.filter_by(
+                                id_book_series=series.id,
+                                status="Reserved",
+                                id_log=log.id
+                            ).all()
+                            if entry_log:
+                                status = "Reserved"
+                                break
 
                     if status == "":
                         if entry_wishlist:
@@ -198,13 +209,14 @@ def advanced_search_book():
 
                 ids_current_books = []
                 log = Log.query.filter_by(id_user=current_user.id).first()
-                entry_logs = db.session().query(EntryLog).filter(
-                    (EntryLog.id_log == log.id)
-                    & ~(EntryLog.status == "Returned")
-                ).all()
+                if log:
+                    entry_logs = db.session().query(EntryLog).filter(
+                        (EntryLog.id_log == log.id)
+                        & ~(EntryLog.status == "Returned")
+                    ).all()
 
-                for entry in entry_logs:
-                    ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
+                    for entry in entry_logs:
+                        ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
 
                 book_author_join = db.session() \
                     .query(Book) \
@@ -233,13 +245,14 @@ def advanced_search_book():
 
                 ids_current_books = []
                 log = Log.query.filter_by(id_user=current_user.id).first()
-                entry_logs = db.session().query(EntryLog).filter(
-                    (EntryLog.id_log == log.id)
-                    & ~(EntryLog.status == "Returned")
-                ).all()
+                if log:
+                    entry_logs = db.session().query(EntryLog).filter(
+                        (EntryLog.id_log == log.id)
+                        & ~(EntryLog.status == "Returned")
+                    ).all()
 
-                for entry in entry_logs:
-                    ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
+                    for entry in entry_logs:
+                        ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
 
                 book_author_join = db.session() \
                     .query(Book) \
@@ -279,13 +292,13 @@ def advanced_search_book():
             elif form.exclude_current_book.data:
                 ids_current_books = []
                 log = Log.query.filter_by(id_user=current_user.id).first()
-                entry_logs = db.session().query(EntryLog).filter(
-                    (EntryLog.id_log == log.id)
-                    & ~(EntryLog.status == "Returned")
-                ).all()
-
-                for entry in entry_logs:
-                    ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
+                if log:
+                    entry_logs = db.session().query(EntryLog).filter(
+                        (EntryLog.id_log == log.id)
+                        & ~(EntryLog.status == "Returned")
+                    ).all()
+                    for entry in entry_logs:
+                        ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
 
                 book_author_join = db.session() \
                     .query(Book) \
@@ -325,14 +338,17 @@ def advanced_search_book():
                     book_series = BookSeries.query.filter_by(book_id=entry[0].id).all()
 
                     status = ""
-                    for series in book_series:
-                        entry_log = EntryLog.query.filter_by(
-                            id_book_series=series.id,
-                            status="Reserved"
-                        ).all()
-                        if entry_log:
-                            status = "Reserved"
-                            break
+                    log = Log.query.filter_by(id_user=current_user.id).first()
+                    if log:
+                        for series in book_series:
+                            entry_log = EntryLog.query.filter_by(
+                                id_book_series=series.id,
+                                status="Reserved",
+                                id_log=log.id
+                            ).all()
+                            if entry_log:
+                                status = "Reserved"
+                                break
 
                     if status == "":
                         if entry_wishlist:
@@ -368,7 +384,12 @@ def add_to_reserved():
 
             book_log = Log.query.filter_by(id_user=current_user.id).first()
             if not book_log:
-                book_log = Log(id_user=current_user.id)
+                book_log = Log(
+                    id_user=current_user.id,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+
+                )
                 db.session.add(book_log)
                 db.session.commit()
             book_log = Log.query.filter_by(id_user=current_user.id).first()
@@ -386,7 +407,9 @@ def add_to_reserved():
                 id_book_series=BookSeries.query.filter_by(book_id=form.book_id_reserved.data).first().id,
                 status="Reserved",
                 period_start=form.startdate.data,
-                period_end=form.enddate.data
+                period_end=form.enddate.data,
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                    pytz.timezone('Europe/Bucharest'))
             )
             db.session.add(entry_log)
             db.session.commit()
