@@ -63,7 +63,7 @@
         min-width: 100%;
         min-height: 100%;
         position: absolute;
-        z-index: 0;
+        z-index: 1;
         -webkit-transition: all .25s ease-out;
         -o-transition: all .25s ease-out;
         transition: all .25s ease-out;

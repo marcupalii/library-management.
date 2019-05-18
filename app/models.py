@@ -1,7 +1,7 @@
 from app import db
 import hashlib
 from flask_login import UserMixin
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 import pytz
 
 db.metadata.clear()
@@ -9,10 +9,15 @@ db.metadata.clear()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    library_card_id = db.Column(db.String(10), unique=True)
 
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
+
     address = db.Column(db.String(150), nullable=False)
+    city = db.Column(db.String(80), nullable=False)
+    country = db.Column(db.String(80), nullable=False)
+    zip_code = db.Column(db.String(20), nullable=False)
 
     email = db.Column(db.String(120), unique=True, nullable=False)
     type = db.Column(db.String(30), nullable=False)
@@ -20,7 +25,7 @@ class User(UserMixin, db.Model):
     trust_coeff = db.Column(db.Integer, nullable=False)
 
     next_book = db.relationship('NextBook', uselist=False, backref='user')
-    settings = db.relationship('User_settings',uselist=False,backref='user')
+    settings = db.relationship('User_settings', uselist=False, backref='user')
     wishlist = db.relationship('Wishlist', backref='user', uselist=False)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
@@ -111,7 +116,7 @@ class NextBook(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     id_book = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=True)
     id_series_book = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=True)
-    rank = db.Column(db.Integer,default=0)
+    rank = db.Column(db.Integer, default=0)
     period = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(20), nullable=False)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
@@ -124,6 +129,7 @@ class NextBook(db.Model):
                                                                                                 self.id_series_book,
                                                                                                 self.period,
                                                                                                 self.status)
+
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -169,6 +175,7 @@ class Notifications(db.Model):
         pytz.timezone('Europe/Bucharest')))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
+
 class User_settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -176,6 +183,7 @@ class User_settings(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+
 
 import random
 
@@ -245,13 +253,17 @@ if __name__ == "__main__":
     admin = User(
         first_name='Jhon',
         last_name='Doe',
-        address="Main str nr 26",
+        address="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09",
         email='admin@gmail.com',
         type='admin',
         created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
             pytz.timezone('Europe/Bucharest')),
         password=hashlib.sha512("admin".encode()).hexdigest(),
-        trust_coeff=0
+        trust_coeff=0,
+        library_card_id="100AAA0000",
+        zip_code="932010",
+        country="Romania",
+        city="Iasi"
     )
 
     db.session.add(admin)
@@ -284,15 +296,25 @@ if __name__ == "__main__":
     db.session.add(settings)
     db.session.commit()
     for i in range(1, 20):
+        library_card_id = ""
+        if i < 10:
+            library_card_id = "000AAA000{}".format(i)
+        else:
+            library_card_id = "000AAA00{}".format(i)
         user = User(
             first_name='first{}'.format(i),
             last_name='last{}'.format(i),
-            address="Main str nr 26",
-            email='user{}@gmail.com'.format(i), type='user',
+            address="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09",
+            email='user{}@gmail.com'.format(i),
+            type='user',
             password=hashlib.sha512("user{}".format(i).encode()).hexdigest(),
             trust_coeff=random.choice([-20, -10, 10, 0, 20, 40]),
             created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                pytz.timezone('Europe/Bucharest'))
+                pytz.timezone('Europe/Bucharest')),
+            library_card_id=library_card_id,
+            city="Iasi",
+            country="Romania",
+            zip_code="970632"
         )
 
         db.session.add(user)
@@ -324,13 +346,11 @@ if __name__ == "__main__":
         db.session.add(settings)
         db.session.commit()
 
-
     print(User.query.all())
     print(Book.query.all())
     print(BookSeries.query.all())
     print(Wishlist.query.all())
     print(EntryWishlist.query.all())
     print(NextBook.query.all())
-
-    # DROP SCHEMA public CASCADE;
-    # CREATE SCHEMA public;
+# # DROP SCHEMA public CASCADE;
+# # CREATE SCHEMA public;

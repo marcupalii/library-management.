@@ -30,7 +30,7 @@ $(document).ready(function () {
                 }
             }
 
-            setTimeout(change_content_index, 1000);
+            setTimeout(change_content_index, 1500);
 
         } else {
             $('.content').css("z-index", "-1");

@@ -29,3 +29,19 @@
 .card .content-profile {
     padding: 15px 15px 10px 15px;
 }
+
+.border-content {
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+}
+
+.has-error {
+    border-color: #dc3545
+}
+
+.err-msg {
+    margin-top: -15px;
+    margin-left: 0!important;
+    max-height: 0!important;
+    color: #dc3545 !important;
+}
