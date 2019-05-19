@@ -34,6 +34,11 @@ footer {
     max-width: 100%;
 }
 
+.border-bottom {
+    border-bottom: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+}
+
 
 @media screen and (min-width: 1025px) {
     #button-sidebar {
@@ -46,5 +51,6 @@ footer {
         -ms-flex-positive: 1;
         flex-grow: 1;
         max-width: 78%;
+        /*min-width: 78%;*/
     }
 }

@@ -63,10 +63,12 @@ def account():
     else:
         wishlist_form.rank.label = "Rank({})".format(1)
 
+    wishlist_form.process()
     wishlist_settings = Wishlist_settings()
     wishlist_settings.setting_option.default = str(current_user.settings.wishlist_option)
     wishlist_settings.process()
 
+    print(wishlist_form.rank.label)
     return render_template(
         'account.html',
         advanced_search_form=advanced_search_form,
@@ -386,7 +388,8 @@ def add_to_reserved():
     if current_user.email:
         form = Reserved_book_date()
         if form.validate_on_submit():
-
+            print(form.startdate.data)
+            print(form.enddate.data)
             book_log = Log.query.filter_by(id_user=current_user.id).first()
             if not book_log:
                 book_log = Log(
@@ -420,6 +423,7 @@ def add_to_reserved():
             db.session.commit()
 
             return jsonify(data="succes")
+        print(form.errors)
         return jsonify(data=form.errors)
 
 

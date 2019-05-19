@@ -266,6 +266,9 @@ $(function () {
     });
 
     function get_data() {
+        $('#basic_search_name_error').css("visibility", "hidden");
+        $('#basic_search_name').removeClass("has-error");
+
         if ($('#advanced-search-container').hasClass('hide')) {
             data_form = data_form.replace(/&basic_page_number=\d+&/, "&basic_page_number=" + $('#basic_page_number').val() + "&");
             $.ajax({
@@ -382,16 +385,23 @@ $(function () {
 
     $('#days_number_error').css("visibility", "hidden");
     $('#rank_error').css("visibility", "hidden");
+    $('#rank').css("width", "100%");
+    $('#days_number').css("width", "100%");
 
     $('#add-to-wishlist-button').click(function () {
+
         let period_err = $('#days_number_error');
         let rank_err = $('#rank_error');
+
         period_err.css("visibility", "hidden");
+        $('#rank').removeClass("has-error");
+        $('#days_number').removeClass("has-error");
 
         rank_err.css("visibility", "hidden");
         $('#book_id').val($('#book-id').text());
+
         let rank = $('#rank').val();
-        let rank_range = $('#rank-range').text().split("-");
+        let rank_range = $('#rank-parent').contents().first().text().split("-");
 
         if (rank_range.length === 2) {
             if (parseInt(rank) < parseInt(rank_range[0].match(/[0-9]+/)[0]) ||
@@ -400,12 +410,14 @@ $(function () {
                 rank_err
                     .css("visibility", "visible")
                     .text('Rank out of range');
+                $('#rank').addClass("has-error");
                 return
             }
         } else if (parseInt(rank) !== parseInt(rank_range[0].match(/[0-9]+/)[0])) {
             rank_err
                 .css("visibility", "visible")
                 .text('Rank out of range');
+            $('#rank').addClass("has-error");
             return
         }
 
@@ -419,13 +431,17 @@ $(function () {
                     period_err
                         .css("visibility", "visible")
                         .text(data['data']["days_number"][0]);
+                    $('#days_number').addClass("has-error");
                 } else if (data['data'].hasOwnProperty("rank")) {
                     rank_err
                         .css("visibility", "visible")
                         .text(data['data']["rank"][0]);
+                     $('#rank').addClass("has-error");
                 } else {
                     $('#rank-range').text("Range(1-{0})".format(data['data']));
+
                     $('#days_number').val('');
+                    $('#rank').val('');
                     $('#myModal').modal('hide');
                 }
                 get_data();

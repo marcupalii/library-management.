@@ -39,15 +39,15 @@ class Advanced_search(FlaskForm):
 
 
 class Wishlist_form(FlaskForm):
-    days_number = DecimalField(label="Number of days: ",
+    days_number = DecimalField(label="Number of days : ",
                                validators=[InputRequired("Must be a positive number"), NumberRange(min=1)])
     book_id = DecimalField(validators=[InputRequired("Missing book id")])
-    rank = DecimalField(label="Rank", validators=[InputRequired("Rank out of range"), NumberRange(min=1)])
+    rank = DecimalField(label="Rank : ", validators=[InputRequired("Rank out of range"), NumberRange(min=1)])
 
 
 class Reserved_book_date(FlaskForm):
-    startdate = DateField('Start Date', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
-    enddate = DateField('End Date', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
+    startdate = DateField('Start date : ', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
+    enddate = DateField('End date : ', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
     book_id_reserved = DecimalField(validators=[InputRequired("Missing book id"), NumberRange(min=1)])
 
     def validate(self):

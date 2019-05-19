@@ -12,18 +12,20 @@
     border-color: #dc3545
 }
 
+.mt-8{
+    margin-top: 8rem;
+}
 .err-msg {
     margin-top: -15px;
     color: #dc3545 !important;
 }
 
-#search_name_error {
+#search_name_error,.err-msg-no-padding {
     color: #dc3545 !important;
 }
-
-#wishlist-form, .no-padding-row {
-    padding-right: 0;
-    padding-left: 0;
+.no-padding-row {
+    padding-right: 0!important;
+    padding-left: 0!important;
 }
 
 .error-label {

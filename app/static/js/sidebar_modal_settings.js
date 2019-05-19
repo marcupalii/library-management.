@@ -1,5 +1,8 @@
 $(function () {
     $('#sidebar-modal-settings').modal('hide');
+    $('.button-all-notifications').click(function () {
+       window.location = $(this).attr("id");
+    });
 });
 $(document).on("click", "#settings-button", function () {
     $('#sidebar-modal-settings').modal('show');

@@ -1,7 +1,7 @@
 $(function () {
 
     var colors = ['#007bff', '#28a745', '#333333', '#c3e6cb', '#dc3545', '#6c757d'];
-    var grey = '#C0C0C0';
+    var grey = '#E5E5E5';
     var options_pie_chart = {
         cutoutPercentage: 85,
         legend: {position: 'bottom', padding: 5, labels: {pointStyle: 'circle', usePointStyle: true}}
@@ -78,7 +78,7 @@ $(function () {
     function create_user_trust_coeff_statistics(coeff) {
         let labels = [];
         let data = [Math.abs(coeff),100-Math.abs(coeff)];
-        let backgroundColor = '#C0C0C0';
+        let backgroundColor = grey;
         if (coeff<0){
             labels.push("late");
             backgroundColor = "#dc3545";

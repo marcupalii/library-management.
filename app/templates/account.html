@@ -264,85 +264,93 @@
                     <div class="modal-body">
                         <div class="container-fluid">
 
-                            <div class="row mb-2">
-                                <div class="col">Number</div>
-                                <div class="col" id="no"></div>
+                            <div class="row mb-2 mt-3 ml-1 mr-1">
+                                <div class="col-sm-6 p-2">Number :</div>
+                                <div class="col-sm-4 border-content p-2" id="no"></div>
                             </div>
 
-                            <div class="row mb-2">
-                                <div class="col">Book name</div>
-                                <div class="col" id="book-name"></div>
+                            <div class="row mb-2 mt-3 ml-1 mr-1">
+                                <div class="col-sm-6 p-2">Book name :</div>
+                                <div class="col-sm-4 border-content p-2" id="book-name"></div>
                             </div>
 
-                            <div class="row mb-2">
-                                <div class="col">Book type</div>
-                                <div class="col" id="book-type"></div>
+                            <div class="row mb-2 mt-3 ml-1 mr-1">
+                                <div class="col-sm-6 p-2">Book type :</div>
+                                <div class="col-sm-4 border-content p-2" id="book-type"></div>
                             </div>
 
-                            <div class="row mb-2">
-                                <div class="col">Author name</div>
-                                <div class="col" id="author-name"></div>
+                            <div class="row mb-2 mt-3 ml-1 mr-1">
+                                <div class="col-sm-6 p-2">Author name :</div>
+                                <div class="col-sm-4 border-content p-2" id="author-name"></div>
                             </div>
 
-                            <div class="row mb-2">
-                                <div class="col">Status</div>
-                                <div class="col" id="status"></div>
+                            <div class="row mb-2 mt-3 ml-1 mr-1 mb-5">
+                                <div class="col-sm-6 p-2">Status :</div>
+                                <div class="col-sm-4 border-content p-2" id="status"></div>
                             </div>
 
                             <div class="hidden-content" id="book-id"></div>
 
-                            <form id="wishlist-form" class="container-fluid wishlist-modal" method="post" novalidate>
+                            <form id="wishlist-form" class="container-fluid wishlist-modal mt-10" method="post"
+                                  novalidate>
                                 {{ wishlist_form.hidden_tag() }}
                                 <div class="hidden-content">{{ wishlist_form.book_id }} </div>
 
-                                <div class="row mb-2">
-                                    <div class="col mb-2">
-                                        <div class="row  error-label">
-                                            {{ wishlist_form.days_number.label }}
-                                        </div>
-                                        <small class="row  error-label text-muted" id="days_number_error"></small>
+                                <div class="row form-group">
+                                    <div class="col-sm-6">
+                                        {{ wishlist_form.days_number.label }}
+                                        <small class="d-flex flex-wrap err-msg" id="days_number_error"></small>
                                     </div>
-
-                                    <div class="col mb-2">
-                                        <div class="row  error-label">
-                                            {{ wishlist_form.days_number }}
-                                        </div>
+                                    <div class="no-padding-row col-sm-4">
+                                        {{ wishlist_form.days_number(class_="form-control") }}
                                     </div>
                                 </div>
 
-                                <div class="row mb-2">
-                                    <div class="col mb-2">
-                                        <div class="row d-flex flex-column error-label ">
-                                            <div class="" id="rank-range">
-                                                {{ wishlist_form.rank.label }}
-                                            </div>
-                                            <small class="text-muted" id="rank_error"></small>
-                                        </div>
-
+                                <div class="row form-group">
+                                    <div class="col-sm-6" id="rank-parent">
+                                        {{ wishlist_form.rank.label }}
+                                        <small class="d-flex flex-wrap err-msg-no-padding" id="rank_error"></small>
                                     </div>
-
-                                    <div class="col mb-2">
-                                        <div class="row  error-label">
-                                            {{ wishlist_form.rank }}
-                                        </div>
+                                    <div class="no-padding-row col-sm-4">
+                                        {{ wishlist_form.rank(class_="form-control") }}
                                     </div>
                                 </div>
-
                             </form>
                         </div>
 
                         <div class="container-fluid reserved-modal">
                             <form id="reserved-date-form" class="container-fluid" method="post" novalidate>
                                 {{ reserved_book_date.hidden_tag() }}
-                                <div class="hidden-content">{{ reserved_book_date.book_id_reserved }} </div>
-                                <div class="form-group">
-                                    {{ reserved_book_date.startdate.label }}
-                                    {{ reserved_book_date.startdate }}
-                                </div>
-                                <div class="form-group">
-                                    {{ reserved_book_date.enddate.label }}
-                                    {{ reserved_book_date.enddate }}
-                                </div>
+                                <div class="hidden-content">{{ reserved_book_date.book_id_reserved }}</div>
+                                    <div class="row form-group">
+                                        <div class="col-sm-6">
+                                            {{ reserved_book_date.startdate.label }}
+                                            <small class="d-flex flex-wrap err-msg-no-padding" id="rank_error"></small>
+                                        </div>
+                                        <div class="no-padding-row col-md-4">
+                                            {{ reserved_book_date.startdate(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-sm-6">
+                                            {{ reserved_book_date.enddate.label }}
+                                            <small class="d-flex flex-wrap err-msg-no-padding" id="rank_error"></small>
+                                        </div>
+                                        <div class="no-padding-row col-md-4">
+                                            {{ reserved_book_date.enddate(class_="form-control") }}
+                                        </div>
+                                    </div>
+
+
+                                    {#                                <div class="hidden-content">{{ reserved_book_date.book_id_reserved }} </div>#}
+                                    {#                                <div class="form-group">#}
+                                    {#                                    {{ reserved_book_date.startdate.label }}#}
+                                    {#                                    {{ reserved_book_date.startdate }}#}
+                                    {#                                </div>#}
+                                    {#                                <div class="form-group">#}
+                                    {#                                    {{ reserved_book_date.enddate.label }}#}
+                                    {#                                    {{ reserved_book_date.enddate }}#}
+                                    {#                                </div>#}
                             </form>
                         </div>
 
