@@ -16,7 +16,24 @@ tr:focus {
 
 .last-td {
     /*border: 0 !important;*/
-    width: 10%!important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    max-width: 70px !important;
+    /*min-width: 65px !important;*/
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    /*width: 10%!important;*/
+}
+
+.table-button {
+    padding-left: .5rem !important;
+    padding-right: .5rem !important;
+    padding-top: .2rem !important;
+}
+
+.border-content {
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
 }
 
 .table-bordered {

@@ -40,4 +40,11 @@ $(document).ready(function () {
     //     window.location = $(this).attr("id");
     // });
 
+
+
+    $('#empty-notifications').css("visibility","hidden");
+    if ($('#content-table').children().length === 0){
+        $('#empty-notifications').css("visibility","visible");
+        $('#paginationBox').css("visibility","hidden");
+    }
 });

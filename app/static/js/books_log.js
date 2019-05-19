@@ -35,4 +35,12 @@ $(document).ready(function () {
         let focus = $(location).attr('href').match(/focus[a-zA-Z0-9%=]+/);
         window.location = "/books_log/page/" + page + "/" + focus[0];
     });
+
+
+    $('#empty-books-log').css("visibility","hidden");
+    if ($('#content-table').children().length === 0){
+        $('#empty-books-log').css("visibility","visible");
+        $('#paginationBox').css("visibility","hidden");
+    }
+
 });

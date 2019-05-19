@@ -1,9 +1,15 @@
 
-
-.red{
-    color:red;
+.red {
+    color: red;
 }
-.no-padding{
+
+.no-padding {
     padding-right: 0;
     padding-left: 0;
+}
+#empty-wishlist{
+    margin-top: -1rem;
+}
+#paginationBox{
+    margin-top: -1rem;
 }

@@ -388,8 +388,8 @@ def add_to_reserved():
     if current_user.email:
         form = Reserved_book_date()
         if form.validate_on_submit():
-            print(form.startdate.data)
-            print(form.enddate.data)
+            print(form.start_date.data)
+            print(form.end_date.data)
             book_log = Log.query.filter_by(id_user=current_user.id).first()
             if not book_log:
                 book_log = Log(
@@ -414,8 +414,8 @@ def add_to_reserved():
                 id_log=book_log.id,
                 id_book_series=BookSeries.query.filter_by(book_id=form.book_id_reserved.data).first().id,
                 status="Reserved",
-                period_start=form.startdate.data,
-                period_end=form.enddate.data,
+                period_start=form.start_date.data,
+                period_end=form.end_date.data,
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                     pytz.timezone('Europe/Bucharest'))
             )

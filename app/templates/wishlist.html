@@ -18,8 +18,8 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-
-        <h3>Wishlist</h3>
+    <div class="container-fluid p-3 border-content">
+        <h3 class="mt-5 mb-4">Wishlist</h3>
 
         <div id="collapse-table">
             <div class="container-fluid no-padding">
@@ -56,14 +56,15 @@
                             <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">
                                 {{ entry[5] }}
                             </td>
-                            <td class="last-td">
-                                <button class="btn accordion-toggle d-lg-none" data-toggle="collapse"
+                            <td class="last-td row">
+                                <button class="btn accordion-toggle d-lg-none table-button" data-toggle="collapse"
                                         data-target="#tr-collapse-id-{{ entry[0] }}"
                                         aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}" type="button">
                                     <i class="fas fa-expand-arrows-alt"></i>
                                 </button>
-                                <button class="btn" type="button">
-                                    <i class="delete-from-wishlist fa fa-times red" id="/wishlist_delete_entry/{{ entry[6] }}"></i>
+                                <button class="btn table-button" type="button">
+                                    <i class="delete-from-wishlist fa fa-times red"
+                                       id="/wishlist_delete_entry/{{ entry[6] }}"></i>
                                 </button>
                             </td>
                         </tr>
@@ -83,11 +84,14 @@
 
                     </tbody>
                 </table>
+                <div class="border-content d-flex justify-content-center p-2" id="empty-wishlist">
+                    Your wishlist is empty !
+                </div>
             </div>
 
             <div>
-                <ul class="pagination" id="paginationBox">
-                 <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
+                <ul class="pagination pagination d-flex justify-content-end" id="paginationBox">
+                    <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
                     <li class="page-item">
                         <button id="prev" class="btn btn-secondary page_num_link page-link">
                             <a href="{{ prev_url }}">&laquo;</a>
@@ -153,5 +157,7 @@
                 </div>
             </div>
         </div>
+    </div>
+
     </div>
 {% endblock %}

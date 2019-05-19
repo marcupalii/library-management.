@@ -3,8 +3,8 @@
 
 {% block styles %}
     {{ super() }}
-        <link rel="stylesheet" type="text/css"
-              href="{{ url_for('.static', filename='css/books_log.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/books_log.css') }}">
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('.static', filename='css/table.css') }}">
 {% endblock %}
@@ -17,8 +17,8 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-
-        <h3>Books log</h3>
+    <div class="container-fluid p-3 border-content">
+        <h3 class="mt-5 mb-4">Books log</h3>
         <div id="collapse-table">
             <div class="container-fluid no-padding">
                 <table class="table table-bordered" style="border-collapse:collapse;">
@@ -78,13 +78,14 @@
                             </td>
                         </tr>
                     {% endfor %}
-
                     </tbody>
                 </table>
+                <div class="border-content d-flex justify-content-center p-2" id="empty-books-log">You`r books history is empty !
+                </div>
             </div>
 
             <div>
-                <ul class="pagination" id="paginationBox">
+                <ul class="pagination d-flex justify-content-end" id="paginationBox">
                     <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
                     <li class="page-item">
                         <button id="prev" class="btn btn-secondary page_num_link page-link">
@@ -152,5 +153,7 @@
                 </div>
             </div>
         </div>
+    </div>
+
     </div>
 {% endblock %}

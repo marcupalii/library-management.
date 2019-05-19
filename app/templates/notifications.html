@@ -1,4 +1,3 @@
-
 {% extends "layout.html" %}
 
 {% block page_title %}Notifications{% endblock %}
@@ -19,8 +18,8 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-
-        <h3>Notifications</h3>
+    <div class="container-fluid p-3 border-content">
+        <h3 class="mt-5 mb-4">Notifications</h3>
 
         <div id="collapse-table">
             <div class="container-fluid no-padding">
@@ -30,13 +29,12 @@
                         <th>#</th>
                         <th>Content</th>
                         <th class="d-none d-md-block">Status</th>
-{#                        <th>Author name</th>#}
-{#                        <th>Period</th>#}
+                        {#                        <th>Author name</th>#}
+                        {#                        <th>Period</th>#}
                         <th class="d-none d-lg-block">Created At</th>
                     </tr>
                     </thead>
                     <tbody id="content-table">
-
                     {% for entry in notifications %}
                         <tr colspan="7">
                             <td class="" id="nr-row-content-{{ entry[0] }}">
@@ -45,51 +43,56 @@
                             <td id="content-row-content-{{ entry[0] }}">
                                 {{ entry[1] }}
                             </td>
-{#                            <td class="d-none d-md-block" id="book-type-row-content-{{ entry[0] }}">#}
-{#                                {{ entry[2] }}#}
-{#                            </td>#}
+                            {#                            <td class="d-none d-md-block" id="book-type-row-content-{{ entry[0] }}">#}
+                            {#                                {{ entry[2] }}#}
+                            {#                            </td>#}
                             <td id="status-row-content-{{ entry[0] }}">
                                 {{ entry[2] }}
                             </td>
                             <td id="created-at-row-content-{{ entry[0] }}">
                                 {{ entry[3] }}
                             </td>
-{#                            <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">#}
-{#                                {{ entry[5] }}#}
-{#                            </td>#}
-                            <td class="hidden-content" id="id-notification-row-content-{{ entry[0] }}">{{ entry[4] }}</td>
-{#                            <td class="last-td">#}
-{#                                <button class="btn accordion-toggle d-lg-none" data-toggle="collapse"#}
-{#                                        data-target="#tr-collapse-id-{{ entry[0] }}"#}
-{#                                        aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}" type="button">#}
-{#                                    <i class="fas fa-expand-arrows-alt"></i>#}
-{#                                </button>#}
-{#                                <button class="btn" type="button">#}
-{#                                    <i class="delete-from-wishlist fa fa-times red"#}
-{#                                       id="/wishlist_delete_entry/{{ entry[6] }}"></i>#}
-{#                                </button>#}
-{#                            </td>#}
+                            {#                            <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">#}
+                            {#                                {{ entry[5] }}#}
+                            {#                            </td>#}
+                            <td class="hidden-content"
+                                id="id-notification-row-content-{{ entry[0] }}">{{ entry[4] }}</td>
+                            {#                            <td class="last-td">#}
+                            {#                                <button class="btn accordion-toggle d-lg-none" data-toggle="collapse"#}
+                            {#                                        data-target="#tr-collapse-id-{{ entry[0] }}"#}
+                            {#                                        aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}" type="button">#}
+                            {#                                    <i class="fas fa-expand-arrows-alt"></i>#}
+                            {#                                </button>#}
+                            {#                                <button class="btn" type="button">#}
+                            {#                                    <i class="delete-from-wishlist fa fa-times red"#}
+                            {#                                       id="/wishlist_delete_entry/{{ entry[6] }}"></i>#}
+                            {#                                </button>#}
+                            {#                            </td>#}
                         </tr>
 
-{#                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"#}
-{#                            id="tr-collapse-id-{{ entry[0] }}">#}
-{#                            <td colspan="6" class="hiddenRow">#}
-{#                                <div class="accordian-body">#}
-{#                                    <p class="d-md-none">Book type: <span>{{ entry[2] }}</span>#}
-{#                                    </p>#}
-{#                                    <p class="d-lg-none">Created at: <span>{{ entry[5] }}</span>#}
-{#                                    </p>#}
-{#                                </div>#}
-{#                            </td>#}
-{#                        </tr>#}
+                        {#                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"#}
+                        {#                            id="tr-collapse-id-{{ entry[0] }}">#}
+                        {#                            <td colspan="6" class="hiddenRow">#}
+                        {#                                <div class="accordian-body">#}
+                        {#                                    <p class="d-md-none">Book type: <span>{{ entry[2] }}</span>#}
+                        {#                                    </p>#}
+                        {#                                    <p class="d-lg-none">Created at: <span>{{ entry[5] }}</span>#}
+                        {#                                    </p>#}
+                        {#                                </div>#}
+                        {#                            </td>#}
+                        {#                        </tr>#}
                     {% endfor %}
 
                     </tbody>
+
                 </table>
+                <div class="border-content d-flex justify-content-center p-2" id="empty-notifications">You have 0
+                    notifications !
+                </div>
             </div>
 
             <div>
-                <ul class="pagination" id="paginationBox">
+                <ul class="pagination d-flex justify-content-end" id="paginationBox">
                     <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
                     <li class="page-item">
                         <button id="prev" class="btn btn-secondary page_num_link page-link">
@@ -156,5 +159,7 @@
                 </div>
             </div>
         </div>
+    </div>
+
     </div>
 {% endblock %}

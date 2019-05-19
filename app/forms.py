@@ -46,16 +46,16 @@ class Wishlist_form(FlaskForm):
 
 
 class Reserved_book_date(FlaskForm):
-    startdate = DateField('Start date : ', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
-    enddate = DateField('End date : ', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
+    start_date = DateField('Start date : ', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
+    end_date = DateField('End date : ', format='%Y-%m-%d', validators=[InputRequired("Date required!")])
     book_id_reserved = DecimalField(validators=[InputRequired("Missing book id"), NumberRange(min=1)])
 
     def validate(self):
         if not super(Reserved_book_date, self).validate():
             return False
-        if self.startdate.data > self.enddate.data:
-            msg = 'Start date can not be bigger than end date!'
-            self.startdate.errors.append(msg)
+        if self.start_date.data >= self.end_date.data:
+            msg = 'Invalid start date!'
+            self.start_date.errors.append(msg)
             return False
         return True
 

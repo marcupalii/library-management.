@@ -215,6 +215,14 @@ $(function () {
             write_row(data['data'][key], index_start, key);
 
         }
+        if (index_start === 0){
+            $('#empty-results').css("visibility","visible");
+            $('#paginationBox').css("visibility","hidden");
+        }else{
+            $('#empty-results').css("visibility","hidden");
+            $('#paginationBox').css("visibility","visible");
+        }
+
         $('#paginationBox').empty();
         if (index_start !== 0) {
             show_page_numbers(data['pages_lst']);
@@ -230,12 +238,7 @@ $(function () {
                 $('#page_number').val(page);
             }
 
-        } else {
-            $('#content-table')
-                .css("text-align", "center")
-                .text("no results find !");
         }
-
         if ($('#collapse-table').css("display") === "none") {
             $('#collapse-table').slideToggle(0);
         } else {
@@ -436,7 +439,7 @@ $(function () {
                     rank_err
                         .css("visibility", "visible")
                         .text(data['data']["rank"][0]);
-                     $('#rank').addClass("has-error");
+                    $('#rank').addClass("has-error");
                 } else {
                     $('#rank-range').text("Range(1-{0})".format(data['data']));
 
@@ -449,17 +452,36 @@ $(function () {
         });
     });
 
+    $('#start_date_error').css("visibility", "hidden");
+    $('#end_date_error').css("visibility", "hidden");
 
     $('#add-to-reserved-button').click(function () {
+        $('#end_date').removeClass("has-error");
+        $('#start_date').removeClass("has-error");
+        $('#start_date_error').css("visibility", "hidden");
+        $('#end_date_error').css("visibility", "hidden");
+
         $('#book_id_reserved').val($('#book-id').text());
         $.ajax({
             type: "POST",
             url: "/add_to_reserved/",
             data: $('#reserved-date-form').serialize(),
             success: function (data) {
-                $('#reserved-date-form').trigger('reset');
-                $('#myModal').modal('hide');
-                get_data();
+                if (data['data'].hasOwnProperty("start_date")) {
+                    $('#start_date_error')
+                        .css("visibility", "visible")
+                        .text(data['data']['start_date']);
+                    $('#start_date').addClass("has-error");
+                } else if (data['data'].hasOwnProperty("end_date")) {
+                    $('#end_date_error')
+                        .css("visibility", "visible")
+                        .text(data['data']['end_date']);
+                    $('#end_date').addClass("has-error");
+                } else {
+                    $('#reserved-date-form').trigger('reset');
+                    $('#myModal').modal('hide');
+                    get_data();
+                }
             }
         });
     });
@@ -479,6 +501,12 @@ $(function () {
             $('#advanced-search-container').removeClass("hide");
         }
     });
+
+    $('#empty-results').css("visibility", "hidden");
+    if ($('#content-table').children().length === 0) {
+        $('#empty-results').css("visibility", "visible");
+        $('#paginationBox').css("visibility", "hidden");
+    }
 })
 ;
 
@@ -525,13 +553,13 @@ $(document).on("click", ".modal-button", function () {
             $('#add-to-wishlist-button').css("visibility", "visible");
             $('.wishlist-modal').css("visibility", "visible");
         } else {
-            $('#startdate')
+            $('#start_date')
                 .attr("type", "date")
                 .attr("min", "2019-05-06")
                 .attr("max", "2019-12-29")
                 .addClass("form-control");
 
-            $('#enddate')
+            $('#end_date')
                 .attr("type", "date")
                 .attr("min", "2019-05-06")
                 .attr("max", "2019-12-29")

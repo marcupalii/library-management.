@@ -39,4 +39,9 @@ $(document).ready(function () {
        window.location = $(this).attr("id");
     });
 
+    $('#empty-wishlist').css("visibility","hidden");
+    if ($('#content-table').children().length === 0){
+        $('#empty-wishlist').css("visibility","visible");
+        $('#paginationBox').css("visibility","hidden");
+    }
 });
