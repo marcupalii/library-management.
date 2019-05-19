@@ -15,11 +15,11 @@ def notifications(page, id):
     notifications = Notifications.query \
         .filter_by(id_user=current_user.id) \
         .order_by(Notifications.created_at.desc()) \
-        .paginate(per_page=3,
+        .paginate(per_page=15,
                   page=int(page),
                   error_out=True
                   )
-    per_page = 3
+    per_page = 15
     index = 1
     if int(page) > 1:
         index = (int(page) - 1) * per_page + 1

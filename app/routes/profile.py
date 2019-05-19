@@ -40,9 +40,6 @@ def change_password():
     form = Change_password()
 
     if form.validate_on_submit():
-        print(form.old_password.data)
-        print(form.new_password.data)
-
         if current_user.password == hashlib.sha512(form.old_password.data.encode()).hexdigest():
             user = current_user
             user.password = hashlib.sha512(form.new_password.data.encode()).hexdigest()

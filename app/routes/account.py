@@ -134,7 +134,7 @@ def basic_search_book():
                 .order_by(Book.name) \
                 .add_columns(Author.id, Author.name) \
                 .paginate(
-                per_page=3,
+                per_page=15,
                 page=form.basic_page_number.data,
                 error_out=True
             )
@@ -239,7 +239,7 @@ def advanced_search_book():
                     .order_by(Book.name) \
                     .add_columns(Author.id, Author.name) \
                     .paginate(
-                    per_page=3,
+                    per_page=15,
                     page=form.page_number.data,
                     error_out=True
                 )
@@ -274,7 +274,7 @@ def advanced_search_book():
                     .order_by(Book.name) \
                     .add_columns(Author.id, Author.name) \
                     .paginate(
-                    per_page=3,
+                    per_page=15,
                     page=form.page_number.data,
                     error_out=True
                 )
@@ -292,7 +292,7 @@ def advanced_search_book():
                     .order_by(Book.name) \
                     .add_columns(Author.id, Author.name) \
                     .paginate(
-                    per_page=3,
+                    per_page=15,
                     page=form.page_number.data,
                     error_out=True
                 )
@@ -319,7 +319,7 @@ def advanced_search_book():
                     .order_by(Book.name) \
                     .add_columns(Author.id, Author.name) \
                     .paginate(
-                    per_page=3,
+                    per_page=15,
                     page=form.page_number.data,
                     error_out=True
                 )
@@ -331,7 +331,7 @@ def advanced_search_book():
                     .order_by(Book.name) \
                     .add_columns(Author.id, Author.name) \
                     .paginate(
-                    per_page=3,
+                    per_page=15,
                     page=form.page_number.data,
                     error_out=True
                 )

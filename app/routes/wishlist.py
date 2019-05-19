@@ -9,7 +9,7 @@ from app.forms import Wishlist_settings
 @login_required
 def wishlist_delete_entry(entry_id):
     user = User.query.filter_by(email=current_user.email).first()
-    per_page = 3
+    per_page = 15
     rank = 0
     if user:
         entry = EntryWishlist.query.filter_by(id=entry_id).first()
@@ -61,7 +61,7 @@ def wishlist(page, book_id):
         entry_wishlist = EntryWishlist.query \
             .filter_by(id_wishlist=user.wishlist.id) \
             .order_by(EntryWishlist.rank.asc()) \
-            .paginate(per_page=3,
+            .paginate(per_page=15,
                       page=int(page),
                       error_out=True
                       )
@@ -111,7 +111,7 @@ def wishlist(page, book_id):
 @login_required
 def wishlist_book(book_id):
     book = EntryWishlist.query.filter_by(id_book=book_id).first()
-    per_page = 3
+    per_page = 15
     page = 1
     total_pages = 1
 

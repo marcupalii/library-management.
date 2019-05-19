@@ -14,7 +14,6 @@ def books_log(page, book_id):
     num_list = []
     nr_of_pages = 1
     if _email:
-        print(page, type(page))
         next_url = url_for('books_log', page=1, book_id=0)
         prev_url = url_for('books_log', page=1, book_id=0)
 
@@ -24,11 +23,11 @@ def books_log(page, book_id):
             entry_log = EntryLog.query \
                 .filter_by(id_log=book_log.id) \
                 .order_by(EntryLog.created_at.desc()) \
-                .paginate(per_page=3,
+                .paginate(per_page=15,
                           page=int(page),
                           error_out=True
                           )
-            per_page = 3
+            per_page = 15
             index = 1
             if int(page) > 1:
                 index = (int(page) - 1) * per_page + 1
@@ -81,7 +80,7 @@ def books_log(page, book_id):
 @app.route("/reserved_book/<book_id>/", methods=["GET"])
 @login_required
 def reserved_book(book_id):
-    per_page = 3
+    per_page = 15
     total_pages = 1
     log = Log.query.filter_by(id_user=current_user.id).first()
     total = EntryLog.query.filter_by(id_log=log.id).count()
@@ -94,7 +93,7 @@ def reserved_book(book_id):
         entry_log = EntryLog.query \
             .filter_by(id_log=log.id) \
             .order_by(EntryLog.created_at.desc()) \
-            .paginate(per_page=3,
+            .paginate(per_page=15,
                       page=page,
                       error_out=True
             )
@@ -102,8 +101,6 @@ def reserved_book(book_id):
         for entry in entry_log.items:
             for book in book_series:
                 if entry.id_book_series == book.id:
-                    print(entry.id)
-                    print("/books_log/page/{}/focus={}".format(page, entry.id))
                     return jsonify({
                         "url": "/books_log/page/{}/focus={}".format(page, entry.id)
                     })

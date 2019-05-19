@@ -204,10 +204,11 @@ $(function () {
 
     function create_table(data) {
         let index_start = 1;
+        let per_page = 15;
         if ($('#basic-search-container').hasClass('hide')) {
-            index_start = 3 * (parseInt($('#page_number').val()) - 1);
+            index_start = per_page * (parseInt($('#page_number').val()) - 1);
         } else {
-            index_start = 3 * (parseInt($('#basic_page_number').val()) - 1);
+            index_start = per_page * (parseInt($('#basic_page_number').val()) - 1);
         }
 
         for (key in data['data']) {
@@ -215,12 +216,12 @@ $(function () {
             write_row(data['data'][key], index_start, key);
 
         }
-        if (index_start === 0){
-            $('#empty-results').css("visibility","visible");
-            $('#paginationBox').css("visibility","hidden");
-        }else{
-            $('#empty-results').css("visibility","hidden");
-            $('#paginationBox').css("visibility","visible");
+        if (index_start === 0) {
+            $('#empty-results').css("visibility", "visible");
+            $('#paginationBox').css("visibility", "hidden");
+        } else {
+            $('#empty-results').css("visibility", "hidden");
+            $('#paginationBox').css("visibility", "visible");
         }
 
         $('#paginationBox').empty();
@@ -391,6 +392,7 @@ $(function () {
     $('#rank').css("width", "100%");
     $('#days_number').css("width", "100%");
 
+
     $('#add-to-wishlist-button').click(function () {
 
         let period_err = $('#days_number_error');
@@ -405,7 +407,6 @@ $(function () {
 
         let rank = $('#rank').val();
         let rank_range = $('#rank-parent').contents().first().text().split("-");
-
         if (rank_range.length === 2) {
             if (parseInt(rank) < parseInt(rank_range[0].match(/[0-9]+/)[0]) ||
                 parseInt(rank) > parseInt(rank_range[1].match(/[0-9]+/)[0])
@@ -441,8 +442,8 @@ $(function () {
                         .text(data['data']["rank"][0]);
                     $('#rank').addClass("has-error");
                 } else {
-                    $('#rank-range').text("Range(1-{0})".format(data['data']));
-
+                    $('#rank-parent').contents().first().remove();
+                    $('#rank-parent').prepend("Range(1-{0})".format(data['data']));
                     $('#days_number').val('');
                     $('#rank').val('');
                     $('#myModal').modal('hide');
