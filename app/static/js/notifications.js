@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    let actual_page = $(location).attr('href').match(/page\/([0-9])+/)[1];
+    let actual_page = $(location).attr('href').match(/page\/([0-9]+)/)[1];
     $('.page-link').parent().removeClass("active");
     $('#' + actual_page + '.page_num_link').parent().addClass("active");
 
@@ -18,7 +18,6 @@ $(document).ready(function () {
     //     });
     //
     // }
-    console.log("actual_page=",actual_page);
     $('.page_num_link').click(function () {
         let page = "1";
         if ($(this).attr("id").trim() === "prev") {

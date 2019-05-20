@@ -4,7 +4,7 @@ from app.models import User, EntryWishlist, Book, Author
 from flask_login import login_required, current_user
 from flask import jsonify
 from app.forms import Wishlist_settings
-
+import re
 @app.route("/wishlist_delete_entry/<entry_id>", methods=["GET"])
 @login_required
 def wishlist_delete_entry(entry_id):
@@ -76,7 +76,7 @@ def wishlist(page, book_id):
                     book.type,
                     author.name,
                     entry.period,
-                    entry.created_at,
+                    re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.updated_at)).groups(0)[0],
                     entry.id
                 ])
 

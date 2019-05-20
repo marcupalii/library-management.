@@ -554,15 +554,24 @@ $(document).on("click", ".modal-button", function () {
             $('#add-to-wishlist-button').css("visibility", "visible");
             $('.wishlist-modal').css("visibility", "visible");
         } else {
+
+            var currentdate = new Date();
+            let year = currentdate.getFullYear();
+            let month = currentdate.getMonth() + 1;
+            if (month < 10){
+                month = '0'+month
+            }
+            let day = currentdate.getDate();
+
             $('#start_date')
                 .attr("type", "date")
-                .attr("min", "2019-05-06")
-                .attr("max", "2019-12-29")
+                .attr("min", year + "-" + month + "-" + day)
+                .attr("max", year + "-" + month + "-" + day)
                 .addClass("form-control");
 
             $('#end_date')
                 .attr("type", "date")
-                .attr("min", "2019-05-06")
+                .attr("min", year + "-" + month + "-" + day)
                 .attr("max", "2019-12-29")
                 .addClass("form-control");
 

@@ -4,7 +4,7 @@ from app.models import Book, BookSeries, Author, Log, EntryLog
 from flask_login import login_required, current_user
 from flask import jsonify
 from app.forms import Wishlist_settings
-
+import re
 
 @app.route("/books_log/page/<page>/focus=<book_id>/")
 @login_required
@@ -43,10 +43,11 @@ def books_log(page, book_id):
                         book.name,
                         book.type,
                         author.name,
-                        entry.period_start,
-                        entry.period_end,
+                        re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.period_start)).groups(0)[0],
+                        re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.period_end)).groups(0)[0],
                         entry.status,
-                        entry.id
+                        re.search("([\sa-zA-Z0-9]+\d+:\d+:\d+)",str(entry.period_diff)).groups(0)[0],
+                        entry.id,
                     ])
                     index += 1
 

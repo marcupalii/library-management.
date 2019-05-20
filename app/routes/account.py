@@ -7,6 +7,7 @@ from flask import jsonify
 from datetime import datetime
 import pytz
 
+
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
 def user_trust_coeff_statistics():
@@ -148,16 +149,17 @@ def basic_search_book():
                     book_series = BookSeries.query.filter_by(book_id=entry[0].id).all()
 
                     status = ""
+                    period_diff = "0 days 00:00:00"
                     log = Log.query.filter_by(id_user=current_user.id).first()
                     if log:
                         for series in book_series:
                             entry_log = EntryLog.query.filter_by(
                                 id_book_series=series.id,
-                                status="Reserved",
                                 id_log=log.id
-                            ).all()
+                            ).first()
                             if entry_log:
-                                status = "Reserved"
+                                status = entry_log.status
+                                period_diff = entry_log.period_diff
                                 break
 
                     if status == "":
@@ -172,7 +174,8 @@ def basic_search_book():
                             'author_name': entry[2],
                             'book_name': entry[0].name,
                             'book_type': entry[0].type,
-                            'status': status
+                            'status': status,
+                            'period_diff': period_diff
                         }
                     })
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
@@ -219,7 +222,7 @@ def advanced_search_book():
                 if log:
                     entry_logs = db.session().query(EntryLog).filter(
                         (EntryLog.id_log == log.id)
-                        & ~(EntryLog.status == "Returned")
+                        & ~(EntryLog.status.in_(["Returned","Reserved expired"]))
                     ).all()
 
                     for entry in entry_logs:
@@ -255,7 +258,7 @@ def advanced_search_book():
                 if log:
                     entry_logs = db.session().query(EntryLog).filter(
                         (EntryLog.id_log == log.id)
-                        & ~(EntryLog.status == "Returned")
+                        & ~(EntryLog.status.in_(["Returned","Reserved expired"]))
                     ).all()
 
                     for entry in entry_logs:
@@ -302,7 +305,7 @@ def advanced_search_book():
                 if log:
                     entry_logs = db.session().query(EntryLog).filter(
                         (EntryLog.id_log == log.id)
-                        & ~(EntryLog.status == "Returned")
+                        & ~(EntryLog.status.in_(["Returned","Reserved expired"]))
                     ).all()
                     for entry in entry_logs:
                         ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
@@ -345,17 +348,17 @@ def advanced_search_book():
                     book_series = BookSeries.query.filter_by(book_id=entry[0].id).all()
 
                     status = ""
+                    period_diff = "0 days 00:00:00"
                     log = Log.query.filter_by(id_user=current_user.id).first()
                     if log:
                         for series in book_series:
                             entry_log = EntryLog.query.filter_by(
                                 id_book_series=series.id,
-                                status="Reserved",
                                 id_log=log.id
-                            ).all()
+                            ).first()
                             if entry_log:
-                                status = "Reserved"
-                                break
+                                status = entry_log.status
+                                period_diff = entry_log.period_diff
 
                     if status == "":
                         if entry_wishlist:
@@ -369,7 +372,8 @@ def advanced_search_book():
                             'author_name': entry[2],
                             'book_name': entry[0].name,
                             'book_type': entry[0].type,
-                            'status': status
+                            'status': status,
+                            'period_diff': period_diff
                         }
                     })
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
@@ -401,23 +405,22 @@ def add_to_reserved():
                 db.session.add(book_log)
                 db.session.commit()
             book_log = Log.query.filter_by(id_user=current_user.id).first()
-            fmt = "%Y-%m-%d"
-            # date_start = datetime.datetime.strptime(form.startdate.data, fmt)\
-            #     .replace(tzinfo=pytz.UTC)\
-            #     .astimezone(pytz.timezone('Europe/Bucharest'))
-            #
-            # date_end = datetime.datetime.strptime(form.enddate.data, fmt) \
-            #     .replace(tzinfo=pytz.UTC) \
-            #     .astimezone(pytz.timezone('Europe/Bucharest'))
 
+            time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+            period_start = time_now
+            diff = form.end_date.data-form.start_date.data
+            print("diff=",diff)
+            period_end = time_now+(diff)
             entry_log = EntryLog(
                 id_log=book_log.id,
                 id_book_series=BookSeries.query.filter_by(book_id=form.book_id_reserved.data).first().id,
                 status="Reserved",
-                period_start=form.start_date.data,
-                period_end=form.end_date.data,
+                period_start=period_start,
+                period_end=period_end,
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                    pytz.timezone('Europe/Bucharest'))
+                    pytz.timezone('Europe/Bucharest')),
+                period_diff=str(period_end - period_start)
             )
             db.session.add(entry_log)
             db.session.commit()
@@ -468,10 +471,10 @@ def mark_notification_read():
 
         return render_template("layout.html", id_user=current_user.id)
 
-@app.route("/save_settings/",methods=["POST"])
+
+@app.route("/save_settings/", methods=["POST"])
 @login_required
 def save_settings():
-
     form = Wishlist_settings()
     if form.validate_on_submit():
         settings = User_settings.query.filter_by(id_user=current_user.id).first()
@@ -481,3 +484,17 @@ def save_settings():
             'option': form.setting_option.data
         })
     return jsonify(data=form.errors)
+
+
+@app.route("/books_count", methods=["GET"])
+@login_required
+def books_count():
+    log = Log.query.filter_by(id_user=current_user.id).first()
+    total = Log.query.filter_by(
+        id_log=log.id
+    ).count()
+    count_late = Log.query.filter_by(
+        id_log=log.id,
+        status="Late"
+    )
+    # count_early

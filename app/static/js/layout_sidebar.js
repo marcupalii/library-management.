@@ -1,7 +1,6 @@
 $(document).ready(function () {
     $(window).resize(function () {
         if ($('#button-sidebar').attr("aria-expanded") === "false" && $(window).width() <= 1050) {
-            console.log("aria expanded false");
             $('.content')
                 .css("z-index", "-1")
                 .delay(1500)
@@ -16,7 +15,6 @@ $(document).ready(function () {
         let navar_button = $('#navbar-button');
 
         if (navar_button.attr('aria-expanded') === "true") {
-            console.log("aria-expanded");
             navar_button.toggleClass("collapsed");
             $('#ReverseNavbar').toggleClass("show");
         }

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var actual_page = $(location).attr('href').match(/page\/([0-9])+/)[1];
+    var actual_page = $(location).attr('href').match(/page\/([0-9]+)/)[1];
     $('.page-link').parent().removeClass("active");
     $('#' + actual_page + '.page_num_link').parent().addClass("active");
 

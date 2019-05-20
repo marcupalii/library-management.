@@ -3,7 +3,7 @@ from app import app
 from app.models import User, Notifications
 from flask_login import login_required, current_user
 from app.forms import Wishlist_settings
-
+import re
 @app.route("/notifications/page/<page>/focus=<id>/")
 @login_required
 def notifications(page, id):
@@ -30,7 +30,7 @@ def notifications(page, id):
                 index,
                 entry.content,
                 entry.status,
-                entry.created_at,
+                re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.created_at)).groups(0)[0],
                 entry.id,
             ])
             index += 1

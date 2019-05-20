@@ -1,5 +1,5 @@
 from app import celery, logger, db
-from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications, User_settings, User
+from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications, User_settings, User, EntryLog, Log
 from app.Stable_matching_algorithm.algorithm import Stable_matching
 from datetime import datetime, timedelta
 import pytz
@@ -42,9 +42,9 @@ def update_state():
 
 
 def update_ranks(rank, id_wishlist):
-    _entryes_wishlist = EntryWishlist.query.filter_by(id_wishlist=id_wishlist)
+    entryes_wishlist = EntryWishlist.query.filter_by(id_wishlist=id_wishlist)
 
-    for entry in _entryes_wishlist:
+    for entry in entryes_wishlist:
         if entry.rank > rank:
             entry.rank -= 1
             db.session.commit()
@@ -168,7 +168,7 @@ def clean_unaccepted_books():
                 entry_wishlist = EntryWishlist(
                     id_wishlist=id_wishlist,
                     id_book=id_book,
-                    rank=last_rank+1,
+                    rank=last_rank + 1,
                     period=period,
                     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                         pytz.timezone('Europe/Bucharest'))
@@ -177,16 +177,46 @@ def clean_unaccepted_books():
                 db.session.commit()
 
 
+def update_remaining_book_time():
+    entry_logs = db.session()\
+        .query(EntryLog)\
+        .filter(~(EntryLog.status.in_(["Returned","Reserved expired"]))
+        ).all()
+
+    for entry in entry_logs:
+        entry.period_diff = entry.period_end - entry.period_start
+        db.session.commit()
+        # timedelta(hours=24)
+        if entry.period_start + timedelta(seconds=30) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
+            entry.status = "Reserved expired"
+            entry.period_end = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+            db.session.commit()
+
+            log = Log.query.filter_by(id=entry.id_log).first()
+            book_series = BookSeries.query.filter_by(id=entry.id_book_series).first()
+            book = Book.query.filter_by(id=book_series.book_id).first()
+            notification = Notifications(
+                id_user=log.id_user,
+                content="The 24 hours reservation on book {} expired !".format(book.name),
+                status="unread",
+                created_at= datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+            )
+            print(notification)
+            db.session.add(notification)
+            db.session.commit()
+
 @celery.task()
 def stable_matching_routine():
     clean_unaccepted_books()
+    update_remaining_book_time()
 
     users_with_wishlist, trust_coeffs, book_count = update_state()
-
     stable_matching = Stable_matching(users_with_wishlist, trust_coeffs, book_count)
     stable_matching.run()
     matched = stable_matching.get_match()
     del stable_matching
 
     write_result_of_matching(matched)
-    logger.info("stable matching algorithm done")
+    logger.info("Routine done")

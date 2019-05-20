@@ -25,7 +25,7 @@ class Advanced_search(FlaskForm):
     search_type = StringField(label='Type: ', validators=[Optional()])
     search_substring = BooleanField('Search sub-string')
     exclude_wishlist = BooleanField('Exclude wishlist')
-    exclude_current_book = BooleanField('Exclude not returned book')
+    exclude_current_book = BooleanField('Exclude unreturned book')
     only_available = BooleanField('Only available')
 
     def validate(self):

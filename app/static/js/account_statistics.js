@@ -1,4 +1,10 @@
 $(function () {
+    let c1 = '#007bff';
+    let c2 = '#28a745';
+    let c3 = '#333333';
+    let c4 = '#c3e6cb';
+    let c5 = '#dc3545';
+    let c6 =  '#6c757d';
 
     var colors = ['#007bff', '#28a745', '#333333', '#c3e6cb', '#dc3545', '#6c757d'];
     var grey = '#E5E5E5';
@@ -65,6 +71,7 @@ $(function () {
             });
         }
     }
+
     function get_data_user_trust_coeff() {
         $.ajax({
             type: "GET",
@@ -75,17 +82,18 @@ $(function () {
             }
         });
     }
+
     function create_user_trust_coeff_statistics(coeff) {
         let labels = [];
-        let data = [Math.abs(coeff),100-Math.abs(coeff)];
+        let data = [Math.abs(coeff), 100 - Math.abs(coeff)];
         let backgroundColor = grey;
-        if (coeff<0){
+        if (coeff < 0) {
             labels.push("late");
             backgroundColor = "#dc3545";
-        }else if (coeff >0){
+        } else if (coeff > 0) {
             labels.push("earlier");
             backgroundColor = colors[1];
-        }else{
+        } else {
             labels.push("no data")
         }
 
@@ -117,7 +125,7 @@ $(function () {
                 ctx.fillStyle = "#9b9b9b";
                 ctx.textBaseline = "middle";
 
-                let text = Math.abs(coeff).toString()+'%',
+                let text = Math.abs(coeff).toString() + '%',
                     textX = Math.round((width - ctx.measureText(text).width) / 2),
                     textY = height / 2.4;
 
@@ -128,7 +136,6 @@ $(function () {
 
         var chart = document.getElementById("chart-user-trust-coeff");
         chart.height = 200;
-
         if (chart) {
             new Chart(chart, {
                 type: 'pie',
@@ -139,6 +146,16 @@ $(function () {
         }
     }
 
+    function get_data_books_count() {
+        $.ajax({
+            type: "GET",
+            url: "/books_count/",
+            dataType: "json",
+            success: function (data) {
+                create_user_trust_coeff_statistics(data['coeff']);
+            }
+        });
+    }
     function create_statistics_3() {
         let chartData = {
             labels: ['Science', 'Literature', 'Other'],
