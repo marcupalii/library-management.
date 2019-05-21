@@ -95,3 +95,6 @@ class Profile(FlaskForm):
     country = StringField(label='Country: ', validators=[InputRequired('Field can not be empty !')])
     zip_code = StringField(label='Postal Code: ', validators=[InputRequired('Field can not be empty !')])
     address = StringField(label='Address: ', validators=[InputRequired('Field can not be empty !')])
+
+class Accept_next_book(FlaskForm):
+    next_book_id = DecimalField(validators=[InputRequired("Missing book id"), NumberRange(min=1)])

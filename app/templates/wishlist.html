@@ -21,104 +21,224 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-    <div class="container-fluid p-3 border-content">
-        <h3 class="mt-5 mb-4">Wishlist</h3>
+        <div class="container-fluid p-3 border-content" id="content-wishlist">
+            {% if next_book %}
+                <div id="collapse-table">
+                    <div class="container-fluid no-padding">
+                        <table class="table table-bordered" style="border-collapse:collapse;">
+                            <thead>
+                            <tr>
+                                <th>Book name</th>
+                                <th class="d-none d-md-block">Book type</th>
+                                <th class="d-none d-lg-block">Author name</th>
+                                <th>Period Start</th>
+                                <th>Period End</th>
+                            </tr>
+                            </thead>
+                            <tbody id="content-table">
 
-        <div id="collapse-table">
-            <div class="container-fluid no-padding">
-                <table class="table table-bordered" style="border-collapse:collapse;">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Book name</th>
-                        <th class="d-none d-md-block">Book type</th>
-                        <th>Author name</th>
-                        <th>Period</th>
-                        <th class="d-none d-lg-block">Created At</th>
-                    </tr>
-                    </thead>
-                    <tbody id="content-table">
+                            <tr colspan="6">
+                                <td class="hidden-content" id="next-book-id">
+                                    {{ next_book[0] }}
+                                </td>
+                                <td id="book-name-next-book">
+                                    {{ next_book[1] }}
+                                </td>
+                                <td class="d-none d-md-block" id="book-type-next-book">
+                                    {{ next_book[2] }}
+                                </td>
+                                <td class="d-none d-lg-block" id="author-next-book">
+                                    {{ next_book[3] }}
+                                </td>
+                                <td id="period-start-next-book">
+                                    {{ next_book[4] }}
+                                </td>
+                                <td id="period-end-next-book">
+                                    {{ next_book[5] }}
+                                </td>
 
-                    {% for entry in wishlist %}
-                        <tr colspan="7">
-                            <td class="rank" id="nr-row-content-{{ entry[0] }}">
-                                {{ entry[0] }}
-                            </td>
-                            <td id="book-name-row-content-{{ entry[0] }}">
-                                {{ entry[1] }}
-                            </td>
-                            <td class="d-none d-md-block" id="book-type-row-content-{{ entry[0] }}">
-                                {{ entry[2] }}
-                            </td>
-                            <td id="author-row-content-{{ entry[0] }}">
-                                {{ entry[3] }}
-                            </td>
-                            <td id="period-row-content-{{ entry[0] }}">
-                                {{ entry[4] }}
-                            </td>
-                            <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">
-                                {{ entry[5] }}
-                            </td>
-                            <td class="last-td row">
-                                <button class="btn accordion-toggle d-lg-none table-button" data-toggle="collapse"
-                                        data-target="#tr-collapse-id-{{ entry[0] }}"
-                                        aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}" type="button">
-                                    <i class="fas fa-expand-arrows-alt"></i>
-                                </button>
-                                <button class="btn table-button" type="button">
-                                    <i class="delete-from-wishlist fa fa-times red"
-                                       id="/wishlist_delete_entry/{{ entry[6] }}"></i>
-                                </button>
-                            </td>
+                                <td class="last-td-next-book">
+                                    <button class="btn accordion-toggle  table-button  d-lg-none" data-toggle="collapse"
+                                            data-target="#tr-collapse-next-book"
+                                            aria-controls="aria-controls-next-book" id="next-book"
+                                            type="button">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                    </button>
+                                    <button class="btn modal-button" id="open-next-book-modal" type="button">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+{#                                    <button class="btn table-button" type="button">#}
+{#                                        <i class="delete-from-wishlist fa fa-times red"#}
+{#                                           id="/wishlist_delete_entry/{{ entry[6] }}"></i>#}
+{#                                    </button>#}
+                                </td>
+                            </tr>
+
+                            <tr class="sub-table-row p collapse p-3 tr-collapse-next-book"
+                                id="tr-collapse-next-book">
+                                <td colspan="6" class="hiddenRow">
+                                    <div class="accordian-body">
+                                        <p class="d-md-none">Book type: <span>{{ next_book[2] }}</span>
+                                        </p>
+                                        <p class="d-lg-none">Author name: <span>{{ next_book[3] }}</span>
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+            <h3 class="mt-5 mb-4">Wishlist</h3>
+
+            <div id="collapse-table">
+                <div class="container-fluid no-padding">
+                    <table class="table table-bordered" style="border-collapse:collapse;">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Book name</th>
+                            <th class="d-none d-md-block">Book type</th>
+                            <th>Author name</th>
+                            <th>Period</th>
+                            <th class="d-none d-lg-block">Created At</th>
                         </tr>
+                        </thead>
+                        <tbody id="content-table">
 
-                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"
-                            id="tr-collapse-id-{{ entry[0] }}">
-                            <td colspan="6" class="hiddenRow">
-                                <div class="accordian-body">
-                                    <p class="d-md-none">Book type: <span>{{ entry[2] }}</span>
-                                    </p>
-                                    <p class="d-lg-none">Created at: <span>{{ entry[5] }}</span>
-                                    </p>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                        {% for entry in wishlist %}
+                            <tr colspan="7">
+                                <td class="rank" id="nr-row-content-{{ entry[0] }}">
+                                    {{ entry[0] }}
+                                </td>
+                                <td id="book-name-row-content-{{ entry[0] }}">
+                                    {{ entry[1] }}
+                                </td>
+                                <td class="d-none d-md-block" id="book-type-row-content-{{ entry[0] }}">
+                                    {{ entry[2] }}
+                                </td>
+                                <td id="author-row-content-{{ entry[0] }}">
+                                    {{ entry[3] }}
+                                </td>
+                                <td id="period-row-content-{{ entry[0] }}">
+                                    {{ entry[4] }}
+                                </td>
+                                <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">
+                                    {{ entry[5] }}
+                                </td>
+                                <td class="last-td row">
+                                    <button class="btn accordion-toggle d-lg-none table-button" data-toggle="collapse"
+                                            data-target="#tr-collapse-id-{{ entry[0] }}"
+                                            aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}"
+                                            type="button">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                    </button>
+                                    <button class="btn table-button" type="button">
+                                        <i class="delete-from-wishlist fa fa-times red"
+                                           id="/wishlist_delete_entry/{{ entry[6] }}"></i>
+                                    </button>
+                                </td>
+                            </tr>
 
-                    </tbody>
-                </table>
-                <div class="border-content d-flex justify-content-center p-2" id="empty-wishlist">
-                    Your wishlist is empty !
+                            <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"
+                                id="tr-collapse-id-{{ entry[0] }}">
+                                <td colspan="6" class="hiddenRow">
+                                    <div class="accordian-body">
+                                        <p class="d-md-none">Book type: <span>{{ entry[2] }}</span>
+                                        </p>
+                                        <p class="d-lg-none">Created at: <span>{{ entry[5] }}</span>
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                    <div class="border-content d-flex justify-content-center p-2" id="empty-wishlist">
+                        Your wishlist is empty !
+                    </div>
+                </div>
+
+                <div>
+                    <ul class="pagination pagination d-flex justify-content-end" id="paginationBox">
+                        <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
+                        <li class="page-item">
+                            <button id="prev" class="btn btn-secondary page_num_link page-link">
+                                <a href="{{ prev_url }}">&laquo;</a>
+                            </button>
+                        </li>
+                        {% for nr in num_list %}
+                            {% if nr %}
+                                <li class="page-item">
+                                    <button id="{{ nr }}"
+                                            class="btn btn-secondary page_num_link page-link">{{ nr }}</button>
+                                </li>
+                            {% else %}
+                                <li class="page-item">...</li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item">
+                            <button id="next" class="btn btn-secondary page_num_link page-link">
+                                <a href="{{ next_url }}">&raquo;</a>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
             </div>
+        </div>
+    </div>
+{% endblock %}
+{% block modal_next_book %}
+    <div class="container">
+        <div class="modal fade" id="next-book-modal" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Do you accept the next book?</h4>
+                        <button type="button" class="close" id="close-next-book-modal">&times;
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="container-fluid">
+                                <div class="row mb-2 mt-3 ml-1 mr-1">
+                                    <div class="col-sm-6 p-2">Book name :</div>
+                                    <div class="col-sm-4 border-content p-2" id="modal-book-name"></div>
+                                </div>
 
-            <div>
-                <ul class="pagination pagination d-flex justify-content-end" id="paginationBox">
-                    <div class="hidden-content" id="nr_of_pages">{{ nr_of_pages }}</div>
-                    <li class="page-item">
-                        <button id="prev" class="btn btn-secondary page_num_link page-link">
-                            <a href="{{ prev_url }}">&laquo;</a>
+                                <div class="row mb-2 mt-3 ml-1 mr-1">
+                                    <div class="col-sm-6 p-2">Book type :</div>
+                                    <div class="col-sm-4 border-content p-2" id="modal-book-type"></div>
+                                </div>
+                                <div class="row mb-2 mt-3 ml-1 mr-1">
+                                    <div class="col-sm-6 p-2">Author :</div>
+                                    <div class="col-sm-4 border-content p-2" id="modal-book-author"></div>
+                                </div>
+                                <div class="row mb-2 mt-3 ml-1 mr-1">
+                                    <div class="col-sm-6 p-2">Period Start :</div>
+                                    <div class="col-sm-4 border-content p-2" id="modal-book-period-start"></div>
+                                </div>
+                                <div class="row mb-2 mt-3 ml-1 mr-1">
+                                    <div class="col-sm-6 p-2">Period End :</div>
+                                    <div class="col-sm-4 border-content p-2" id="modal-book-period-end"></div>
+                                </div>
+                                <form class="hidden-content" id="accept-next-book-form" method="post" novalidate>
+                                    {{ next_book_form.hidden_tag() }}
+                                    {{ next_book_form.next_book_id }}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="Submit" id="next-book-save-button" class="btn btn-secondary"><i
+                                class="">Save</i>
                         </button>
-                    </li>
-                    {% for nr in num_list %}
-                        {% if nr %}
-                            <li class="page-item">
-                                <button id="{{ nr }}"
-                                        class="btn btn-secondary page_num_link page-link">{{ nr }}</button>
-                            </li>
-                        {% else %}
-                            <li class="page-item">...</li>
-                        {% endif %}
-                    {% endfor %}
-                    <li class="page-item">
-                        <button id="next" class="btn btn-secondary page_num_link page-link">
-                            <a href="{{ next_url }}">&raquo;</a>
-                        </button>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 {% endblock %}
 {% block sidebar_settings %}
@@ -160,7 +280,5 @@
                 </div>
             </div>
         </div>
-    </div>
-
     </div>
 {% endblock %}

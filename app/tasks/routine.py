@@ -187,7 +187,7 @@ def update_remaining_book_time():
         entry.period_diff = entry.period_end - entry.period_start
         db.session.commit()
         # timedelta(hours=24)
-        if entry.period_start + timedelta(seconds=30) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
+        if entry.period_start + timedelta(seconds=60) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
             entry.status = "Reserved expired"
             entry.period_end = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                 pytz.timezone('Europe/Bucharest'))

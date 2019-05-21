@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 from flask import jsonify
 from datetime import datetime
 import pytz
-
+import re
 
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
@@ -486,15 +486,28 @@ def save_settings():
     return jsonify(data=form.errors)
 
 
-@app.route("/books_count", methods=["GET"])
+@app.route("/books_count/", methods=["GET"])
 @login_required
 def books_count():
     log = Log.query.filter_by(id_user=current_user.id).first()
-    total = Log.query.filter_by(
+    total = EntryLog.query.filter_by(
         id_log=log.id
     ).count()
-    count_late = Log.query.filter_by(
+    entry_logs = EntryLog.query.filter_by(
         id_log=log.id,
-        status="Late"
+        status="Returned"
     )
-    # count_early
+    count_late = 0
+    count_in_time = 0
+    if entry_logs:
+        for entry in entry_logs:
+            if re.search("-",str(entry.period_diff)):
+                    count_late += 1
+            else:
+                count_in_time += 1
+
+    return jsonify({
+        "total": total,
+        "count_late" :count_late,
+        "count_in_time":count_in_time
+    })

@@ -152,18 +152,19 @@ $(function () {
             url: "/books_count/",
             dataType: "json",
             success: function (data) {
-                create_user_trust_coeff_statistics(data['coeff']);
+                create_books_statistics(data);
             }
         });
     }
-    function create_statistics_3() {
+    function create_books_statistics(books) {
+        console.log(books);
         let chartData = {
-            labels: ['Science', 'Literature', 'Other'],
+            labels: ['Later', 'Earlier'],
             datasets: [
                 {
                     backgroundColor: colors.slice(0, 3),
                     borderWidth: 0,
-                    data: [21, 45, 55, 33]
+                    data: [books['count_late'],books['count_in_time']]
                 }
             ]
         };
@@ -181,7 +182,7 @@ $(function () {
 
     get_data_book_type_statistics();
     get_data_user_trust_coeff();
-    create_statistics_3();
+    get_data_books_count();
 
 
     function generateLabels() {

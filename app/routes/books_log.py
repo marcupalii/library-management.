@@ -46,7 +46,8 @@ def books_log(page, book_id):
                         re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.period_start)).groups(0)[0],
                         re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.period_end)).groups(0)[0],
                         entry.status,
-                        re.search("([\sa-zA-Z0-9]+\d+:\d+:\d+)",str(entry.period_diff)).groups(0)[0],
+                        entry.period_diff,
+                        # re.search("([\sa-zA-Z0-9]*(\d+:\d+:\d+)?)",str(entry.period_diff)).groups(0)[0],
                         entry.id,
                     ])
                     index += 1
