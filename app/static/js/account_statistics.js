@@ -164,7 +164,7 @@ $(function () {
                 {
                     backgroundColor: colors.slice(0, 3),
                     borderWidth: 0,
-                    data: [books['count_late'],books['count_in_time']]
+                    data: [0,0]
                 }
             ]
         };

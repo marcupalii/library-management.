@@ -170,16 +170,25 @@ def accept_next_book():
         ).first()
 
         log = Log.query.filter_by(id_user=current_user.id).first()
+        if not log:
+            log = Log(
+                id_user=current_user.id,
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                    pytz.timezone('Europe/Bucharest'))
+            )
+            db.session.add(log)
+            db.session.commit()
+        log = Log.query.filter_by(id_user=current_user.id).first()
         period_start = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
             pytz.timezone('Europe/Bucharest'))
-        period_end = period_start+ timedelta(days=next_book.period)
+        period_end = period_start + timedelta(days=next_book.period)
         entry_log = EntryLog(
             id_log=log.id,
             id_book_series=next_book.id_series_book,
             status="Unreturned",
             period_start=period_start,
             period_end=period_end,
-            period_diff=period_end-period_start,
+            period_diff=period_end - period_start,
             created_at=period_start
         )
         print(entry_log)
