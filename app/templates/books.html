@@ -1,0 +1,147 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}Admin dashboard {% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/table.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/books.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('.static', filename='js/books.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid mt-5">
+        <div class="container-fluid p-3 border-content" id="new-book-container">
+            <h3 class="mt-5 mb-4 p-3">Add new book</h3>
+
+            <form id="new-book-form" class="mt-2 p-3 border-content" novalidate>
+                {{ new_book.hidden_tag() }}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_book.name.label }}
+                            {{ new_book.name(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row" id="name_new_book_error"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_book.type.label }}
+                            {{ new_book.type(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row" id="type_new_book_error"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_book.author.label }}
+                            {{ new_book.author(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row" id="author_new_book_error"></small>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_book.series.label }}
+                            {{ new_book.series(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row" id="series_new_book_error"></small>
+                    </div>
+                </div>
+                <button type="submit" id="add-new-book-button" class="btn btn-info btn-fill pull-right">
+                    Save
+                </button>
+            </form>
+
+        </div>
+
+
+        <div class="container-fluid p-3 border-content mt-5" id="new-author-container">
+            <h3 class="mt-5 mb-4 p-3">Add new author</h3>
+            <div class="container-fluid m-2 p-4 border-content">
+                <form id="new-book-form" class="mt-2" novalidate>
+                    {{ new_book.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                {{ new_book.name.label }}
+                                {{ new_book.name(class_='form-control') }}
+                            </div>
+                            <small class="form-group row err-msg no-margin-row" id="name_new_book_error"></small>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                {{ new_book.type.label }}
+                                {{ new_book.type(class_='form-control') }}
+                            </div>
+                            <small class="form-group row err-msg no-margin-row" id="type_new_book_error"></small>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                {{ new_book.series.label }}
+                                {{ new_book.series(class_='form-control') }}
+                            </div>
+                            <small class="form-group row err-msg no-margin-row" id="series_new_book_error"></small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                {{ new_book.author.label }}
+                                {{ new_book.author(class_='form-control') }}
+                            </div>
+                            <small class="form-group row err-msg no-margin-row" id="author_new_book_error"></small>
+                        </div>
+
+                        <div class="col-md-6 d-flex align-items-center justify-content-start col">
+
+                            {% for choice in new_book.type_author %}
+                                <div class="mr-4">
+                                    {{ choice }} {{ choice.label }}
+                                </div>
+                            {% endfor %}
+
+                            <small class="form-group row err-msg no-margin-row" id="series_new_book_error"></small>
+                        </div>
+                    </div>
+                </form>
+                <div class="container-fluid border-content mb-3 mt-3 p-3" id="choose-author-container">
+                    <form id="choose-author-form" class="row" method="post" novalidate>
+                        {{ choose_author.hidden_tag() }}
+                        {{ choose_author.page_nr(class_="hidden-content") }}
+                        <div class="col-md-6 mt-2 ml-4">
+                            <div class="form-group form-inline row">
+                                {{ choose_author.name(placeholder="Author name",class_="form-control w-75") }}
+                                <i class="fas fa-search ml-2" id="search-author-button" aria-hidden="true"></i>
+                            </div>
+                            <small class="form-group row err-msg" id="name_choose_author_error"></small>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <div class="form-group row">
+                                {{ choose_author.search_substring.label }}
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    {{ choose_author.search_substring }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <button type="submit" id="add-new-book-button" class="btn btn-info btn-fill pull-right mt-4">
+                    Save
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+
+{% endblock %}

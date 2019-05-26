@@ -1,0 +1,11 @@
+.has-error {
+    border-color: #dc3545
+}
+
+.mt-8{
+    margin-top: 8rem;
+}
+.err-msg {
+    margin-top: -15px;
+    color: #dc3545 !important;
+}

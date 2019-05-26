@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% endblock %}
+    <link rel="shortcut icon" href="#">
+    {% block styles %}
+
+        <link rel="stylesheet" type="text/css"
+              href="{{ url_for('.static', filename='css/layout_top_navbar.css') }}">
+
+        {% if current_user.is_authenticated %}
+            <link rel="stylesheet" type="text/css"
+                  href="{{ url_for('.static', filename='css/layout_sidebar.css') }}">
+        {% endif %}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+              integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+              crossorigin="anonymous">
+    {% endblock %}
+</head>
+
+
+<body>
+{% block navbar %}
+    <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+        <button type="button" class="btn btn-default" data-toggle="offcanvas" data-target="#sidebar"
+                aria-expanded="false" aria-controls="sidebar" id="button-sidebar">
+            <i class="fa fa-chevron-down"></i>
+        </button>
+        <a class="navbar-brand" href="#">Library Management</a>
+        <button class="navbar-toggler" id="navbar-button" type="button" data-toggle="collapse"
+                data-target="#ReverseNavbar"
+                aria-controls="ReverseNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="ReverseNavbar">
+            <ul class="navbar-nav ml-auto" id="navar-right">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">
+                            <i class="fa fa-user"></i> {{ current_user.first_name }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="ReverseNavbar">
+                            <a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a>
+                            <a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                {% if current_user.is_anonymous %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('about') }}">
+                            <i class="fa fa-home"></i>About Page<span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="fa fa-home"></i>Login<span class="sr-only"></span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+        </div>
+    </nav>
+{% endblock %}
+
+
+<div class="container-fluid mb-5 push-footer">
+    <div class="row">
+        {% if current_user.is_authenticated %}
+            {% block sidebar %}
+                <div class="position-fixed row-offcanvas-left">
+                    <div class="d-flex flex-column" id="sidebar-fixed">
+                        <div class="h-20">
+                        </div>
+                        <div class="sidebar-offcanvas" id="sidebar">
+                            <div class="list-group p-3">
+                                <a class="nav-link list-group-item list-group-item-action bg-light"
+                                   href="{{ url_for('users') }}">
+                                    <i class="fa fa-home"></i> Users<span class="sr-only"></span>
+                                </a>
+
+                                <a class="nav-link list-group-item list-group-item-action bg-light"
+                                   href="{{ url_for('books') }}">
+                                    <i class="fa fa-home"></i> Books<span class="sr-only"></span>
+                                </a>
+                                <a class="nav-link list-group-item list-group-item-action bg-light"
+                                   href="{{ url_for('account') }}">
+                                    <i class="fa fa-home"></i> User dashboard <span class="sr-only"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            {% endblock %}
+        {% endif %}
+
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+</div>
+
+{% block scripts %}
+    <script
+            src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+{% endblock %}
+
+{% if current_user.is_authenticated %}
+    <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
+    <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
+{% endif %}
+
+
+</body>
+</html>

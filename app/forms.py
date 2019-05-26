@@ -98,3 +98,17 @@ class Profile(FlaskForm):
 
 class Accept_next_book(FlaskForm):
     next_book_id = DecimalField(validators=[InputRequired("Missing book id"), NumberRange(min=1)])
+
+
+class New_Book(FlaskForm):
+    name = StringField(label='Book name: ', validators=[InputRequired('Field can not be empty !')])
+    type = StringField(label='Book type: ', validators=[InputRequired('Field can not be empty !')])
+    author = StringField(label='Author name: ', validators=[InputRequired('Field can not be empty !')])
+    series = StringField(label='Book series: ', validators=[InputRequired('Field can not be empty !')])
+    type_author = RadioField(choices=[('1', "New author"), ('2', 'Already exists')], validators=[InputRequired()])
+
+
+class Choose_Author(FlaskForm):
+    name = StringField(label='Author name: ', validators=[InputRequired('Field can not be empty !')])
+    page_nr = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
+    search_substring = BooleanField('Search sub-string')

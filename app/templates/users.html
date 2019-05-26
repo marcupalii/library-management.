@@ -2,11 +2,14 @@
 
 {% block page_title %}Admin dashboard {% endblock %}
 
-
-
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css"
+                  href="{{ url_for('.static', filename='css/table.css') }}">
+{% endblock %}
 {% block content %}
 
-    <p> ADMIN</p>
+    <p> Users</p>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
         labore et
         dolore magna aliqua. Eget lorem dolor sed viverra. Sit amet volutpat consequat mauris nunc

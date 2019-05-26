@@ -12,13 +12,10 @@
               href="{{ url_for('.static', filename='css/layout_top_navbar.css') }}">
 
         {% if current_user.is_authenticated %}
-            {% if current_user.type == "user" %}
-
                 <link rel="stylesheet" type="text/css"
                       href="{{ url_for('.static', filename='css/layout_notification.css') }}">
                 <link rel="stylesheet" type="text/css"
                       href="{{ url_for('.static', filename='css/layout_sidebar.css') }}">
-            {% endif %}
         {% endif %}
 
 
@@ -48,7 +45,6 @@
         <div class="collapse navbar-collapse" id="ReverseNavbar">
             <ul class="navbar-nav ml-auto" id="navar-right">
                 {% if current_user.is_authenticated %}
-                    {% if current_user.type == "user" %}
                         <li class="nav-item dropdown">
 
                             <button class="btn dropdown-toggle" id="notifications-dropdown"
@@ -116,8 +112,6 @@
                             </a>
                         </script>
                     {% endif %}
-                {% endif %}
-
                 {% if current_user.is_anonymous %}
                     <li class="nav-item active">
                         <a class="nav-link" href="{{ url_for('about') }}">
@@ -166,6 +160,10 @@
                                 <a class="nav-link list-group-item list-group-item-action bg-light"
                                    href="{{ url_for('books_log', page=1, book_id=0) }}">
                                     <i class="fa fa-home"></i> Books log<span class="sr-only"></span>
+                                </a>
+                                 <a class="nav-link list-group-item list-group-item-action bg-light"
+                                   href="{{ url_for('admin_dashboard') }}">
+                                    <i class="fa fa-home"></i>Admin dashboard<span class="sr-only"></span>
                                 </a>
                             </div>
                             <div class="list-group p-3">
@@ -221,11 +219,9 @@
 {% endblock %}
 
 {% if current_user.is_authenticated %}
-    {% if current_user.type == "user" %}
         <script src="{{ url_for('.static', filename='js/layout_navbar.js') }}"></script>
         <script src="{{ url_for('.static', filename='js/layout_notification.js') }}"></script>
         <script src="{{ url_for('.static', filename='js/layout_sidebar.js') }}"></script>
-    {% endif %}
 {% endif %}
 
 
