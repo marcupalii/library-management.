@@ -3,7 +3,7 @@ from app import app, db
 from flask_login import current_user, login_required
 from app.forms import New_Book, Choose_Author
 import hashlib
-from app.models import User
+from app.models import User, Author
 
 
 @app.route('/books')
@@ -41,3 +41,41 @@ def add_new_book():
     else:
         print(new_book.errors)
         return jsonify(data=new_book.errors)
+
+@app.route("/choose_author/",methods=["POST"])
+@login_required
+def choose_author():
+    response = {}
+    num_list = []
+    form = Choose_Author()
+    if form.validate_on_submit():
+        name = ""
+        if form.search_substring.data == False:
+            name = form.author_name.data
+        else:
+            name = '%' + form.author_name.data + '%'
+
+        authors= Author.query \
+            .filter(Author.name.like(name)) \
+            .order_by(Author.name) \
+            .paginate(
+            per_page=3,
+            page=form.page_nr.data,
+            error_out=True
+        )
+
+        if authors:
+            for entry in authors.items:
+                response.update({
+                    str(entry.id): {
+                        'name': entry.name,
+                    }
+                })
+            for i in authors.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+                num_list.append(i)
+
+        return jsonify(
+            data={key: response[key] for key in response.keys()},
+            pages_lst=[value for value in num_list]
+        )
+    return jsonify(data=form.errors)

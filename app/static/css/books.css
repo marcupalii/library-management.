@@ -2,10 +2,19 @@
     border-color: #dc3545
 }
 
-.mt-8{
+.mt-8 {
     margin-top: 8rem;
 }
+
 .err-msg {
     margin-top: -15px;
     color: #dc3545 !important;
+}
+
+#search-author-button {
+    cursor: pointer;
+}
+
+#empty-results {
+    margin-top: -1rem;
 }

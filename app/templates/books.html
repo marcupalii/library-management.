@@ -102,6 +102,7 @@
                             <small class="form-group row err-msg no-margin-row" id="author_new_book_error"></small>
                         </div>
 
+
                         <div class="col-md-6 d-flex align-items-center justify-content-start col">
 
                             {% for choice in new_book.type_author %}
@@ -120,7 +121,7 @@
                         {{ choose_author.page_nr(class_="hidden-content") }}
                         <div class="col-md-6 mt-2 ml-4">
                             <div class="form-group form-inline row">
-                                {{ choose_author.name(placeholder="Author name",class_="form-control w-75") }}
+                                {{ choose_author.author_name(placeholder="Author name",class_="form-control w-75") }}
                                 <i class="fas fa-search ml-2" id="search-author-button" aria-hidden="true"></i>
                             </div>
                             <small class="form-group row err-msg" id="name_choose_author_error"></small>
@@ -134,6 +135,31 @@
                             </div>
                         </div>
                     </form>
+                </div>
+                <div class="row d-none" id="author-result-container">
+                    <div id="collapse-table" class="container-fluid">
+                        <table class="table table-bordered" style="border-collapse:collapse;">
+                            <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>First name</th>
+                                <th>Last name</th>
+                                {#                            <th class="d-none d-md-block">Author name</th>#}
+                                {#                            <th class="d-none d-lg-block">Status</th>#}
+                            </tr>
+                            </thead>
+                            <tbody id="content-table">
+                            </tbody>
+                        </table>
+                        <div class="border-content d-flex justify-content-center p-2" id="empty-results">No results
+                            found !
+                        </div>
+
+                        <div>
+                            <ul class="pagination d-flex justify-content-end" id="paginationBox">
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" id="add-new-book-button" class="btn btn-info btn-fill pull-right mt-4">
                     Save
