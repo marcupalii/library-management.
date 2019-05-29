@@ -12,6 +12,8 @@ def books():
     if current_user.type != "admin":
         return render_template("page_403.html")
     new_book = New_Book()
+    new_book.type_author.default = '1'
+    new_book.process()
     choose_author = Choose_Author()
     return render_template(
         "books.html",
@@ -32,7 +34,8 @@ def add_new_book():
             new_book.name.data,
             new_book.type.data,
             new_book.series.data,
-            new_book.author.data
+            new_book.author_first_name.data,
+            new_book.author_last_name.data
         )
         return jsonify(data={
             'id': 3,

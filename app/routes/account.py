@@ -392,8 +392,6 @@ def add_to_reserved():
     if current_user.email:
         form = Reserved_book_date()
         if form.validate_on_submit():
-            print(form.start_date.data)
-            print(form.end_date.data)
             book_log = Log.query.filter_by(id_user=current_user.id).first()
             if not book_log:
                 book_log = Log(
@@ -410,7 +408,7 @@ def add_to_reserved():
                 pytz.timezone('Europe/Bucharest'))
             period_start = time_now
             diff = form.end_date.data-form.start_date.data
-            print("diff=",diff)
+
             period_end = time_now+(diff)
             entry_log = EntryLog(
                 id_log=book_log.id,
@@ -426,7 +424,7 @@ def add_to_reserved():
             db.session.commit()
 
             return jsonify(data="succes")
-        print(form.errors)
+
         return jsonify(data=form.errors)
 
 

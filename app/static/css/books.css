@@ -18,3 +18,6 @@
 #empty-results {
     margin-top: -1rem;
 }
+#choose-author-container, #author-result-container{
+    display: none;
+}

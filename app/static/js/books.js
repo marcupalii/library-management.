@@ -2,19 +2,24 @@ $(document).ready(function () {
 
     $('#type_author-0').next().css("margin-bottom", "0");
     $('#type_author-1').next().css("margin-bottom", "0");
-    $('#choose-author-container').addClass("d-none");
+    // $('#choose-author-container').addClass("d-none");
 
     $('.err-msg').each(function () {
         $(this).css("visibility", "hidden");
     });
 
     $('#type_author-0').on("click", function () {
-        $('#choose-author-container').addClass("d-none");
+        // $('#choose-author-container').addClass("d-none");
+        $('#choose-author-container').slideToggle(0);
         $('#author').val('');
     });
 
     $('#type_author-1').on("click", function () {
-        $('#choose-author-container').removeClass("d-none");
+        // $('#choose-author-container').removeClass("d-none");
+        let author_container = $('#choose-author-container');
+        if (author_container.css("display") === "none") {
+            author_container.slideToggle(0);
+        }
         $('#author').val('');
     });
 
@@ -49,9 +54,8 @@ $(document).ready(function () {
     });
 
     function show_pagination_buttons(page_numbers) {
-        console.log("page_numbers=", page_numbers);
         let pagination_container = $('#paginationBox');
-        pagination_container.empty();
+
         pagination_container.append(
             $('<li/>')
                 .addClass("page-item")
@@ -116,7 +120,7 @@ $(document).ready(function () {
     function write_data(data) {
         let per_page = 3;
         let row_index = per_page * (parseInt($('#page_nr').val()) - 1);
-        $('#author-result-container').removeClass("d-none");
+        $('#content-table').empty();
         for (let id in data['data']) {
             row_index += 1;
             $('#content-table')
@@ -141,22 +145,22 @@ $(document).ready(function () {
                         .append(
                             $('<td/>')
                                 .addClass("last-td")
+                                // .append(
+                                //     $('<button/>')
+                                //         .addClass("btn accordion-toggle d-lg-none")
+                                //         .attr("data-toggle", "collapse")
+                                //         .attr("data-target", "#tr-collapse-id-" + row_index.toString())
+                                //         .attr("aria-controls", "aria-controls" + row_index.toString())
+                                //         .attr("id", row_index.toString())
+                                //         .attr("type", "button")
+                                //         .append(
+                                //             $('<i/>')
+                                //                 .addClass("fas fa-expand-arrows-alt")
+                                //         )
+                                // )
                                 .append(
                                     $('<button/>')
-                                        .addClass("btn accordion-toggle d-lg-none")
-                                        .attr("data-toggle", "collapse")
-                                        .attr("data-target", "#tr-collapse-id-" + row_index.toString())
-                                        .attr("aria-controls", "aria-controls" + row_index.toString())
-                                        .attr("id", row_index.toString())
-                                        .attr("type", "button")
-                                        .append(
-                                            $('<i/>')
-                                                .addClass("fas fa-expand-arrows-alt")
-                                        )
-                                )
-                                .append(
-                                    $('<button/>')
-                                        .addClass("btn modal-button")
+                                        .addClass("btn select-author-button")
                                         .attr("id", row_index.toString())
                                         .attr("type", "button")
                                         .append(
@@ -167,13 +171,20 @@ $(document).ready(function () {
                         )
                 )
         }
+        if ($('#author-result-container').css("display")==="none") {
+            $('#author-result-container').slideToggle(0);
+        }
         if (row_index === 0) {
             $('#empty-results').css("visibility", "visible");
-            $('#paginationBox').css("visibility", "hidden");
+            $('#paginationBox')
+                .css("visibility", "hidden")
+                .empty();
         } else {
 
             $('#empty-results').css("visibility", "hidden");
-            $('#paginationBox').css("visibility", "visible");
+            $('#paginationBox')
+                .css("visibility", "visible")
+                .empty();
             show_pagination_buttons(data['pages_lst']);
         }
 
@@ -185,11 +196,10 @@ $(document).ready(function () {
     var data_form = "";
 
     function get_authors() {
-        $('#content-table').empty();
+
         $('#name_choose_author_error').css("visibility", "hidden");
         $('#author_name').removeClass("has-error");
         data_form = data_form.replace(/&page_nr=\d+&/, "&page_nr=" + $('#page_nr').val() + "&");
-        console.log("data_Form in get authors=", data_form);
         $.ajax({
             type: "POST",
             url: "/choose_author/",
@@ -197,7 +207,7 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data['data']);
                 if (data['data'].hasOwnProperty("author_name")) {
-                    $('#author-result-container').addClass("d-none");
+                    $('#author-result-container').slideToggle(0);
                     $('#name_choose_author_error')
                         .css("visibility", "visible")
                         .text(data['data']["author_name"]);
@@ -223,14 +233,29 @@ $(document).ready(function () {
         let page_nr = $('#page_nr');
 
         if ($(this).attr("id") === "prev") {
-            page_nr.val(parseInt(page_nr.val()) <= 1 ? 1 : parseInt(page_nr.val()) - 1);
+            if (parseInt(page_nr.val()) <= 1){
+                $(this).trigger("blur");
+                return;
+            }
+            page_nr.val(parseInt(page_nr.val()) - 1);
         } else if ($(this).attr("id") === "next") {
-            page_nr.val(parseInt(page_nr.val()) >= nr_of_pages ? nr_of_pages : parseInt(page_nr.val()) + 1);
+            if (parseInt(page_nr.val()) >= nr_of_pages){
+                $(this).trigger("blur");
+                return;
+            }
+            page_nr.val(parseInt(page_nr.val()) + 1);
         } else {
             page_nr.val(parseInt($(this).attr("id")));
         }
-        console.log("page_nr=", page_nr.val());
         get_authors();
+    });
+    $(document).on("click", ".select-author-button", function () {
+        $('#author_first_name').val(
+            $('#author-first-name-row-content-'+$(this).attr("id")).text()
+        );
+        $('#author_last_name').val(
+           $('#author-last-name-row-content-'+$(this).attr("id")).text()
+        );
     });
 
 });

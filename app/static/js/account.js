@@ -377,9 +377,19 @@ $(function () {
         }
 
         if ($(this).attr("id") === "prev") {
-            page_nr.val(parseInt(page_nr.val()) <= 1 ? 1 : parseInt(page_nr.val()) - 1);
+            if (parseInt(page_nr.val()) <= 1){
+                $(this).trigger("blur");
+                return;
+            }
+
+            page_nr.val(parseInt(page_nr.val()) - 1);
         } else if ($(this).attr("id") === "next") {
-            page_nr.val(parseInt(page_nr.val()) >= nr_of_pages ? nr_of_pages : parseInt(page_nr.val()) + 1);
+            if (parseInt(page_nr.val()) >= nr_of_pages){
+                $(this).trigger("blur");
+                return;
+            }
+
+            page_nr.val(parseInt(page_nr.val()) + 1);
         } else {
             page_nr.val(parseInt($(this).attr("id")));
         }

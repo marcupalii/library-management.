@@ -103,7 +103,8 @@ class Accept_next_book(FlaskForm):
 class New_Book(FlaskForm):
     name = StringField(label='Book name: ', validators=[InputRequired('Field can not be empty !')])
     type = StringField(label='Book type: ', validators=[InputRequired('Field can not be empty !')])
-    author = StringField(label='Author name: ', validators=[InputRequired('Field can not be empty !')])
+    author_first_name = StringField(label='Author first name: ', validators=[InputRequired('Field can not be empty !')])
+    author_last_name = StringField(label='Author last name: ', validators=[InputRequired('Field can not be empty !')])
     series = StringField(label='Book series: ', validators=[InputRequired('Field can not be empty !')])
     type_author = RadioField(choices=[('1', "New author"), ('2', 'Already exists')], validators=[InputRequired()])
 
