@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, jsonify
 from app import app, db
 from flask_login import current_user, login_required
-from app.forms import New_Book, Choose_Author
+from app.forms import New_Book, Choose_Author, New_author
 import hashlib
 from app.models import User, Author
 
@@ -15,10 +15,12 @@ def books():
     new_book.type_author.default = '1'
     new_book.process()
     choose_author = Choose_Author()
+    new_author = New_author()
     return render_template(
         "books.html",
         new_book=new_book,
-        choose_author=choose_author
+        choose_author=choose_author,
+        new_author=new_author
     )
 
 
@@ -44,6 +46,22 @@ def add_new_book():
     else:
         print(new_book.errors)
         return jsonify(data=new_book.errors)
+
+
+@app.route("/add_new_author/", methods=["POST"])
+@login_required
+def add_new_author():
+    new_author = New_author()
+    if new_author.validate_on_submit():
+        print(new_author.new_author_first_name.data,new_author.new_author_last_name.data)
+        return jsonify(data={
+            'id': 3,
+            'status': 200
+        })
+    else:
+        print(new_author.errors)
+        return jsonify(data=new_author.errors)
+
 
 @app.route("/choose_author/",methods=["POST"])
 @login_required

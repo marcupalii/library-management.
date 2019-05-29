@@ -113,3 +113,8 @@ class Choose_Author(FlaskForm):
     author_name = StringField(label='Author first name: ', validators=[InputRequired('Field can not be empty !')])
     page_nr = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
     search_substring = BooleanField('Search sub-string')
+
+
+class New_author(FlaskForm):
+    new_author_first_name = StringField(label='First name: ', validators=[InputRequired('Field can not be empty !')])
+    new_author_last_name = StringField(label='Last name: ', validators=[InputRequired('Field can not be empty !')])

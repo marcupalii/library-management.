@@ -2,30 +2,67 @@ $(document).ready(function () {
 
     $('#type_author-0').next().css("margin-bottom", "0");
     $('#type_author-1').next().css("margin-bottom", "0");
-    // $('#choose-author-container').addClass("d-none");
+
 
     $('.err-msg').each(function () {
         $(this).css("visibility", "hidden");
     });
 
     $('#type_author-0').on("click", function () {
-        // $('#choose-author-container').addClass("d-none");
-        $('#choose-author-container').slideToggle(0);
-        $('#author').val('');
-    });
 
-    $('#type_author-1').on("click", function () {
-        // $('#choose-author-container').removeClass("d-none");
-        let author_container = $('#choose-author-container');
-        if (author_container.css("display") === "none") {
-            author_container.slideToggle(0);
+        if ($('#author-result-container').css("display") === "block") {
+            $('#author-result-container').slideToggle(0);
+        }
+        if ($('#choose-author-container').css("display") === "block") {
+            $('#choose-author-container').slideToggle(0);
         }
         $('#author').val('');
     });
 
+    $('#type_author-1').on("click", function () {
+
+        let author_container = $('#choose-author-container');
+        if (author_container.css("display") === "none") {
+            author_container.slideToggle(0);
+        }
+
+        $('#author').val('');
+    });
+
+    $('#name').on("change",function () {
+        $('#name').removeClass("has-error");
+        $('#name_new_book_error').css("visibility","hidden");
+    });
+
+    $('#type').on("change",function () {
+        $('#type').removeClass("has-error");
+        $('#type_new_book_error').css("visibility","hidden");
+    });
+
+    $('#author_first_name').on("change",function () {
+        $('#author_first_name').removeClass("has-error");
+        $('#author_first_name_new_book_error').css("visibility","hidden");
+    });
+
+    $('#author_last_name').on("change",function () {
+        $('#author_last_name').removeClass("has-error");
+        $('#author_last_name_new_book_error').css("visibility","hidden");
+    });
+
+    $('#series').on("change",function () {
+        $('#series').removeClass("has-error");
+        $('#series_new_book_error').css("visibility","hidden");
+    });
 
     $('#add-new-book-button').on("click", function (e) {
         e.preventDefault();
+
+        $('#name').removeClass("has-error");
+        $('#type').removeClass("has-error");
+        $('#author_first_name').removeClass("has-error");
+        $('#author_last_name').removeClass("has-error");
+        $('#series').removeClass("has-error");
+
         $('.err-msg').each(function () {
             $(this).css("visibility", "hidden");
         });
@@ -41,7 +78,7 @@ $(document).ready(function () {
                         $('#' + key + '_new_book_error')
                             .css("visibility", "visible")
                             .text(data['data'][key]);
-
+                        $('#'+key).addClass("has-error");
                     }
                 } else {
                     $('.err-msg').each(function () {
@@ -171,7 +208,7 @@ $(document).ready(function () {
                         )
                 )
         }
-        if ($('#author-result-container').css("display")==="none") {
+        if ($('#author-result-container').css("display") === "none") {
             $('#author-result-container').slideToggle(0);
         }
         if (row_index === 0) {
@@ -233,13 +270,13 @@ $(document).ready(function () {
         let page_nr = $('#page_nr');
 
         if ($(this).attr("id") === "prev") {
-            if (parseInt(page_nr.val()) <= 1){
+            if (parseInt(page_nr.val()) <= 1) {
                 $(this).trigger("blur");
                 return;
             }
             page_nr.val(parseInt(page_nr.val()) - 1);
         } else if ($(this).attr("id") === "next") {
-            if (parseInt(page_nr.val()) >= nr_of_pages){
+            if (parseInt(page_nr.val()) >= nr_of_pages) {
                 $(this).trigger("blur");
                 return;
             }
@@ -251,11 +288,56 @@ $(document).ready(function () {
     });
     $(document).on("click", ".select-author-button", function () {
         $('#author_first_name').val(
-            $('#author-first-name-row-content-'+$(this).attr("id")).text()
+            $('#author-first-name-row-content-' + $(this).attr("id")).text()
         );
         $('#author_last_name').val(
-           $('#author-last-name-row-content-'+$(this).attr("id")).text()
+            $('#author-last-name-row-content-' + $(this).attr("id")).text()
         );
+        // $(this).trigger("blur");
     });
 
+    $('#new_author_first_name').on("change",function () {
+        $('#new_author_first_name').removeClass("has-error");
+        $('#new_author_first_name_error').css("visibility","hidden");
+    });
+
+    $('#new_author_last_name').on("change",function () {
+        $('#new_author_last_name').removeClass("has-error");
+        $('#new_author_last_name_error').css("visibility","hidden");
+    });
+
+    $('#new_author_first_name_error').css("visibility", "hidden");
+    $('#new_author_last_name_error').css("visibility", "hidden");
+
+    $('#add-new-author-button').on("click", function (e) {
+        $('#new_author_first_name').removeClass("has-error");
+        $('#new_author_last_name').removeClass("has-error");
+
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "/add_new_author/",
+            data: $('#new-author-form').serialize(),
+            success: function (data) {
+                if (data['data'].hasOwnProperty("status") === false) {
+
+                    $('#new_author_first_name_error')
+                        .css("visibility", "visible")
+                        .text(data['data']["new_author_first_name"]);
+
+                    $('#new_author_last_name_error')
+                        .css("visibility", "visible")
+                        .text(data['data']["new_author_last_name"]);
+
+                    $('#new_author_first_name').addClass("has-error");
+                    $('#new_author_last_name').addClass("has-error");
+                } else {
+                    $('#new_author_first_name_error').css("visibility", "hidden");
+                    $('#new_author_last_name_error').css("visibility", "hidden");
+                    $('#new_author_first_name').val('');
+                    $('#new_author_last_name').val('');
+                }
+            }
+        });
+    });
 });

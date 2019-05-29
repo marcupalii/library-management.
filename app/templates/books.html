@@ -17,56 +17,38 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-        {#        <div class="container-fluid p-3 border-content" id="new-book-container">#}
-        {#            <h3 class="mt-5 mb-4 p-3">Add new book</h3>#}
-        {##}
-        {#            <form id="new-book-form" class="mt-2 p-3 border-content" novalidate>#}
-        {#                {{ new_book.hidden_tag() }}#}
-        {#                <div class="row">#}
-        {#                    <div class="col-md-4">#}
-        {#                        <div class="form-group">#}
-        {#                            {{ new_book.name.label }}#}
-        {#                            {{ new_book.name(class_='form-control') }}#}
-        {#                        </div>#}
-        {#                        <small class="form-group row err-msg no-margin-row" id="name_new_book_error"></small>#}
-        {#                    </div>#}
-        {#                    <div class="col-md-4">#}
-        {#                        <div class="form-group">#}
-        {#                            {{ new_book.type.label }}#}
-        {#                            {{ new_book.type(class_='form-control') }}#}
-        {#                        </div>#}
-        {#                        <small class="form-group row err-msg no-margin-row" id="type_new_book_error"></small>#}
-        {#                    </div>#}
-        {#                    <div class="col-md-4">#}
-        {#                        <div class="form-group">#}
-        {#                            {{ new_book.author.label }}#}
-        {#                            {{ new_book.author(class_='form-control') }}#}
-        {#                        </div>#}
-        {#                        <small class="form-group row err-msg no-margin-row" id="author_new_book_error"></small>#}
-        {#                    </div>#}
-        {#                </div>#}
-        {##}
-        {#                <div class="row">#}
-        {##}
-        {#                    <div class="col-md-4">#}
-        {#                        <div class="form-group">#}
-        {#                            {{ new_book.series.label }}#}
-        {#                            {{ new_book.series(class_='form-control') }}#}
-        {#                        </div>#}
-        {#                        <small class="form-group row err-msg no-margin-row" id="series_new_book_error"></small>#}
-        {#                    </div>#}
-        {#                </div>#}
-        {#                <button type="submit" id="add-new-book-button" class="btn btn-info btn-fill pull-right">#}
-        {#                    Save#}
-        {#                </button>#}
-        {#            </form>#}
-        {##}
-        {#        </div>#}
+        <div class="container-fluid p-3 border-content" id="new-book-container">
+            <h3 class="mt-5 mb-4 p-3">Add new author</h3>
+
+            <form id="new-author-form" class="mt-2 p-3 border-content" novalidate>
+                {{ new_author.hidden_tag() }}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_author.new_author_first_name.label }}
+                            {{ new_author.new_author_first_name(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row" id="new_author_first_name_error"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_author.new_author_last_name.label }}
+                            {{ new_author.new_author_last_name(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row" id="new_author_last_name_error"></small>
+                    </div>
+                </div>
+                <button type="submit" id="add-new-author-button" class="btn btn-info btn-fill pull-right">
+                    Save
+                </button>
+            </form>
+
+        </div>
 
 
-        <div class="container-fluid p-3 border-content mt-5" id="new-book-container">
+        <div class="container-fluid p-3 border-content mt-5 mb-3" id="new-book-container">
             <h3 class="mt-5 mb-4 p-3">Add new book</h3>
-            <div class="container-fluid m-2 p-4 border-content">
+            <div class="container-fluid p-3 border-content">
                 <form id="new-book-form" class="mt-2" novalidate>
                     {{ new_book.hidden_tag() }}
                     <div class="row">
@@ -99,19 +81,19 @@
                                 {{ new_book.author_first_name.label }}
                                 {{ new_book.author_first_name(class_='form-control') }}
                             </div>
-                            <small class="form-group row err-msg no-margin-row" id="author_new_book_error"></small>
+                            <small class="form-group row err-msg no-margin-row" id="author_first_name_new_book_error"></small>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 {{ new_book.author_last_name.label }}
                                 {{ new_book.author_last_name(class_='form-control') }}
                             </div>
-                            <small class="form-group row err-msg no-margin-row" id="author_new_book_error"></small>
+                            <small class="form-group row err-msg no-margin-row" id="author_last_name_new_book_error"></small>
                         </div>
 
                         <div class="col-md-4 d-flex align-items-start justify-content-center flex-column">
                             {% for choice in new_book.type_author %}
-                                {% if choice.label.text in new_book.type_author.choices[0][1]%}
+                                {% if choice.label.text in new_book.type_author.choices[0][1] %}
                                     <div class="mt-md-4 pt-md-3">
                                         {{ choice }} {{ choice.label }}
                                     </div>
