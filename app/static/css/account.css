@@ -56,6 +56,15 @@
 #days_number_error{
     margin-bottom: 10px;
 }
+.chart-pie{
+    padding: 1rem 0!important;
+}
+.w-99{
+    width: 99%!important;
+}
+.pie-container{
+    overflow-x: hidden;
+}
 @media screen and (max-width: 768px) {
 
     .chart-pie {

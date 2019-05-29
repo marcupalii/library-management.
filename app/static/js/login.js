@@ -15,13 +15,10 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: "/process_login_form", // send the form data here.
-            data: $('form').serialize(), // serializes the form's elements.
+            url: "/process_login_form",
+            data: $('form').serialize(),
             success: function (data) {
-                console.log(data);
-                if (data['data'] === 'succes-as-admin') {
-                    window.location = "/admin";
-                } else if (data['data'] === 'succes-as-user') {
+                if (data['data'].hasOwnProperty("status") && data['data']['status'] === 200) {
                     window.location = "/account";
                 } else if (data['data'] === 'invalid-credentials') {
 
@@ -31,28 +28,23 @@ $(document).ready(function () {
                     if ($('#password').hasClass('has-error') === false) {
                         $('#password').addClass('has-error');
                     }
-
-                    $('#invalid-credentials').text('Invalid username or password !');
-                    $('#invalid-credentials').css("visibility", "visible");
+                    $('#invalid-credentials')
+                        .text('Invalid username or password !')
+                        .css("visibility", "visible");
                 } else {
-
                     for (key in data['data']) {
                         if ($('#' + key).hasClass('has-error') === false) {
                             $('#' + key).addClass('has-error');
                         }
-
-                        $('#' + key + '-err').text(data['data'][key][0]);
-                        $('#' + key + '-err').css("visibility", "visible");
-
+                        $('#' + key + '-err')
+                            .text(data['data'][key][0])
+                            .css("visibility", "visible");
                     }
-                    console.log(data['data']);
                 }
-
             }
         });
         e.preventDefault();
     });
-    // Inject our CSRF token into our AJAX request.
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {

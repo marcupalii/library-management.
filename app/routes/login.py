@@ -10,9 +10,6 @@ import hashlib
 @app.route("/login")
 def login():
     if current_user.is_authenticated:
-        if current_user.type == "admin":
-            return redirect(url_for('admin'))
-        else:
             return redirect(url_for('account'))
 
     form = LoginForm()
@@ -29,10 +26,10 @@ def process_login_form():
         ).first()
         if user:
             login_user(user, remember=form.remember.data)
-            if user.type == "admin":
-                return jsonify(data='succes-as-admin')
-            else:
-                return jsonify(data='succes-as-user')
+            return jsonify(data={
+                'status': 200
+            })
+
         else:
             return jsonify(data="invalid-credentials")
 

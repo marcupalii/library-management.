@@ -21,6 +21,7 @@
 }
 
 .row-offcanvas-left {
+
     -ms-flex: 0 0 22%;
     flex: 0 0 22%;
     max-width: 22%;
