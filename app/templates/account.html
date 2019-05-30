@@ -161,9 +161,15 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            {{ advanced_search_form.search_author.label }}
+                            {{ advanced_search_form.search_author_first_name.label }}
                             <div class="col-7">
-                                {{ advanced_search_form.search_author }}
+                                {{ advanced_search_form.search_author_first_name }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            {{ advanced_search_form.search_author_last_name.label }}
+                            <div class="col-7">
+                                {{ advanced_search_form.search_author_last_name }}
                             </div>
                         </div>
 
@@ -223,7 +229,8 @@
                         <th>No.</th>
                         <th>Book name</th>
                         <th>Book type</th>
-                        <th class="d-none d-md-block">Author name</th>
+                        <th class="d-none d-md-block">Author first name</th>
+                        <th class="d-none d-md-block">Author last name</th>
                         <th class="d-none d-lg-block">Status</th>
 
                     </tr>
@@ -280,8 +287,12 @@
                             </div>
 
                             <div class="row mb-2 mt-3 ml-1 mr-1">
-                                <div class="col-sm-6 p-2">Author name :</div>
-                                <div class="col-sm-4 border-content p-2" id="author-name"></div>
+                                <div class="col-sm-6 p-2">Author first name :</div>
+                                <div class="col-sm-4 border-content p-2" id="author-first-name"></div>
+                            </div>
+                            <div class="row mb-2 mt-3 ml-1 mr-1">
+                                <div class="col-sm-6 p-2">Author last name :</div>
+                                <div class="col-sm-4 border-content p-2" id="author-last-name"></div>
                             </div>
 
                             <div class="row mb-2 mt-3 ml-1 mr-1 mb-5">

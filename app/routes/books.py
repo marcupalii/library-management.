@@ -3,7 +3,7 @@ from app import app, db
 from flask_login import current_user, login_required
 from app.forms import New_Book, Choose_Author, New_author
 import hashlib
-from app.models import User, Author
+from app.models import User, Author, Book,BookTypes
 
 
 @app.route('/books')
@@ -13,7 +13,9 @@ def books():
         return render_template("page_403.html")
     new_book = New_Book()
     new_book.type_author.default = '1'
+    new_book.type_exists.default = '1'
     new_book.process()
+    print(new_book.type.choices)
     choose_author = Choose_Author()
     new_author = New_author()
     return render_template(
@@ -35,6 +37,7 @@ def add_new_book():
         print(
             new_book.name.data,
             new_book.type.data,
+            new_book.type_string_field.data,
             new_book.series.data,
             new_book.author_first_name.data,
             new_book.author_last_name.data

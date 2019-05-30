@@ -23,6 +23,7 @@
     <div class="container-fluid mt-5">
         <div class="container-fluid p-3 border-content" id="content-wishlist">
             {% if next_book %}
+                <h3 class="mt-5 mb-4">Accept the next book</h3>
                 <div id="collapse-table">
                     <div class="container-fluid no-padding">
                         <table class="table table-bordered" style="border-collapse:collapse;">
@@ -30,14 +31,15 @@
                             <tr>
                                 <th>Book name</th>
                                 <th class="d-none d-md-block">Book type</th>
-                                <th class="d-none d-lg-block">Author name</th>
+                                <th class="d-none d-lg-block">Author first name</th>
+                                <th class="d-none d-lg-block">Author last name</th>
                                 <th>Period Start</th>
                                 <th>Period End</th>
                             </tr>
                             </thead>
                             <tbody id="content-table">
 
-                            <tr colspan="6">
+                            <tr colspan="7">
                                 <td class="hidden-content" id="next-book-id">
                                     {{ next_book[0] }}
                                 </td>
@@ -47,14 +49,17 @@
                                 <td class="d-none d-md-block" id="book-type-next-book">
                                     {{ next_book[2] }}
                                 </td>
-                                <td class="d-none d-lg-block" id="author-next-book">
+                                <td class="d-none d-lg-block" id="author-first-name-next-book">
                                     {{ next_book[3] }}
                                 </td>
-                                <td id="period-start-next-book">
+                                <td class="d-none d-lg-block" id="author-last-name-next-book">
                                     {{ next_book[4] }}
                                 </td>
-                                <td id="period-end-next-book">
+                                <td id="period-start-next-book">
                                     {{ next_book[5] }}
+                                </td>
+                                <td id="period-end-next-book">
+                                    {{ next_book[6] }}
                                 </td>
 
                                 <td class="last-td-next-book">
@@ -80,7 +85,9 @@
                                     <div class="accordian-body">
                                         <p class="d-md-none">Book type: <span>{{ next_book[2] }}</span>
                                         </p>
-                                        <p class="d-lg-none">Author name: <span>{{ next_book[3] }}</span>
+                                        <p class="d-lg-none">Author first name: <span>{{ next_book[3] }}</span>
+                                        </p>
+                                        <p class="d-lg-none">Author last name: <span>{{ next_book[4] }}</span>
                                         </p>
                                     </div>
                                 </td>
@@ -100,7 +107,8 @@
                             <th>#</th>
                             <th>Book name</th>
                             <th class="d-none d-md-block">Book type</th>
-                            <th>Author name</th>
+                            <th>Author first name</th>
+                            <th>Author last name</th>
                             <th>Period</th>
                             <th class="d-none d-lg-block">Created At</th>
                         </tr>
@@ -108,7 +116,7 @@
                         <tbody id="content-table">
 
                         {% for entry in wishlist %}
-                            <tr colspan="7">
+                            <tr colspan="8">
                                 <td class="rank" id="nr-row-content-{{ entry[0] }}">
                                     {{ entry[0] }}
                                 </td>
@@ -118,14 +126,17 @@
                                 <td class="d-none d-md-block" id="book-type-row-content-{{ entry[0] }}">
                                     {{ entry[2] }}
                                 </td>
-                                <td id="author-row-content-{{ entry[0] }}">
+                                <td id="author-first-name-row-content-{{ entry[0] }}">
                                     {{ entry[3] }}
                                 </td>
-                                <td id="period-row-content-{{ entry[0] }}">
+                                <td id="author-last-name-row-content-{{ entry[0] }}">
                                     {{ entry[4] }}
                                 </td>
-                                <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">
+                                <td id="period-row-content-{{ entry[0] }}">
                                     {{ entry[5] }}
+                                </td>
+                                <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">
+                                    {{ entry[6] }}
                                 </td>
                                 <td class="last-td row">
                                     <button class="btn accordion-toggle d-lg-none table-button" data-toggle="collapse"
@@ -136,7 +147,7 @@
                                     </button>
                                     <button class="btn table-button" type="button">
                                         <i class="delete-from-wishlist fa fa-times red"
-                                           id="/wishlist_delete_entry/{{ entry[6] }}"></i>
+                                           id="/wishlist_delete_entry/{{ entry[7] }}"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -147,7 +158,7 @@
                                     <div class="accordian-body">
                                         <p class="d-md-none">Book type: <span>{{ entry[2] }}</span>
                                         </p>
-                                        <p class="d-lg-none">Created at: <span>{{ entry[5] }}</span>
+                                        <p class="d-lg-none">Created at: <span>{{ entry[6] }}</span>
                                         </p>
                                     </div>
                                 </td>
@@ -213,8 +224,12 @@
                                     <div class="col-sm-4 border-content p-2" id="modal-book-type"></div>
                                 </div>
                                 <div class="row mb-2 mt-3 ml-1 mr-1">
-                                    <div class="col-sm-6 p-2">Author :</div>
-                                    <div class="col-sm-4 border-content p-2" id="modal-book-author"></div>
+                                    <div class="col-sm-6 p-2">Author first name:</div>
+                                    <div class="col-sm-4 border-content p-2" id="modal-book-author-first-name"></div>
+                                </div>
+                                <div class="row mb-2 mt-3 ml-1 mr-1">
+                                    <div class="col-sm-6 p-2">Author last name:</div>
+                                    <div class="col-sm-4 border-content p-2" id="modal-book-author-last-name"></div>
                                 </div>
                                 <div class="row mb-2 mt-3 ml-1 mr-1">
                                     <div class="col-sm-6 p-2">Period Start :</div>

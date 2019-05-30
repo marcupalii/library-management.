@@ -1,6 +1,6 @@
 from flask import render_template, request, url_for, redirect
 from app import app, db
-from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Author, Log, EntryLog, User_settings
+from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Author, Log, EntryLog, User_settings, BookTypes
 from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_book_date, Wishlist_settings
 from flask_login import login_required, current_user
 from flask import jsonify
@@ -29,10 +29,11 @@ def book_type_statistics():
         for entry_log in entry_logs:
             book_series = BookSeries.query.filter_by(id=entry_log.id_book_series).first()
             book = Book.query.filter_by(id=book_series.book_id).first()
-            if book.type not in types.keys():
-                types.update({book.type: 1})
+            type = BookTypes.query.filter_by(id=book.type_id).first()
+            if type.type_name not in types.keys():
+                types.update({type.type_name: 1})
             else:
-                types[book.type] += 1
+                types[type.type_name] += 1
 
     types = {item[0]: item[1] for item in sorted(types.items(), key=lambda kv: kv[1])}
     response_type = {}
@@ -69,7 +70,6 @@ def account():
     wishlist_settings.setting_option.default = str(current_user.settings.wishlist_option)
     wishlist_settings.process()
 
-    print(wishlist_form.rank.label)
     return render_template(
         'account.html',
         advanced_search_form=advanced_search_form,
@@ -133,7 +133,7 @@ def basic_search_book():
                 .filter(Book.name.like(name)) \
                 .join(Author, Book.author_id == Author.id) \
                 .order_by(Book.name) \
-                .add_columns(Author.id, Author.name) \
+                .add_columns(Author.id, Author.first_name, Author.last_name) \
                 .paginate(
                 per_page=15,
                 page=form.basic_page_number.data,
@@ -171,9 +171,10 @@ def basic_search_book():
                             status = "Available"
                     response.update({
                         str(entry[0].id): {
-                            'author_name': entry[2],
+                            'author_first_name': entry[2],
+                            'author_last_name': entry[3],
                             'book_name': entry[0].name,
-                            'book_type': entry[0].type,
+                            'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
                             'status': status,
                             'period_diff': period_diff
                         }
@@ -197,15 +198,18 @@ def advanced_search_book():
     if current_user.email:
         form = Advanced_search()
         if form.validate_on_submit():
-            author = ""
+            author_first_name = ""
+            author_last_name = ""
             name = ""
             type = ""
             if form.search_substring.data == False:
-                author = form.search_author.data if form.search_author.data else '%%'
+                author_first_name = form.search_author_first_name.data if form.search_author_first_name.data else '%%'
+                author_last_name = form.search_author_last_name.data if form.search_author_last_name.data else '%%'
                 name = form.search_name.data if form.search_name.data else '%%'
                 type = form.search_type.data if form.search_type.data else '%%'
             else:
-                author = '%' + form.search_author.data + '%' if form.search_author.data else '%%'
+                author_first_name = '%' + form.search_author_first_name.data + '%' if form.search_author_first_name.data else '%%'
+                author_last_name = '%' + form.search_author_last_name.data + '%' if form.search_author_last_name.data else '%%'
                 name = '%' + form.search_name.data + '%' if form.search_name.data else '%%'
                 type = '%' + form.search_type.data + '%' if form.search_type.data else '%%'
 
@@ -227,20 +231,29 @@ def advanced_search_book():
 
                     for entry in entry_logs:
                         ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
+                book_type = db.session()\
+                    .query(BookTypes)\
+                    .filter(
+                    BookTypes.type_name.like(type)
+                ).all()
+                type_ids = []
+                if book_type:
+                    for t in book_type:
+                        type_ids.append(t.id)
 
                 book_author_join = db.session() \
                     .query(Book) \
                     .filter(
                     ~(Book.id.in_(ids_wishlist))
-                    & (Book.type.like(type))
+                    & (Book.type_id.in_(type_ids))
                     & (Book.name.like(name))
                     & ~(Book.id.in_(ids_current_books))
                     & (Book.count_free_books > 3)
                 ) \
                     .join(Author, Book.author_id == Author.id) \
-                    .filter(Author.name.like(author)) \
+                    .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
                     .order_by(Book.name) \
-                    .add_columns(Author.id, Author.name) \
+                    .add_columns(Author.id, Author.first_name, Author.last_name) \
                     .paginate(
                     per_page=15,
                     page=form.page_number.data,
@@ -264,18 +277,28 @@ def advanced_search_book():
                     for entry in entry_logs:
                         ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
 
+                book_type = db.session() \
+                    .query(BookTypes) \
+                    .filter(
+                    BookTypes.type_name.like(type)
+                ).all()
+                type_ids = []
+                if book_type:
+                    for t in book_type:
+                        type_ids.append(t.id)
+
                 book_author_join = db.session() \
                     .query(Book) \
                     .filter(
                     ~(Book.id.in_(ids_wishlist))
-                    & (Book.type.like(type))
+                    & (Book.type_id.in_(type_ids))
                     & (Book.name.like(name))
                     & ~(Book.id.in_(ids_current_books))
                 ) \
                     .join(Author, Book.author_id == Author.id) \
-                    .filter(Author.name.like(author)) \
+                    .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
                     .order_by(Book.name) \
-                    .add_columns(Author.id, Author.name) \
+                    .add_columns(Author.id, Author.first_name, Author.last_name) \
                     .paginate(
                     per_page=15,
                     page=form.page_number.data,
@@ -287,13 +310,23 @@ def advanced_search_book():
                 for entry in entry_wishlist:
                     ids.append(entry.id_book)
 
+                book_type = db.session() \
+                    .query(BookTypes) \
+                    .filter(
+                    BookTypes.type_name.like(type)
+                ).all()
+                type_ids = []
+                if book_type:
+                    for t in book_type:
+                        type_ids.append(t.id)
+
                 book_author_join = db.session() \
                     .query(Book) \
-                    .filter(~(Book.id.in_(ids)) & (Book.type.like(type)) & Book.name.like(name)) \
+                    .filter(~(Book.id.in_(ids)) & (Book.type_id.in_(type_ids)) & Book.name.like(name)) \
                     .join(Author, Book.author_id == Author.id) \
-                    .filter(Author.name.like(author)) \
+                    .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
                     .order_by(Book.name) \
-                    .add_columns(Author.id, Author.name) \
+                    .add_columns(Author.id, Author.first_name, Author.last_name) \
                     .paginate(
                     per_page=15,
                     page=form.page_number.data,
@@ -310,29 +343,49 @@ def advanced_search_book():
                     for entry in entry_logs:
                         ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
 
+                book_type = db.session() \
+                    .query(BookTypes) \
+                    .filter(
+                    BookTypes.type_name.like(type)
+                ).all()
+                type_ids = []
+                if book_type:
+                    for t in book_type:
+                        type_ids.append(t.id)
+
                 book_author_join = db.session() \
                     .query(Book) \
                     .filter(
-                    (Book.type.like(type))
+                    (Book.type_id.in_(type_ids))
                     & (Book.name.like(name))
                     & ~(Book.id.in_(ids_current_books))
                 ) \
                     .join(Author, Book.author_id == Author.id) \
-                    .filter(Author.name.like(author)) \
+                    .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
                     .order_by(Book.name) \
-                    .add_columns(Author.id, Author.name) \
+                    .add_columns(Author.id, Author.first_name, Author.last_name) \
                     .paginate(
                     per_page=15,
                     page=form.page_number.data,
                     error_out=True
                 )
             else:
+                book_type = db.session() \
+                    .query(BookTypes) \
+                    .filter(
+                    BookTypes.type_name.like(type)
+                ).all()
+                type_ids = []
+                if book_type:
+                    for t in book_type:
+                        type_ids.append(t.id)
+
                 book_author_join = Book.query \
-                    .filter(Book.name.like(name) & (Book.type.like(type))) \
+                    .filter(Book.name.like(name) & (Book.type_id.in_(type_ids))) \
                     .join(Author, Book.author_id == Author.id) \
-                    .filter(Author.name.like(author)) \
+                    .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
                     .order_by(Book.name) \
-                    .add_columns(Author.id, Author.name) \
+                    .add_columns(Author.id, Author.first_name, Author.last_name) \
                     .paginate(
                     per_page=15,
                     page=form.page_number.data,
@@ -369,9 +422,10 @@ def advanced_search_book():
                             status = "Available"
                     response.update({
                         str(entry[0].id): {
-                            'author_name': entry[2],
+                            'author_first_name': entry[2],
+                            'author_last_name': entry[3],
                             'book_name': entry[0].name,
-                            'book_type': entry[0].type,
+                            'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
                             'status': status,
                             'period_diff': period_diff
                         }

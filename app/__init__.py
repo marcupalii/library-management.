@@ -55,6 +55,6 @@ from app.routes.notifications import notifications
 from app.routes.wishlist import wishlist_delete_entry, wishlist, wishlist_book, accept_next_book
 from app.routes.profile import profile,change_password
 from app.routes.admin_dashboard import admin_dashboard, users
-from app.routes.books import books, add_new_book
+from app.routes.books import books, add_new_author
 
 

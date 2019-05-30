@@ -1,6 +1,6 @@
 from flask import render_template, request, url_for, redirect, abort
 from app import app, db
-from app.models import User, EntryWishlist, Log, Book, Author, NextBook, EntryLog
+from app.models import User, EntryWishlist, Log, Book, Author, NextBook, EntryLog, BookTypes
 from flask_login import login_required, current_user
 from flask import jsonify
 from app.forms import Wishlist_settings, Accept_next_book
@@ -78,8 +78,9 @@ def wishlist(page, book_id):
                 response.append([
                     entry.rank,
                     book.name,
-                    book.type,
-                    author.name,
+                    BookTypes.query.filter_by(id=book.type_id).first().type_name,
+                    author.first_name,
+                    author.last_name,
                     entry.period,
                     re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)", str(entry.updated_at)).groups(0)[0],
                     entry.id
@@ -113,8 +114,9 @@ def wishlist(page, book_id):
             next_book = [
                 next_book_query.id,
                 book.name,
-                book.type,
-                author.name,
+                BookTypes.query.filter_by(id=book.type_id).first().type_name,
+                author.first_name,
+                author.last_name,
                 re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)", str(period_start)).groups(0)[0],
                 re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)", str(period_end)).groups(0)[0],
 
@@ -191,12 +193,10 @@ def accept_next_book():
             period_diff=period_end - period_start,
             created_at=period_start
         )
-        print(entry_log)
         next_book.status = "Have one"
         next_book.period = 0
 
         db.session.add(entry_log)
         db.session.commit()
-        print(form.next_book_id.data)
         return jsonify(data={'id': 1}, status=200)
     return jsonify(data=form.errors)

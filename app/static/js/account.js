@@ -49,8 +49,14 @@ $(function () {
                     )
                     .append(
                         $('<td/>')
-                            .text(row['author_name'])
-                            .attr("id", "author-name-row-content-" + row_index.toString())
+                            .text(row['author_first_name'])
+                            .attr("id", "author-first-name-row-content-" + row_index.toString())
+                            .addClass("d-none d-md-block")
+                    )
+                    .append(
+                        $('<td/>')
+                            .text(row['author_last_name'])
+                            .attr("id", "author-last-name-row-content-" + row_index.toString())
                             .addClass("d-none d-md-block")
                     )
 
@@ -110,10 +116,19 @@ $(function () {
                                     .append(
                                         $('<p/>')
                                             .addClass("d-md-none")
-                                            .text("author_name: ")
+                                            .text("Author first name: ")
                                             .append(
                                                 $('<span/>')
-                                                    .text(row['author_name'])
+                                                    .text(row['author_first_name'])
+                                            )
+                                    )
+                                    .append(
+                                        $('<p/>')
+                                            .addClass("d-md-none")
+                                            .text("Author last name: ")
+                                            .append(
+                                                $('<span/>')
+                                                    .text(row['author_last_name'])
                                             )
                                     )
                                     .append(
@@ -250,7 +265,7 @@ $(function () {
     }
 
     $.each($('input'), function () {
-        if ($(this).attr("id").match(/^search_[a-z]+$/) &&
+        if ($(this).attr("id").match(/^search_[a-z_]+$/) &&
             $(this).attr("id") !== "search_substring") {
 
             $(this).addClass("form-control");
@@ -321,8 +336,11 @@ $(function () {
                             $('#search_type.form-control').addClass('has-error');
                         }
 
-                        if ($('#search_author.form-control').hasClass('has-error') === false) {
-                            $('#search_author.form-control').addClass('has-error');
+                        if ($('#search_author_first_name.form-control').hasClass('has-error') === false) {
+                            $('#search_author_first_name.form-control').addClass('has-error');
+                        }
+                        if ($('#search_author_last_name.form-control').hasClass('has-error') === false) {
+                            $('#search_author_last_name.form-control').addClass('has-error');
                         }
 
 
@@ -342,14 +360,14 @@ $(function () {
 
     }
 
-    $('#basic-search-button').on('click',function (e) {
+    $('#basic-search-button').on('click', function (e) {
         $('#basic_page_number').val(1);
         data_form = $('#basic-search-form').serialize();
         get_data();
         e.preventDefault();
     });
 
-    $('#advanced-search-button').on('click',function (e) {
+    $('#advanced-search-button').on('click', function (e) {
         reset_err_tags();
         $('#page_number').val(1);
         data_form = $('#advanced-search-form').serialize();
@@ -377,14 +395,14 @@ $(function () {
         }
 
         if ($(this).attr("id") === "prev") {
-            if (parseInt(page_nr.val()) <= 1){
+            if (parseInt(page_nr.val()) <= 1) {
                 $(this).trigger("blur");
                 return;
             }
 
             page_nr.val(parseInt(page_nr.val()) - 1);
         } else if ($(this).attr("id") === "next") {
-            if (parseInt(page_nr.val()) >= nr_of_pages){
+            if (parseInt(page_nr.val()) >= nr_of_pages) {
                 $(this).trigger("blur");
                 return;
             }
@@ -403,7 +421,7 @@ $(function () {
     $('#days_number').css("width", "100%");
 
 
-    $('#add-to-wishlist-button').on('click',function () {
+    $('#add-to-wishlist-button').on('click', function () {
 
         let period_err = $('#days_number_error');
         let rank_err = $('#rank_error');
@@ -466,7 +484,7 @@ $(function () {
     $('#start_date_error').css("visibility", "hidden");
     $('#end_date_error').css("visibility", "hidden");
 
-    $('#add-to-reserved-button').on('click',function () {
+    $('#add-to-reserved-button').on('click', function () {
         $('#end_date').removeClass("has-error");
         $('#start_date').removeClass("has-error");
         $('#start_date_error').css("visibility", "hidden");
@@ -497,7 +515,7 @@ $(function () {
         });
     });
 
-    $('.search').on('click',function () {
+    $('.search').on('click', function () {
 
         $('#collapse-table')
             .css("display", "none");
@@ -568,8 +586,8 @@ $(document).on("click", ".modal-button", function () {
             var currentdate = new Date();
             let year = currentdate.getFullYear();
             let month = currentdate.getMonth() + 1;
-            if (month < 10){
-                month = '0'+month
+            if (month < 10) {
+                month = '0' + month
             }
             let day = currentdate.getDate();
 
@@ -595,7 +613,8 @@ $(document).on("click", ".modal-button", function () {
         $('#no').text($("#nr-row-content-" + id).text());
         $('#book-name').text($("#book-name-row-content-" + id).text());
         $('#book-type').text($("#book-type-row-content-" + id).text());
-        $('#author-name').text($("#author-name-row-content-" + id).text());
+        $('#author-first-name').text($("#author-first-name-row-content-" + id).text());
+        $('#author-last-name').text($("#author-last-name-row-content-" + id).text());
         $('#status').text($("#status-book-row-content-" + id).text());
         $('#book-id').text($("#book-id-row-content-" + id).text());
         $('#myModal').modal('toggle');

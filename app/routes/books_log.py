@@ -1,6 +1,6 @@
 from flask import render_template, url_for
 from app import app
-from app.models import Book, BookSeries, Author, Log, EntryLog
+from app.models import Book, BookSeries, Author, Log, EntryLog, BookTypes
 from flask_login import login_required, current_user
 from flask import jsonify
 from app.forms import Wishlist_settings
@@ -41,8 +41,9 @@ def books_log(page, book_id):
                     response.append([
                         index,
                         book.name,
-                        book.type,
-                        author.name,
+                        BookTypes.query.filter_by(id=book.type_id).first().type_name,
+                        author.first_name,
+                        author.last_name,
                         re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.period_start)).groups(0)[0],
                         re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.period_end)).groups(0)[0],
                         entry.status,

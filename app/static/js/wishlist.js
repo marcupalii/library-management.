@@ -48,7 +48,8 @@ $(document).ready(function () {
         $('#next_book_id').val($('#next-book-id').text());
         $('#modal-book-name').text($('#book-name-next-book').text());
         $('#modal-book-type').text($('#book-type-next-book').text());
-        $('#modal-book-author').text($('#author-next-book').text());
+        $('#modal-book-author-first-name').text($('#author-first-name-next-book').text());
+        $('#modal-book-author-last-name').text($('#author-last-name-next-book').text());
         $('#modal-book-period-start').text($('#period-start-next-book').text());
         $('#modal-book-period-end').text($('#period-end-next-book').text());
 

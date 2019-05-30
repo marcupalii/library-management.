@@ -23,14 +23,14 @@
             <form id="new-author-form" class="mt-2 p-3 border-content" novalidate>
                 {{ new_author.hidden_tag() }}
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <div class="form-group">
                             {{ new_author.new_author_first_name.label }}
                             {{ new_author.new_author_first_name(class_='form-control') }}
                         </div>
                         <small class="form-group row err-msg no-margin-row" id="new_author_first_name_error"></small>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <div class="form-group">
                             {{ new_author.new_author_last_name.label }}
                             {{ new_author.new_author_last_name(class_='form-control') }}
@@ -52,21 +52,14 @@
                 <form id="new-book-form" class="mt-2" novalidate>
                     {{ new_book.hidden_tag() }}
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <div class="form-group">
                                 {{ new_book.name.label }}
                                 {{ new_book.name(class_='form-control') }}
                             </div>
                             <small class="form-group row err-msg no-margin-row" id="name_new_book_error"></small>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                {{ new_book.type.label }}
-                                {{ new_book.type(class_='form-control') }}
-                            </div>
-                            <small class="form-group row err-msg no-margin-row" id="type_new_book_error"></small>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <div class="form-group">
                                 {{ new_book.series.label }}
                                 {{ new_book.series(class_='form-control') }}
@@ -74,24 +67,54 @@
                             <small class="form-group row err-msg no-margin-row" id="series_new_book_error"></small>
                         </div>
                     </div>
-
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5" id="type_select">
+                            <div class="form-group">
+                                {{ new_book.type.label }}
+                                {{ new_book.type(class_='form-control') }}
+                            </div>
+                            <small class="form-group row err-msg no-margin-row" id="type_new_book_error"></small>
+                        </div>
+                        <div class="col-md-5" id="type_string">
+                            <div class="form-group">
+                                {{ new_book.type_string_field.label }}
+                                {{ new_book.type_string_field(class_='form-control') }}
+                            </div>
+                            <small class="form-group row err-msg no-margin-row" id="type_string_field_new_book_error"></small>
+                        </div>
+                        <div class="col-md-5 row">
+                            {% for choice in new_book.type_exists %}
+                                {% if choice.label.text in new_book.type_exists.choices[0][1] %}
+                                    <div class="col-md-8 mt-md-4 pt-md-3 pr-0">
+                                        {{ choice }} {{ choice.label }}
+                                    </div>
+                                {% else %}
+                                    <div class="mt-md-4 pt-md-3 pr-0 pl-0">
+                                        {{ choice }} {{ choice.label }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
                             <div class="form-group">
                                 {{ new_book.author_first_name.label }}
                                 {{ new_book.author_first_name(class_='form-control') }}
                             </div>
-                            <small class="form-group row err-msg no-margin-row" id="author_first_name_new_book_error"></small>
+                            <small class="form-group row err-msg no-margin-row"
+                                   id="author_first_name_new_book_error"></small>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <div class="form-group">
                                 {{ new_book.author_last_name.label }}
                                 {{ new_book.author_last_name(class_='form-control') }}
                             </div>
-                            <small class="form-group row err-msg no-margin-row" id="author_last_name_new_book_error"></small>
+                            <small class="form-group row err-msg no-margin-row"
+                                   id="author_last_name_new_book_error"></small>
                         </div>
 
-                        <div class="col-md-4 d-flex align-items-start justify-content-center flex-column">
+                        <div class="col-md-5 d-flex align-items-start justify-content-center flex-column">
                             {% for choice in new_book.type_author %}
                                 {% if choice.label.text in new_book.type_author.choices[0][1] %}
                                     <div class="mt-md-4 pt-md-3">
@@ -102,12 +125,7 @@
                                         {{ choice }} {{ choice.label }}
                                     </div>
                                 {% endif %}
-
-
-
                             {% endfor %}
-
-                            <small class="form-group row err-msg no-margin-row" id="series_new_book_error"></small>
                         </div>
                     </div>
                 </form>
@@ -122,7 +140,7 @@
                             </div>
                             <small class="form-group row err-msg" id="name_choose_author_error"></small>
                         </div>
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-5 mt-2">
                             <div class="form-group row ml-4">
                                 {{ choose_author.search_substring.label }}
                                 <div class="col-2 d-flex justify-content-center align-items-center">
@@ -161,8 +179,6 @@
                     Save
                 </button>
             </div>
-
-
         </div>
     </div>
 

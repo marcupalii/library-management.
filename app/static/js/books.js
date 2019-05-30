@@ -29,6 +29,27 @@ $(document).ready(function () {
         $('#author').val('');
     });
 
+
+    $('#type_exists-0').on("click", function () {
+
+        if ($('#type_string').css("display") === "block") {
+            $('#type_string').slideToggle(0);
+            $('#type_select').slideToggle(0);
+            $('#type').val('');
+            $('#type_string_field').val('');
+        }
+    });
+
+    $('#type_exists-1').on("click", function () {
+
+        if ($('#type_string').css("display") === "none") {
+            $('#type_string').slideToggle(0);
+            $('#type_select').css("display","none");
+            $('#type').val('');
+            $('#type_string_field').val('');
+        }
+    });
+
     $('#name').on("change",function () {
         $('#name').removeClass("has-error");
         $('#name_new_book_error').css("visibility","hidden");
@@ -66,7 +87,7 @@ $(document).ready(function () {
         $('.err-msg').each(function () {
             $(this).css("visibility", "hidden");
         });
-
+        console.log("$('#new-book-form')=",$('#new-book-form').serialize());
         $.ajax({
             type: "POST",
             url: "/add_new_book/",

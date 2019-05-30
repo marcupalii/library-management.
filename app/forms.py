@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, DecimalField, DateField, RadioField
+from wtforms import StringField, PasswordField, BooleanField, DecimalField, DateField, RadioField, SelectField
 from wtforms.validators import InputRequired, Email, Length, NumberRange, Optional
-
+from app.models import BookTypes
 
 class LoginForm(FlaskForm):
     email = StringField('Email address',
@@ -20,9 +20,10 @@ class Basic_search(FlaskForm):
 
 class Advanced_search(FlaskForm):
     page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
-    search_name = StringField(label='Book Name: ', validators=[Optional()])
-    search_author = StringField(label='Author Name: ', validators=[Optional()])
-    search_type = StringField(label='Type: ', validators=[Optional()])
+    search_name = StringField(label='Book Name : ', validators=[Optional()])
+    search_author_first_name = StringField(label='Author first name : ', validators=[Optional()])
+    search_author_last_name = StringField(label='Author last name : ', validators=[Optional()])
+    search_type = StringField(label='Type : ', validators=[Optional()])
     search_substring = BooleanField('Search sub-string')
     exclude_wishlist = BooleanField('Exclude wishlist')
     exclude_current_book = BooleanField('Exclude unreturned book')
@@ -31,7 +32,7 @@ class Advanced_search(FlaskForm):
     def validate(self):
         if not super(Advanced_search, self).validate():
             return False
-        if not self.search_name.data and not self.search_author.data and not self.search_type.data:
+        if not self.search_name.data and not self.search_author_first_name.data and not self.search_author_last_name.data and not self.search_type.data:
             msg = 'At least one of fields can not be empty!'
             self.search_name.errors.append(msg)
             return False
@@ -102,11 +103,30 @@ class Accept_next_book(FlaskForm):
 
 class New_Book(FlaskForm):
     name = StringField(label='Book name: ', validators=[InputRequired('Field can not be empty !')])
-    type = StringField(label='Book type: ', validators=[InputRequired('Field can not be empty !')])
+    type_string_field = StringField(label='Book type: ',validators=[Optional()])
+    type = SelectField(
+        'Book type: ',
+        choices=[(str(type.id), type.type_name) for type in BookTypes.query.order_by('type_name')],
+        validators=[Optional()]
+    )
+    type_exists = RadioField(choices=[('1', "Type already exists"), ('2', 'New type')], validators=[InputRequired()])
+
     author_first_name = StringField(label='Author first name: ', validators=[InputRequired('Field can not be empty !')])
     author_last_name = StringField(label='Author last name: ', validators=[InputRequired('Field can not be empty !')])
     series = StringField(label='Book series: ', validators=[InputRequired('Field can not be empty !')])
     type_author = RadioField(choices=[('1', "New author"), ('2', 'Already exists')], validators=[InputRequired()])
+
+    def validate(self):
+        if not super(New_Book, self).validate():
+            return False
+        if not self.type_string_field.data and not self.type.data:
+
+            msg = 'Field can not be empty !'
+            self.type_string_field.errors.append(msg)
+            self.type.errors.append(msg)
+            print("msg"+msg)
+            return False
+        return True
 
 
 class Choose_Author(FlaskForm):

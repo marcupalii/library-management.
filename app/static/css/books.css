@@ -18,6 +18,12 @@
 #empty-results {
     margin-top: -1rem;
 }
-#choose-author-container, #author-result-container{
+.pr-0{
+    padding-right: 0!important;
+}
+.pl-0{
+    padding-left: 0!important;
+}
+#choose-author-container, #author-result-container, #type_string{
     display: none;
 }
