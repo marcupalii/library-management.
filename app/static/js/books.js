@@ -586,10 +586,10 @@ $(document).ready(function () {
                 $('#basic-search-form').trigger('reset');
                 $('#basic_page_number').val(page);
             } else {
-                // let page = $('#page_number').val();
-                // $('#advanced-search-form').trigger('reset');
-                // $('#basic-search-form').trigger('reset');
-                // $('#page_number').val(page);
+                let page = $('#page_number').val();
+                $('#advanced-search-form').trigger('reset');
+                $('#basic-search-form').trigger('reset');
+                $('#page_number').val(page);
             }
 
         }
@@ -635,44 +635,44 @@ $(document).ready(function () {
 
             });
         } else {
-            // data_form = data_form.replace(/&page_number=\d+&/, "&page_number=" + $('#page_number').val() + "&");
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/admin_dashboard_advanced_search_book/",
-            //     data: data_form,
-            //     success: function (data) {
-            //         $('#content-table-search-books').empty();
-            //
-            //         if (data['data'].hasOwnProperty("search_name")) {
-            //
-            //             if ($('#search_name.form-control').hasClass('has-error') === false) {
-            //                 $('#search_name.form-control').addClass('has-error');
-            //             }
-            //
-            //             if ($('#search_type.form-control').hasClass('has-error') === false) {
-            //                 $('#search_type.form-control').addClass('has-error');
-            //             }
-            //
-            //             if ($('#search_author_first_name.form-control').hasClass('has-error') === false) {
-            //                 $('#search_author_first_name.form-control').addClass('has-error');
-            //             }
-            //             if ($('#search_author_last_name.form-control').hasClass('has-error') === false) {
-            //                 $('#search_author_last_name.form-control').addClass('has-error');
-            //             }
-            //
-            //
-            //             $('#search_name_error').text(data['data']['search_name']['0']);
-            //             $('#search_name_error').css("visibility", "visible");
-            //
-            //             if ($('#collapse-table-search-books').css("display") !== "none") {
-            //                 $('#collapse-table-search-books').slideToggle(0);
-            //             }
-            //         } else {
-            //             create_table(data);
-            //         }
-            //     }
-            //
-            // });
+            data_form = data_form.replace(/&page_number=\d+&/, "&page_number=" + $('#page_number').val() + "&");
+            $.ajax({
+                type: "POST",
+                url: "/admin_dashboard_advanced_search_book/",
+                data: data_form,
+                success: function (data) {
+                    $('#content-table-search-books').empty();
+
+                    if (data['data'].hasOwnProperty("search_name")) {
+
+                        if ($('#search_name.form-control').hasClass('has-error') === false) {
+                            $('#search_name.form-control').addClass('has-error');
+                        }
+
+                        if ($('#search_type.form-control').hasClass('has-error') === false) {
+                            $('#search_type.form-control').addClass('has-error');
+                        }
+
+                        if ($('#search_author_first_name.form-control').hasClass('has-error') === false) {
+                            $('#search_author_first_name.form-control').addClass('has-error');
+                        }
+                        if ($('#search_author_last_name.form-control').hasClass('has-error') === false) {
+                            $('#search_author_last_name.form-control').addClass('has-error');
+                        }
+
+
+                        $('#search_name_error').text(data['data']['search_name']['0']);
+                        $('#search_name_error').css("visibility", "visible");
+
+                        if ($('#collapse-table-search-books').css("display") !== "none") {
+                            $('#collapse-table-search-books').slideToggle(0);
+                        }
+                    } else {
+                        create_table(data);
+                    }
+                }
+
+            });
         }
 
     }

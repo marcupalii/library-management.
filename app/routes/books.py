@@ -62,7 +62,7 @@ def add_new_book():
 def add_new_author():
     new_author = New_author()
     if new_author.validate_on_submit():
-        print(new_author.new_author_first_name.data, new_author.new_author_last_name.data)
+
         author = Author.query.filter_by(
             first_name=new_author.new_author_first_name.data,
             last_name=new_author.new_author_last_name.data
@@ -201,10 +201,151 @@ def admin_dashboard_basic_search_book():
 
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-            print(response)
+
             return jsonify(
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
             )
         print(form.errors)
+        return jsonify(data=form.errors)
+
+
+@app.route("/admin_dashboard_advanced_search_book/",methods=["POST"])
+@login_required
+def admin_dashboard_advanced_search_book():
+    response = {}
+    num_list = []
+
+    if current_user.email:
+        form = Advanced_search_admnin()
+        if form.validate_on_submit():
+            author_first_name = ""
+            author_last_name = ""
+            name = ""
+            type = ""
+            if form.search_substring.data == False:
+                author_first_name = form.search_author_first_name.data if form.search_author_first_name.data else '%%'
+                author_last_name = form.search_author_last_name.data if form.search_author_last_name.data else '%%'
+                name = form.search_name.data if form.search_name.data else '%%'
+                type = form.search_type.data if form.search_type.data else '%%'
+            else:
+                author_first_name = '%' + form.search_author_first_name.data + '%' if form.search_author_first_name.data else '%%'
+                author_last_name = '%' + form.search_author_last_name.data + '%' if form.search_author_last_name.data else '%%'
+                name = '%' + form.search_name.data + '%' if form.search_name.data else '%%'
+                type = '%' + form.search_type.data + '%' if form.search_type.data else '%%'
+
+            book_author_join = None
+
+            if form.search_type.data:
+                book_type = db.session() \
+                    .query(BookTypes) \
+                    .filter(
+                    BookTypes.type_name.like(type)
+                ).all()
+                type_ids = []
+                if book_type:
+                    for t in book_type:
+                        type_ids.append(t.id)
+
+                book_series_status = ""
+                if not form.only_unreturned.data and not form.only_available.data:
+                    book_author_join = db.session() \
+                        .query(Book) \
+                        .filter(
+                        (Book.type_id.in_(type_ids)) & (Book.name.like(name))
+                    ) \
+                        .join(Author, Book.author_id == Author.id) \
+                        .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
+                        .join(BookSeries, BookSeries.book_id == Book.id) \
+                        .order_by(Book.name) \
+                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id, BookSeries.series,
+                                     BookSeries.status) \
+                        .paginate(
+                        per_page=15,
+                        page=form.page_number.data,
+                        error_out=True
+                    )
+
+                elif form.only_unreturned.data:
+                    book_series_status= "taken"
+                elif form.only_available.data:
+                    book_series_status = "available"
+
+                if book_series_status != "":
+                    book_author_join = db.session() \
+                        .query(Book) \
+                        .filter(
+                            (Book.type_id.in_(type_ids)) & (Book.name.like(name))
+                        ) \
+                        .join(Author, Book.author_id == Author.id) \
+                        .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
+                        .join(BookSeries, BookSeries.book_id==Book.id)\
+                        .filter(BookSeries.status==book_series_status)\
+                        .order_by(Book.name) \
+                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id,BookSeries.series,BookSeries.status) \
+                        .paginate(
+                            per_page=15,
+                            page=form.page_number.data,
+                            error_out=True
+                        )
+            else:
+                book_series_status = ""
+                if not form.only_unreturned.data and not form.only_available.data:
+                    book_author_join = db.session() \
+                        .query(Book) \
+                        .filter(Book.name.like(name)) \
+                        .join(Author, Book.author_id == Author.id) \
+                        .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
+                        .join(BookSeries, BookSeries.book_id == Book.id) \
+                        .order_by(Book.name) \
+                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id, BookSeries.series,
+                                     BookSeries.status) \
+                        .paginate(
+                        per_page=15,
+                        page=form.page_number.data,
+                        error_out=True
+                    )
+
+                elif form.only_unreturned.data:
+                    book_series_status = "taken"
+                elif form.only_available.data:
+                    book_series_status = "available"
+
+                if book_series_status != "":
+                    book_author_join = db.session() \
+                        .query(Book) \
+                        .filter(Book.name.like(name)) \
+                        .join(Author, Book.author_id == Author.id) \
+                        .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
+                        .join(BookSeries, BookSeries.book_id == Book.id) \
+                        .filter(BookSeries.status == book_series_status) \
+                        .order_by(Book.name) \
+                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id,BookSeries.series,BookSeries.status) \
+                        .paginate(
+                        per_page=15,
+                        page=form.page_number.data,
+                        error_out=True
+                    )
+
+            if book_author_join:
+                for entry in book_author_join.items:
+                    print(entry)
+
+                    response.update({
+                        str(entry[4]): {
+                            'author_first_name': entry[2],
+                            'author_last_name': entry[3],
+                            'book_name': entry[0].name,
+                            'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
+                            'status': entry[6],
+                            'book_series': entry[5]
+                        }
+                    })
+                for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+                    num_list.append(i)
+            print("length=",len(response))
+            return jsonify(
+                data={key: response[key] for key in response.keys()},
+                pages_lst=[value for value in num_list]
+            )
         return jsonify(data=form.errors)

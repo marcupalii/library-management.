@@ -46,7 +46,7 @@ class Advanced_search_admnin(FlaskForm):
     search_author_last_name = StringField(label='Author last name : ', validators=[Optional()])
     search_type = StringField(label='Type : ', validators=[Optional()])
     search_substring = BooleanField('Search sub-string')
-    exclude_current_book = BooleanField('Exclude unreturned book')
+    only_unreturned = BooleanField('Only unreturned book')
     only_available = BooleanField('Only available')
 
     def validate(self):
