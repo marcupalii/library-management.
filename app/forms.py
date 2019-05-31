@@ -39,6 +39,26 @@ class Advanced_search(FlaskForm):
         return True
 
 
+class Advanced_search_admnin(FlaskForm):
+    page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
+    search_name = StringField(label='Book Name : ', validators=[Optional()])
+    search_author_first_name = StringField(label='Author first name : ', validators=[Optional()])
+    search_author_last_name = StringField(label='Author last name : ', validators=[Optional()])
+    search_type = StringField(label='Type : ', validators=[Optional()])
+    search_substring = BooleanField('Search sub-string')
+    exclude_current_book = BooleanField('Exclude unreturned book')
+    only_available = BooleanField('Only available')
+
+    def validate(self):
+        if not super(Advanced_search_admnin, self).validate():
+            return False
+        if not self.search_name.data and not self.search_author_first_name.data and not self.search_author_last_name.data and not self.search_type.data:
+            msg = 'At least one of fields can not be empty!'
+            self.search_name.errors.append(msg)
+            return False
+        return True
+
+
 class Wishlist_form(FlaskForm):
     days_number = DecimalField(label="Number of days : ",
                                validators=[InputRequired("Must be a positive number"), NumberRange(min=1)])

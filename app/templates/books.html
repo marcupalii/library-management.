@@ -26,14 +26,14 @@
                     <div class="col-md-5">
                         <div class="form-group">
                             {{ new_author.new_author_first_name.label }}
-                            {{ new_author.new_author_first_name(class_='form-control') }}
+                            {{ new_author.new_author_first_name }}
                         </div>
                         <small class="form-group row err-msg no-margin-row" id="new_author_first_name_error"></small>
                     </div>
                     <div class="col-md-5">
                         <div class="form-group">
                             {{ new_author.new_author_last_name.label }}
-                            {{ new_author.new_author_last_name(class_='form-control') }}
+                            {{ new_author.new_author_last_name }}
                         </div>
                         <small class="form-group row err-msg no-margin-row" id="new_author_last_name_error"></small>
                     </div>
@@ -80,7 +80,8 @@
                                 {{ new_book.type_string_field.label }}
                                 {{ new_book.type_string_field(class_='form-control') }}
                             </div>
-                            <small class="form-group row err-msg no-margin-row" id="type_string_field_new_book_error"></small>
+                            <small class="form-group row err-msg no-margin-row"
+                                   id="type_string_field_new_book_error"></small>
                         </div>
                         <div class="col-md-5 row">
                             {% for choice in new_book.type_exists %}
@@ -135,7 +136,7 @@
                         {{ choose_author.page_nr(class_="hidden-content") }}
                         <div class="col-md-6 mt-2 ml-4">
                             <div class="form-group form-inline row no-margin-row">
-                                {{ choose_author.author_name(placeholder="Author name",class_="form-control w-75") }}
+                                {{ choose_author.author_name(placeholder="Author first name or last name",class_="form-control w-75") }}
                                 <i class="fas fa-search ml-2" id="search-author-button" aria-hidden="true"></i>
                             </div>
                             <small class="form-group row err-msg" id="name_choose_author_error"></small>
@@ -180,6 +181,141 @@
                 </button>
             </div>
         </div>
-    </div>
 
+
+
+
+        <div class="container-fluid p-3 border-content mt-5 mb-3" id="current-books-container">
+            <div class="container-fluid border-content mt-5">
+                <div class="row m-2">
+                    <div class="col-sm-3 btn border-content search btn btn-secondary"
+                         id="basic-search-change-container">
+                        Basic Search
+                    </div>
+                    <div class="col-sm-3 btn border-content search btn btn-secondary"
+                         id="advance-search-change-container">
+                        Advanced Search
+                    </div>
+                </div>
+                <div class="container-fluid  border-content  m-2 mb-3" id="basic-search-container">
+                    <form id="basic-search-form" class="row" method="post" novalidate>
+                        {{ basic_search_form.hidden_tag() }}
+                        {{ basic_search_form.basic_page_number(class_="d-none") }}
+                        <div class="col-md-5 mt-2 ml-4">
+                            <div class="form-group form-inline row">
+                                {{ basic_search_form.basic_search_name(placeholder="Book name",class_="form-control mr-3 w-75") }}
+                                <i class="fas fa-search" id="basic-search-button" aria-hidden="true"></i>
+                            </div>
+                            <small class="form-group row err-msg" id="basic_search_name_error"></small>
+                        </div>
+                        <div class="col-md-5 mt-2 ml-4">
+                            <div class="form-group row">
+                                {{ basic_search_form.basic_search_substring.label }}
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    {{ basic_search_form.basic_search_substring }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="container-fluid border-content m-2 mb-3 d-none" id="advanced-search-container">
+
+                    <a id="jump-here"></a>
+
+                    <form id="advanced-search-form" class="row" method="post" novalidate>
+                        {{ advanced_search_form.hidden_tag() }}
+                        <div class="col-md mt-4">
+                            {{ advanced_search_form.page_number(class_="d-none")  }}
+                            <div class="form-group row">
+                                {{ advanced_search_form.search_name.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.search_name(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                {{ advanced_search_form.search_author_first_name.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.search_author_first_name(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                {{ advanced_search_form.search_author_last_name.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.search_author_last_name(class_="form-control") }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                {{ advanced_search_form.search_type.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.search_type(class_="form-control") }}
+                                </div>
+                            </div>
+                            <small class="" id="search_name_error"></small>
+                        </div>
+                        <div class="col-md mt-4">
+                            <div class="form-group row">
+                                {{ advanced_search_form.search_substring.label(class_="col-8 col-form-label") }}
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    {{ advanced_search_form.search_substring }}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                {{ advanced_search_form.exclude_current_book.label(class_="col-8 col-form-label") }}
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    {{ advanced_search_form.exclude_current_book }}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                {{ advanced_search_form.only_available.label(class_="col-8 col-form-label") }}
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    {{ advanced_search_form.only_available }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="form-group row">
+                        <div class="col-2">
+                            <button class="btn btn-secondary" type="Submit" id="advanced-search-button">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div id="collapse-table-search-books" class="container-fluid">
+
+                    <table class="table table-bordered" style="border-collapse:collapse;">
+                        <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Book name</th>
+                            <th>Book type</th>
+                            <th>Book series</th>
+                            <th class="d-none d-md-block">Author first name</th>
+                            <th class="d-none d-md-block">Author last name</th>
+                            <th class="d-none d-lg-block">Status</th>
+
+                        </tr>
+                        </thead>
+                        <tbody id="content-table-search-books">
+                        </tbody>
+                    </table>
+                    <div class="border-content d-flex justify-content-center p-2" id="empty-results-search-books">No results found !
+                    </div>
+
+                    <div>
+                        <ul class="pagination d-flex justify-content-end" id="paginationBox-search-books">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 {% endblock %}
