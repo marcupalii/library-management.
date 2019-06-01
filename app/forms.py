@@ -146,7 +146,8 @@ class New_Book(FlaskForm):
     def validate(self):
         if not super(New_Book, self).validate():
             return False
-        if not self.type_string_field.data and not self.type.data:
+        if (not self.type_string_field.data and self.type_exists.data == '2')\
+            or (not self.type.data and self.type_exists.data == '1'):
 
             msg = 'Field can not be empty !'
             self.type_string_field.errors.append(msg)

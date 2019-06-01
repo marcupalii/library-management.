@@ -39,9 +39,68 @@ def add_new_book():
     new_book = New_Book()
 
     if new_book.validate_on_submit():
+        print(
+            "\nname=",new_book.name.data,
+            "\ntype=",new_book.type.data,
+            "\ntype_author=",new_book.type_author.data,
+            "\ntype_string_field=",new_book.type_string_field.data,
+            "\nseries=",new_book.series.data,
+            "\nauthor_first_name=",new_book.author_first_name.data,
+            "\nauthor_last_name=",new_book.author_last_name.data
+        )
+        print("type new_book.type_author.data=",type(new_book.type_author.data))
         book = Book.query.filter_by(name=new_book.name.data).first()
+        book_type = None
         author = None
         book_series = None
+        if new_book.type.data == 'None':
+            return jsonify(
+                data={
+                    'type': 'Field can not be empty !',
+                }
+            )
+
+        if new_book.type_exists.data == "1":
+            book_type = BookTypes.query.filter_by(id=str(new_book.type.data)).first()
+            if not book_type:
+                return jsonify(
+                    data={
+                        'type': 'Type do not exists !',
+                    }
+                )
+        else:
+            book_type = BookTypes.query.filter_by(type_name=new_book.type_string_field.data).first()
+            if book_type:
+                return jsonify(
+                    data={
+                        'type_string_field': 'Type already exists !',
+                    }
+                )
+        if new_book.type_author.data == '1':
+            author = Author.query.filter_by(
+                first_name=new_book.author_first_name.data,
+                last_name=new_book.author_last_name.data,
+            ).first()
+            if author:
+                return jsonify(
+                    data={
+                        'author_first_name': 'Author already exists !',
+                        'author_last_name': 'Author already exists !',
+                    }
+                )
+        else:
+            author = Author.query.filter_by(
+                first_name=new_book.author_first_name.data,
+                last_name=new_book.author_last_name.data,
+            ).first()
+            if not author:
+                return jsonify(
+                    data={
+                        'author_first_name': 'Author does not exists !',
+                        'author_last_name': 'Author does not exists !',
+                    }
+                )
+
         if book:
             author = Author.query.filter_by(id=book.author_id).first()
             book_series = BookSeries.query.filter_by(
@@ -77,18 +136,22 @@ def add_new_book():
                 first_name=new_book.author_first_name.data,
                 last_name=new_book.author_last_name.data,
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                        pytz.timezone('Europe/Bucharest'))
+                    pytz.timezone('Europe/Bucharest'))
             )
             db.session.add(author)
             db.session.commit()
 
-        book_type= BookTypes(
-            type_name=new_book.type.data,
-            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                        pytz.timezone('Europe/Bucharest'))
-        )
-        db.session.add(book_type)
-        db.session.commit()
+        if not book_type:
+            book_type = BookTypes(
+                type_name=new_book.type_string_field.data,
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                    pytz.timezone('Europe/Bucharest'))
+            )
+            db.session.add(book_type)
+            db.session.commit()
+
+        db.session.refresh(author)
+        db.session.refresh(book_type)
 
         if not book:
             book = Book(
@@ -98,18 +161,19 @@ def add_new_book():
                 author_id=author.id,
                 type_id=book_type.id,
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                        pytz.timezone('Europe/Bucharest'))
+                    pytz.timezone('Europe/Bucharest'))
             )
             db.session.add(book)
             db.session.commit()
 
+        db.session.refresh(book)
         if not book_series:
             book_series = BookSeries(
                 book_id=book.id,
                 series=new_book.series.data,
                 status="available",
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                        pytz.timezone('Europe/Bucharest'))
+                    pytz.timezone('Europe/Bucharest'))
 
             )
         db.session.add(book_series)
@@ -121,14 +185,6 @@ def add_new_book():
         })
 
 
-        # print(
-        #     new_book.name.data,
-        #     new_book.type.data,
-        #     new_book.type_string_field.data,
-        #     new_book.series.data,
-        #     new_book.author_first_name.data,
-        #     new_book.author_last_name.data
-        # )
 
     else:
         return jsonify(data=new_book.errors)
@@ -193,7 +249,7 @@ def admin_dashboard_basic_search_book():
             book_author_join = Book.query \
                 .filter(Book.name.like(name)) \
                 .join(Author, Book.author_id == Author.id) \
-                .join(BookSeries, BookSeries.book_id==Book.id)\
+                .join(BookSeries, BookSeries.book_id == Book.id) \
                 .order_by(Book.name) \
                 .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id) \
                 .paginate(
@@ -210,12 +266,12 @@ def admin_dashboard_basic_search_book():
                         status="available"
                     ).all()
 
-                    book_series_unavailable = db.session\
-                        .query(BookSeries)\
+                    book_series_unavailable = db.session \
+                        .query(BookSeries) \
                         .filter(
-                            (BookSeries.book_id==entry[0].id)
-                            & ~(BookSeries.status=="available")
-                        ).all()
+                        (BookSeries.book_id == entry[0].id)
+                        & ~(BookSeries.status == "available")
+                    ).all()
 
                     for not_available in book_series_unavailable:
                         response.update({
@@ -252,7 +308,7 @@ def admin_dashboard_basic_search_book():
         return jsonify(data=form.errors)
 
 
-@app.route("/admin_dashboard_advanced_search_book/",methods=["POST"])
+@app.route("/admin_dashboard_advanced_search_book/", methods=["POST"])
 @login_required
 def admin_dashboard_advanced_search_book():
     response = {}
@@ -309,7 +365,7 @@ def admin_dashboard_advanced_search_book():
                     )
 
                 elif form.only_unreturned.data:
-                    book_series_status= "taken"
+                    book_series_status = "taken"
                 elif form.only_available.data:
                     book_series_status = "available"
 
@@ -317,19 +373,20 @@ def admin_dashboard_advanced_search_book():
                     book_author_join = db.session() \
                         .query(Book) \
                         .filter(
-                            (Book.type_id.in_(type_ids)) & (Book.name.like(name))
-                        ) \
+                        (Book.type_id.in_(type_ids)) & (Book.name.like(name))
+                    ) \
                         .join(Author, Book.author_id == Author.id) \
                         .filter(Author.first_name.like(author_first_name) & Author.last_name.like(author_last_name)) \
-                        .join(BookSeries, BookSeries.book_id==Book.id)\
-                        .filter(BookSeries.status==book_series_status)\
+                        .join(BookSeries, BookSeries.book_id == Book.id) \
+                        .filter(BookSeries.status == book_series_status) \
                         .order_by(Book.name) \
-                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id,BookSeries.series,BookSeries.status) \
+                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id, BookSeries.series,
+                                     BookSeries.status) \
                         .paginate(
-                            per_page=15,
-                            page=form.page_number.data,
-                            error_out=True
-                        )
+                        per_page=15,
+                        page=form.page_number.data,
+                        error_out=True
+                    )
             else:
                 book_series_status = ""
                 if not form.only_unreturned.data and not form.only_available.data:
@@ -362,7 +419,8 @@ def admin_dashboard_advanced_search_book():
                         .join(BookSeries, BookSeries.book_id == Book.id) \
                         .filter(BookSeries.status == book_series_status) \
                         .order_by(Book.name) \
-                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id,BookSeries.series,BookSeries.status) \
+                        .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id, BookSeries.series,
+                                     BookSeries.status) \
                         .paginate(
                         per_page=15,
                         page=form.page_number.data,
@@ -393,7 +451,7 @@ def admin_dashboard_advanced_search_book():
         return jsonify(data=form.errors)
 
 
-@app.route("/update_book/",methods=["POST"])
+@app.route("/update_book/", methods=["POST"])
 @login_required
 def update_book():
     if current_user.type != "admin":
@@ -470,8 +528,6 @@ def update_book():
         #         print("Vai de veata mea!!")
         # elif form.update_book_name.data != book_old.name and form.update_book_type != type_old.type_name:
         #         print("Vai de veata mea!!")
-
-
 
         # print(
         #     form.update_book_name.data,
