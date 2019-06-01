@@ -33,6 +33,6 @@
 #basic-search-button,#advanced-search-button{
     cursor: pointer;
 }
-#choose-author-container, #author-result-container, #type_string{
+#choose-author-container, #author-result-container,.display-none{
     display: none;
 }

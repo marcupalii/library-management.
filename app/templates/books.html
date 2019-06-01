@@ -17,34 +17,6 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-        <div class="container-fluid p-3 border-content" id="new-book-container">
-            <h3 class="mt-5 mb-4 p-3">Add new author</h3>
-
-            <form id="new-author-form" class="mt-2 p-3 border-content" novalidate>
-                {{ new_author.hidden_tag() }}
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            {{ new_author.new_author_first_name.label }}
-                            {{ new_author.new_author_first_name }}
-                        </div>
-                        <small class="form-group row err-msg no-margin-row" id="new_author_first_name_error"></small>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            {{ new_author.new_author_last_name.label }}
-                            {{ new_author.new_author_last_name }}
-                        </div>
-                        <small class="form-group row err-msg no-margin-row" id="new_author_last_name_error"></small>
-                    </div>
-                </div>
-                <button type="submit" id="add-new-author-button" class="btn btn-info btn-fill pull-right">
-                    Save
-                </button>
-            </form>
-
-        </div>
-
 
         <div class="container-fluid p-3 border-content mt-5 mb-3" id="new-book-container">
             <h3 class="mt-5 mb-4 p-3">Add new book</h3>
@@ -75,7 +47,7 @@
                             </div>
                             <small class="form-group row err-msg no-margin-row" id="type_new_book_error"></small>
                         </div>
-                        <div class="col-md-5" id="type_string">
+                        <div class="col-md-5 display-none" id="type_string">
                             <div class="form-group">
                                 {{ new_book.type_string_field.label }}
                                 {{ new_book.type_string_field(class_='form-control') }}
@@ -183,8 +155,6 @@
         </div>
 
 
-
-
         <div class="container-fluid p-3 border-content mt-5 mb-3" id="current-books-container">
             <div class="container-fluid border-content mt-5">
                 <div class="row m-2">
@@ -221,12 +191,10 @@
                 </div>
                 <div class="container-fluid border-content m-2 mb-3 d-none" id="advanced-search-container">
 
-                    <a id="jump-here"></a>
-
                     <form id="advanced-search-form" class="row" method="post" novalidate>
                         {{ advanced_search_form.hidden_tag() }}
                         <div class="col-md mt-4">
-                            {{ advanced_search_form.page_number(class_="d-none")  }}
+                            {{ advanced_search_form.page_number(class_="d-none") }}
                             <div class="form-group row">
                                 {{ advanced_search_form.search_name.label(class_="col-sm-6 col-form-label") }}
                                 <div class="col-sm-6">
@@ -306,7 +274,8 @@
                         <tbody id="content-table-search-books">
                         </tbody>
                     </table>
-                    <div class="border-content d-flex justify-content-center p-2" id="empty-results-search-books">No results found !
+                    <div class="border-content d-flex justify-content-center p-2" id="empty-results-search-books">No
+                        results found !
                     </div>
 
                     <div>
@@ -317,5 +286,84 @@
             </div>
         </div>
 
+    </div>
+{% endblock %}
+
+{% block modal_edit_book %}
+    <div class="container">
+        <div class="modal fade" id="update-book-modal" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Update the book</h4>
+                        <button type="button" id="close-update-book-modal" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <form id="update-book-form" class="mt-2" novalidate>
+                                {{ update_book_form.hidden_tag() }}
+                                {{ update_book_form.update_book_series_id(class_="d-none") }}
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_book_form.update_book_name.label }}
+                                            {{ update_book_form.update_book_name(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_book_name_update_book_error"></small>
+                                    </div>
+                                      <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_book_form.update_book_type.label }}
+                                            {{ update_book_form.update_book_type(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_book_type_update_book_error"></small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                              <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_book_form.update_book_series.label }}
+                                            {{ update_book_form.update_book_series(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_book_series_update_book_error"></small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_book_form.update_author_first_name.label }}
+                                            {{ update_book_form.update_author_first_name(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_author_first_name_update_book_error"></small>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_book_form.update_author_last_name.label }}
+                                            {{ update_book_form.update_author_last_name(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_author_last_name_update_book_error"></small>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="Submit" id="update-book-button" class="btn btn-secondary"><i class="">Update</i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

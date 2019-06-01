@@ -30,24 +30,28 @@ $(document).ready(function () {
     });
 
 
-    $('#type_exists-0').on("click", function () {
+    $(document).on("click", '#type_exists-0',function () {
 
-        if ($('#type_string').css("display") === "block") {
-            $('#type_string').slideToggle(0);
-            $('#type_select').slideToggle(0);
-            $('#type').val('');
-            $('#type_string_field').val('');
+        if ($('#type_string').hasClass("display-none") === false) {
+            $('#type_string').addClass("display-none");
         }
+        if ($('#type_select').hasClass("display-none")){
+              $('#type_select').removeClass("display-none");
+        }
+
+        $('#type').val('');
+        $('#type_string_field').val('');
+
     });
 
-    $('#type_exists-1').on("click", function () {
+    $(document).on("click", '#type_exists-1',function () {
 
-        if ($('#type_string').css("display") === "none") {
-            $('#type_string').slideToggle(0);
-            $('#type_select').css("display", "none");
-            $('#type').val('');
-            $('#type_string_field').val('');
+        if ($('#type_select').hasClass("display-none") === false) {
+            $('#type_select').addClass("display-none");
         }
+        $('#type_string').removeClass("display-none");
+        $('#type').val('');
+        $('#type_string_field').val('');
     });
 
     $('#name').on("change", function () {
@@ -303,51 +307,6 @@ $(document).ready(function () {
         // $(this).trigger("blur");
     });
 
-    $('#new_author_first_name').on("change", function () {
-        $('#new_author_first_name').removeClass("has-error");
-        $('#new_author_first_name_error').css("visibility", "hidden");
-    });
-
-    $('#new_author_last_name').on("change", function () {
-        $('#new_author_last_name').removeClass("has-error");
-        $('#new_author_last_name_error').css("visibility", "hidden");
-    });
-
-    $('#new_author_first_name_error').css("visibility", "hidden");
-    $('#new_author_last_name_error').css("visibility", "hidden");
-
-    $('#add-new-author-button').on("click", function (e) {
-        $('#new_author_first_name').removeClass("has-error");
-        $('#new_author_last_name').removeClass("has-error");
-
-        e.preventDefault();
-        $.ajax({
-            type: "POST",
-            url: "/add_new_author/",
-            data: $('#new-author-form').serialize(),
-            success: function (data) {
-                if (data['data'].hasOwnProperty("status") === false) {
-
-                    $('#new_author_first_name_error')
-                        .css("visibility", "visible")
-                        .text(data['data']["new_author_first_name"]);
-
-                    $('#new_author_last_name_error')
-                        .css("visibility", "visible")
-                        .text(data['data']["new_author_last_name"]);
-
-                    $('#new_author_first_name').addClass("has-error");
-                    $('#new_author_last_name').addClass("has-error");
-                } else {
-                    $('#new_author_first_name_error').css("visibility", "hidden");
-                    $('#new_author_last_name_error').css("visibility", "hidden");
-                    $('#new_author_first_name').val('');
-                    $('#new_author_last_name').val('');
-                }
-            }
-        });
-    });
-
 
     // #####################################################
     // #####################################################
@@ -423,7 +382,7 @@ $(document).ready(function () {
                                     .attr("data-toggle", "collapse")
                                     .attr("data-target", "#tr-collapse-id-search-books-" + row_index.toString())
                                     .attr("aria-controls", "aria-controls-search-books-" + row_index.toString())
-                                    .attr("id", "search-books-"+row_index.toString())
+                                    .attr("id", "search-books-" + row_index.toString())
                                     .attr("type", "button")
                                     .append(
                                         $('<i/>')
@@ -433,11 +392,21 @@ $(document).ready(function () {
                             .append(
                                 $('<button/>')
                                     .addClass("btn modal-button")
-                                    .attr("id", "search-books-"+row_index.toString())
+                                    .attr("id", "search-books-" + row_index.toString())
                                     .attr("type", "button")
                                     .append(
                                         $('<i/>')
                                             .addClass("fas fa-external-link-alt")
+                                    )
+                            )
+                            .append(
+                                $('<button/>')
+                                    .addClass("btn edit-search-books-button")
+                                    .attr("id", row_index.toString())
+                                    .attr("type", "button")
+                                    .append(
+                                        $('<i/>')
+                                            .addClass("far fa-edit")
                                     )
                             )
                     )
@@ -728,4 +697,86 @@ $(document).ready(function () {
     }
     $('#basic_search_name').val("all");
     $('#basic-search-button').trigger('click');
+
+    $(document).on("click", '.edit-search-books-button', function () {
+
+        $('#update-book-modal').modal('show');
+        let row_id = $(this).attr("id");
+        let status = $('#status-book-row-content-search-books-' + row_id).text();
+        $('#update_book_series_id').val($('#series-id-row-content-search-books-' + row_id).text());
+        if (status === "available") {
+            $('#update_book_name')
+                .val($('#book-name-row-content-search-books-' + row_id).text())
+                .prop("disabled", false);
+            $('#update_book_type')
+                .val($('#book-type-row-content-search-books-' + row_id).text())
+                .prop("disabled", false);
+            $('#update_book_series')
+                .val($('#book-series-row-content-search-books-' + row_id).text())
+                .prop("disabled", false);
+            $('#update_author_first_name')
+                .val($('#author-first-name-row-content-search-books-' + row_id).text())
+                .prop("disabled", false);
+            $('#update_author_last_name')
+                .val($('#author-last-name-row-content-search-books-' + row_id).text())
+                .prop("disabled", false);
+
+        } else {
+            $('#update_book_name')
+                .val($('#book-name-row-content-search-books-' + row_id).text())
+                .prop("disabled", "true")
+            $('#update_book_type')
+                .val($('#book-type-row-content-search-books-' + row_id).text())
+                .prop("disabled", "true");
+            $('#update_book_series')
+                .val($('#book-series-row-content-search-books-' + row_id).text())
+                .prop("disabled", "true");
+            $('#update_author_first_name')
+                .val($('#author-first-name-row-content-search-books-' + row_id).text())
+                .prop("disabled", "true");
+            $('#update_author_last_name')
+                .val($('#author-last-name-row-content-search-books-' + row_id).text())
+                .prop("disabled", "true");
+        }
+    });
+    $('#update-book-button').on("click", function (e) {
+        e.preventDefault();
+        $('#update_book_name').removeClass("has-error");
+        $('#update_book_type').removeClass("has-error");
+        $('#update_book_series').removeClass("has-error");
+        $('#update_author_first_name').removeClass("has-error");
+        $('#update_author_last_name').removeClass("has-error");
+        $.ajax({
+            type: "POST",
+            url: "/update_book/",
+            data: $('#update-book-form').serialize(),
+            success: function (data) {
+                console.log(data['data']);
+                if (data['data'].hasOwnProperty("id") === false) {
+                    for (key in data['data']) {
+                        $('#' + key + '_update_book_error')
+                            .css("visibility", "visible")
+                            .text(data['data'][key]);
+                        $('#' + key).addClass("has-error");
+                    }
+                } else {
+                    $('.err-msg').each(function () {
+                        $(this).css("visibility", "hidden");
+                    });
+                    $('#new-book-form').trigger("reset");
+                    $('#update-book-modal').modal('hide');
+                }
+            }
+        });
+    });
+    $(document).on("click", '#close-update-book-modal', function () {
+        $('#update_book_name').removeClass("has-error");
+        $('#update_book_type').removeClass("has-error");
+        $('#update_book_series').removeClass("has-error");
+        $('#update_author_first_name').removeClass("has-error");
+        $('#update_author_last_name').removeClass("has-error");
+        $('.err-msg').each(function () {
+            $(this).css("visibility", "hidden");
+        });
+    });
 });

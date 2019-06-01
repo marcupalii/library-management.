@@ -434,9 +434,9 @@ if __name__ == "__main__":
     #     )
     #     db.session.add(settings)
     #     db.session.commit()
-    #
-    # print(User.query.all())
-    # print(Book.query.all())
+
+    print(User.query.all())
+    print(Book.query.all())
     print(BookSeries.query.all())
     print(Wishlist.query.all())
     print(EntryWishlist.query.all())

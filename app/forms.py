@@ -58,6 +58,13 @@ class Advanced_search_admnin(FlaskForm):
             return False
         return True
 
+class Update_book(FlaskForm):
+    update_book_name = StringField(label='Book name : ', validators=[InputRequired()])
+    update_book_type = StringField(label='Book type : ', validators=[InputRequired()])
+    update_book_series = StringField(label='Book series : ', validators=[InputRequired()])
+    update_author_first_name = StringField(label='Author first name : ', validators=[InputRequired()])
+    update_author_last_name = StringField(label='Author last name : ', validators=[InputRequired()])
+    update_book_series_id = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
 
 class Wishlist_form(FlaskForm):
     days_number = DecimalField(label="Number of days : ",
@@ -153,8 +160,3 @@ class Choose_Author(FlaskForm):
     author_name = StringField(label='Author first name: ', validators=[InputRequired('Field can not be empty !')])
     page_nr = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
     search_substring = BooleanField('Search sub-string')
-
-
-class New_author(FlaskForm):
-    new_author_first_name = StringField(label='First name: ', validators=[InputRequired('Field can not be empty !')])
-    new_author_last_name = StringField(label='Last name: ', validators=[InputRequired('Field can not be empty !')])

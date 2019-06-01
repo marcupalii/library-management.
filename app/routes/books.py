@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, jsonify
 from app import app, db
 from flask_login import current_user, login_required
-from app.forms import New_Book, Choose_Author, New_author, Basic_search, Advanced_search_admnin
+from app.forms import New_Book, Choose_Author, Basic_search, Advanced_search_admnin, Update_book
 import hashlib
 from app.models import User, Author, Book, BookTypes, BookSeries, EntryWishlist, Log, EntryLog
 from datetime import datetime, timedelta
@@ -17,18 +17,17 @@ def books():
     new_book.type_author.default = '1'
     new_book.type_exists.default = '1'
     new_book.process()
-
     choose_author = Choose_Author()
-    new_author = New_author()
     basic_search_form = Basic_search()
     advanced_search_form = Advanced_search_admnin()
+    update_book = Update_book()
     return render_template(
         "books.html",
         new_book=new_book,
         choose_author=choose_author,
-        new_author=new_author,
         basic_search_form=basic_search_form,
         advanced_search_form=advanced_search_form,
+        update_book_form=update_book
     )
 
 
@@ -40,56 +39,21 @@ def add_new_book():
     new_book = New_Book()
 
     if new_book.validate_on_submit():
-        print(
-            new_book.name.data,
-            new_book.type.data,
-            new_book.type_string_field.data,
-            new_book.series.data,
-            new_book.author_first_name.data,
-            new_book.author_last_name.data
-        )
+        # print(
+        #     new_book.name.data,
+        #     new_book.type.data,
+        #     new_book.type_string_field.data,
+        #     new_book.series.data,
+        #     new_book.author_first_name.data,
+        #     new_book.author_last_name.data
+        # )
         return jsonify(data={
             'id': 3,
             'code': 200
         })
     else:
-        print(new_book.errors)
+        # print(new_book.errors)
         return jsonify(data=new_book.errors)
-
-
-@app.route("/add_new_author/", methods=["POST"])
-@login_required
-def add_new_author():
-    new_author = New_author()
-    if new_author.validate_on_submit():
-
-        author = Author.query.filter_by(
-            first_name=new_author.new_author_first_name.data,
-            last_name=new_author.new_author_last_name.data
-        ).first()
-
-        if not author:
-            author = Author(
-                first_name=new_author.new_author_first_name.data,
-                last_name=new_author.new_author_last_name.data,
-                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                    pytz.timezone('Europe/Bucharest'))
-            )
-            db.session.add(author)
-            db.session.commit()
-            return jsonify(data={
-                'status': 200
-            })
-        else:
-            return jsonify(
-                data={
-                    'new_author_first_name': 'Author already exists !',
-                    'new_author_last_name': 'Author already exists !',
-                }
-            )
-    else:
-        print(new_author.errors)
-        return jsonify(data=new_author.errors)
 
 
 @app.route("/choose_author/", methods=["POST"])
@@ -206,7 +170,7 @@ def admin_dashboard_basic_search_book():
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
             )
-        print(form.errors)
+        # print(form.errors)
         return jsonify(data=form.errors)
 
 
@@ -329,7 +293,7 @@ def admin_dashboard_advanced_search_book():
 
             if book_author_join:
                 for entry in book_author_join.items:
-                    print(entry)
+                    # print(entry)
 
                     response.update({
                         str(entry[4]): {
@@ -343,9 +307,107 @@ def admin_dashboard_advanced_search_book():
                     })
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-            print("length=",len(response))
+
             return jsonify(
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
             )
+        return jsonify(data=form.errors)
+
+
+@app.route("/update_book/",methods=["POST"])
+@login_required
+def update_book():
+    if current_user.type != "admin":
+        return render_template("page_403.html")
+
+    form = Update_book()
+    if form.validate_on_submit():
+        book_series = BookSeries.query.filter_by(id=form.update_book_series_id.data).first()
+        book_old = Book.query.filter_by(id=book_series.book_id).first()
+        type_old = BookTypes.query.filter_by(id=book_old.type_id).first()
+        author_old = Author.query.filter_by(id=book_old.author_id).first()
+
+        if book_series.series != form.update_book_series.data:
+            book_series = form.update_book_series.data
+            db.session.commit()
+
+        if form.update_book_name.data != book_old.name:
+            book_new = Book(
+                name=form.update_book_name.data,
+                count_total=1,
+                count_free_books=1,
+                type_id=book_old.type_id,
+                author_id=book_old.author_id,
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                    pytz.timezone('Europe/Bucharest'))
+            )
+            db.session.add(book_new)
+            db.session.commit()
+            book_series.book = book_new
+            db.session.commit()
+            print(book_new)
+            if book_old.count_total == 1:
+                db.session.delete(book_old)
+                db.session.commit()
+
+        if form.update_book_type.data != type_old.type_name:
+            type_exists = BookTypes.query.filter_by(
+                type_name=form.update_book_type.data
+            ).first()
+
+            if not type_exists:
+                type_new = BookTypes(
+                    type_name=form.update_book_type.data,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(type_new)
+                db.session.commit()
+
+                book_old.type_id = BookTypes.query.filter_by(
+                    type_name=form.update_book_type.data
+                ).first().id
+                db.session.commit()
+            else:
+                book_old.type_id = type_exists.id
+                db.session.commit()
+            count = Book.query.filter_by(type_id=type_old.id).count()
+
+            if count == 0:
+                db.session.delete(type_old)
+                db.session.commit()
+
+        # if form.update_book_name.data != book_old.name\
+        #     and (form.update_author_last_name.data != author_old.last_name
+        #          or form.update_author_first_name.data != author_old.first_name
+        #         )\
+        #     and form.update_book_type != type_old.type_name:
+        #
+        #         print("Vai de veata mea!!")
+        # elif form.update_book_name.data != book_old.name\
+        #     and (form.update_author_last_name.data != author_old.last_name
+        #          or form.update_author_first_name.data != author_old.first_name
+        #         ):
+        #         print("Vai de veata mea!!")
+        # elif form.update_book_name.data != book_old.name and form.update_book_type != type_old.type_name:
+        #         print("Vai de veata mea!!")
+
+
+
+        # print(
+        #     form.update_book_name.data,
+        #     form.update_book_type.data,
+        #     form.update_book_series.data,
+        #     form.update_author_first_name.data,
+        #     form.update_author_last_name.data,
+        #     form.update_book_series_id.data
+        # )
+        return jsonify(
+            data={
+                'id': str(form.update_book_series_id.data)
+            }
+        )
+    else:
+        # print(form.errors)
         return jsonify(data=form.errors)
