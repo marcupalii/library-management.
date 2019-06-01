@@ -30,13 +30,13 @@ $(document).ready(function () {
     });
 
 
-    $(document).on("click", '#type_exists-0',function () {
+    $(document).on("click", '#type_exists-0', function () {
 
         if ($('#type_string').hasClass("display-none") === false) {
             $('#type_string').addClass("display-none");
         }
-        if ($('#type_select').hasClass("display-none")){
-              $('#type_select').removeClass("display-none");
+        if ($('#type_select').hasClass("display-none")) {
+            $('#type_select').removeClass("display-none");
         }
 
         $('#type').val('');
@@ -44,7 +44,7 @@ $(document).ready(function () {
 
     });
 
-    $(document).on("click", '#type_exists-1',function () {
+    $(document).on("click", '#type_exists-1', function () {
 
         if ($('#type_select').hasClass("display-none") === false) {
             $('#type_select').addClass("display-none");
@@ -778,5 +778,11 @@ $(document).ready(function () {
         $('.err-msg').each(function () {
             $(this).css("visibility", "hidden");
         });
+    });
+    $('#only_unreturned').on("click", function () {
+        $('#only_available').prop("checked", false);
+    });
+    $('#only_available').on("click", function () {
+        $('#only_unreturned').prop("checked", false);
     });
 });

@@ -39,6 +39,88 @@ def add_new_book():
     new_book = New_Book()
 
     if new_book.validate_on_submit():
+        book = Book.query.filter_by(name=new_book.name.data).first()
+        author = None
+        book_series = None
+        if book:
+            author = Author.query.filter_by(id=book.author_id).first()
+            book_series = BookSeries.query.filter_by(
+                book_id=book.id,
+                series=new_book.series.data,
+            ).first()
+
+        if book and author and book_series:
+            return jsonify(
+                data={
+                    'name': 'Book already exists !',
+                    'type_string_field': 'Book already exists !',
+                    'type': 'Book already exists !',
+                    'author_first_name': 'Book already exists !',
+                    'author_last_name': 'Book already exists !',
+                    'series': 'Book already exists !',
+                }
+            )
+
+        book_series_exists = BookSeries.query.filter_by(
+            series=new_book.series.data,
+        ).first()
+
+        if book_series_exists:
+            return jsonify(
+                data={
+                    'series': 'Series already exists !',
+                }
+            )
+
+        if not author:
+            author = Author(
+                first_name=new_book.author_first_name.data,
+                last_name=new_book.author_last_name.data,
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+            )
+            db.session.add(author)
+            db.session.commit()
+
+        book_type= BookTypes(
+            type_name=new_book.type.data,
+            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+        )
+        db.session.add(book_type)
+        db.session.commit()
+
+        if not book:
+            book = Book(
+                name=new_book.name.data,
+                count_free_books=1,
+                count_total=1,
+                author_id=author.id,
+                type_id=book_type.id,
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+            )
+            db.session.add(book)
+            db.session.commit()
+
+        if not book_series:
+            book_series = BookSeries(
+                book_id=book.id,
+                series=new_book.series.data,
+                status="available",
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+
+            )
+        db.session.add(book_series)
+        db.session.commit()
+
+        return jsonify(data={
+            'id': book_series.id,
+            'code': 200
+        })
+
+
         # print(
         #     new_book.name.data,
         #     new_book.type.data,
@@ -47,12 +129,8 @@ def add_new_book():
         #     new_book.author_first_name.data,
         #     new_book.author_last_name.data
         # )
-        return jsonify(data={
-            'id': 3,
-            'code': 200
-        })
+
     else:
-        # print(new_book.errors)
         return jsonify(data=new_book.errors)
 
 
