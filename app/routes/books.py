@@ -857,6 +857,7 @@ def update_book():
         return jsonify(data=form.errors)
 
 
+
 @app.route("/delete_book_series/<int:id>/",methods=["DELETE"])
 @login_required
 def delete_book_series(id):
@@ -865,8 +866,13 @@ def delete_book_series(id):
         return render_template("page_403.html")
 
     book_series = BookSeries.query.filter_by(id=id).first()
+    if not book_series:
+        return render_template("page_404.html")
+
     book = Book.query.filter_by(id=book_series.book_id).first()
-    print(book)
+    if not book:
+        return render_template("page_404.html")
+
     count_series = book.count_total
     next_books = NextBook.query.filter_by(id_series_book=book_series.id).all()
 

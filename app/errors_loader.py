@@ -1,13 +1,7 @@
-from flask import render_template, request, url_for, redirect, abort, jsonify, Response
+from flask import render_template, request, url_for, redirect, abort, jsonify, make_response
 from app import app, login_manager, db
-from app.models import User, Wishlist, EntryWishlist, Book, NextBook, BookSeries, Notifications, Author, Log, EntryLog
-# from app.forms import LoginForm, Search, Wishlist_form, Reserved_book_date
-# from flask_login import login_user, login_required, logout_user, current_user
-# from flask import jsonify
-# import datetime
-# import pytz
-# import hashlib
-# import json
+from app.models import User
+
 
 
 @login_manager.user_loader
@@ -26,8 +20,16 @@ def FUN_403(error):
 
 
 @app.errorhandler(404)
-def FUN_404(error):
-    return render_template("page_404.html"), 404
+def not_found(error):
+    """
+    Gives error message when any invalid url are requested.
+    Args:
+        error (string):
+    Returns:
+        Error message.
+    """
+    print(error)
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 @app.errorhandler(405)

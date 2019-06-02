@@ -477,6 +477,14 @@ $(function () {
                     $('#myModal').modal('hide');
                 }
                 get_data();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                $('#reserved-date-form').trigger('reset');
+                $('#myModal').modal('hide');
+                get_data();
             }
         });
     });
@@ -511,6 +519,14 @@ $(function () {
                     $('#myModal').modal('hide');
                     get_data();
                 }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                $('#reserved-date-form').trigger('reset');
+                $('#myModal').modal('hide');
+                get_data();
             }
         });
     });
@@ -546,6 +562,14 @@ function redirect_to_wishlist_book(book_id) {
         dataType: "json",
         success: function (data) {
             window.location = data["url"];
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown);
+            $('#reserved-date-form').trigger('reset');
+            $('#myModal').modal('hide');
+            get_data();
         }
 
     });
@@ -558,6 +582,14 @@ function redirect_to_books_log(book_id) {
         dataType: "json",
         success: function (data) {
             window.location = data["url"];
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown);
+            $('#reserved-date-form').trigger('reset');
+            $('#myModal').modal('hide');
+            get_data();
         }
 
     });

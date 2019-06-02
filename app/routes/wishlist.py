@@ -6,7 +6,7 @@ from flask import jsonify
 from app.forms import Wishlist_settings, Accept_next_book
 from datetime import datetime, timedelta
 import pytz
-
+from app import not_found
 import re
 
 
@@ -32,7 +32,8 @@ def wishlist_delete_entry(entry_id):
                     db.session.commit()
 
         else:
-            return abort(401)
+
+            return not_found("nu exista in entrywishlist id="+entry_id)
 
     total = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
     page = 1
@@ -140,6 +141,8 @@ def wishlist(page, book_id):
 @login_required
 def wishlist_book(book_id):
     book = EntryWishlist.query.filter_by(id_book=book_id).first()
+    if not book:
+        return not_found("nu exista cartea")
     per_page = 15
     page = 1
     total_pages = 1
@@ -170,7 +173,8 @@ def accept_next_book():
             id=form.next_book_id.data,
             id_user=current_user.id
         ).first()
-
+        if not next_book:
+            return not_found("nu exista cartea")
         log = Log.query.filter_by(id_user=current_user.id).first()
         if not log:
             log = Log(

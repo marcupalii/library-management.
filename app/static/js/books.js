@@ -802,6 +802,7 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data['data']);
                 $('#update-book-modal').modal('hide');
+                get_data();
             }
         });
     });

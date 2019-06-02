@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from flask import jsonify
 from app.forms import Wishlist_settings
 import re
-
+from app import not_found
 @app.route("/books_log/page/<page>/focus=<book_id>/")
 @login_required
 def books_log(page, book_id):
@@ -88,6 +88,8 @@ def reserved_book(book_id):
     log = Log.query.filter_by(id_user=current_user.id).first()
     total = EntryLog.query.filter_by(id_log=log.id).count()
     book_series = BookSeries.query.filter_by(book_id=book_id).all()
+    if not book_series:
+        return not_found("nu exista cartea")
 
     if total > per_page:
         total_pages = total // per_page if total % per_page == 0 else (total // per_page) + 1

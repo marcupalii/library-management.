@@ -6,6 +6,7 @@ from flask_login import login_required, current_user
 from flask import jsonify
 from datetime import datetime
 import pytz
+from app import not_found
 import re
 
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
@@ -88,6 +89,9 @@ def add_to_wishlist():
         if form.validate_on_submit():
 
             book = Book.query.filter_by(id=form.book_id.data).first()
+            if not book:
+                return not_found("nu exista cartea")
+
             if book:
                 wishlist = current_user.wishlist
 
@@ -468,6 +472,8 @@ def add_to_reserved():
                 book_id=form.book_id_reserved.data,
                 status="available"
             ).first()
+            if not book_series:
+                return not_found("nu exista cartea")
 
             book_series.status = "taken"
             db.session.commit()
