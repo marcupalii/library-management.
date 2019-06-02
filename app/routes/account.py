@@ -464,9 +464,20 @@ def add_to_reserved():
             diff = form.end_date.data-form.start_date.data
 
             period_end = time_now+(diff)
+            book_series = BookSeries.query.filter_by(
+                book_id=form.book_id_reserved.data,
+                status="available"
+            ).first()
+
+            book_series.status = "taken"
+            db.session.commit()
+            book = Book.query.filter_by(id=book_series.book_id).first()
+            book.count_free_books -= 1
+            db.session.commit()
+
             entry_log = EntryLog(
                 id_log=book_log.id,
-                id_book_series=BookSeries.query.filter_by(book_id=form.book_id_reserved.data).first().id,
+                id_book_series=book_series.id,
                 status="Reserved",
                 period_start=period_start,
                 period_end=period_end,

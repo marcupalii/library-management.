@@ -391,16 +391,6 @@ $(document).ready(function () {
                             )
                             .append(
                                 $('<button/>')
-                                    .addClass("btn modal-button")
-                                    .attr("id", "search-books-" + row_index.toString())
-                                    .attr("type", "button")
-                                    .append(
-                                        $('<i/>')
-                                            .addClass("fas fa-external-link-alt")
-                                    )
-                            )
-                            .append(
-                                $('<button/>')
                                     .addClass("btn edit-search-books-button")
                                     .attr("id", row_index.toString())
                                     .attr("type", "button")
@@ -720,8 +710,17 @@ $(document).ready(function () {
             $('#update_author_last_name')
                 .val($('#author-last-name-row-content-search-books-' + row_id).text())
                 .prop("disabled", false);
+            $('#delete-book-button').removeClass("disabled");
+            $('#update-book-button').removeClass("disabled");
 
         } else {
+            if ($('#delete-book-button').hasClass("disabled") === false) {
+                $('#delete-book-button').addClass("disabled");
+            }
+            if ($('#update-book-button').hasClass("disabled") === false) {
+                $('#update-book-button').addClass("disabled");
+            }
+
             $('#update_book_name')
                 .val($('#book-name-row-content-search-books-' + row_id).text())
                 .prop("disabled", "true")
@@ -746,6 +745,10 @@ $(document).ready(function () {
         $('#update_book_series').removeClass("has-error");
         $('#update_author_first_name').removeClass("has-error");
         $('#update_author_last_name').removeClass("has-error");
+        if ($('#update_book_series').prop("disabled") == true) {
+            $('#update-book-modal').modal('hide');
+            return;
+        }
         $.ajax({
             type: "POST",
             url: "/update_book/",
@@ -784,5 +787,22 @@ $(document).ready(function () {
     });
     $('#only_available').on("click", function () {
         $('#only_unreturned').prop("checked", false);
+    });
+
+    $(document).on('click','#delete-book-button', function (e) {
+        if ($(this).hasClass("disabled")) {
+            e.stopPropagation();
+            e.preventDefault();
+            $('#update-book-modal').modal('hide');
+            return;
+        }
+        $.ajax({
+            type: "DELETE",
+            url: "/delete_book_series/" + $('#update_book_series_id').val() + "/",
+            success: function (data) {
+                console.log(data['data']);
+                $('#update-book-modal').modal('hide');
+            }
+        });
     });
 });

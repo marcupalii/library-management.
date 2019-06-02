@@ -13,7 +13,9 @@ tr:focus {
 .hidden-content {
     display: none;
 }
-
+.border-bottom-0{
+    border-bottom: 0;
+}
 .last-td {
     /*border: 0 !important;*/
     padding-right: 0 !important;

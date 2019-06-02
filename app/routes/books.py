@@ -3,7 +3,7 @@ from app import app, db
 from flask_login import current_user, login_required
 from app.forms import New_Book, Choose_Author, Basic_search, Advanced_search_admnin, Update_book
 import hashlib
-from app.models import User, Author, Book, BookTypes, BookSeries, EntryWishlist, Log, EntryLog
+from app.models import User, Author, Book, BookTypes, BookSeries,NextBook, EntryWishlist, Log, EntryLog
 from datetime import datetime, timedelta
 import pytz
 
@@ -207,7 +207,7 @@ def choose_author():
             .filter(Author.first_name.like(name) | (Author.last_name.like(name))) \
             .order_by(Author.first_name) \
             .paginate(
-            per_page=3,
+            per_page=15,
             page=form.page_nr.data,
             error_out=True
         )
@@ -475,6 +475,12 @@ def update_book():
 
         # just series
         if book_series.series != form.update_book_series.data:
+            if book_series.status == "taken":
+                return jsonify(
+                    data={
+                        'update_book_series': 'Can not be modified until the book is returned !'
+                    }
+                )
             book_series.series = form.update_book_series.data
             db.session.commit()
         # book name, author name, type
@@ -849,3 +855,59 @@ def update_book():
     else:
         # print(form.errors)
         return jsonify(data=form.errors)
+
+
+@app.route("/delete_book_series/<int:id>/",methods=["DELETE"])
+@login_required
+def delete_book_series(id):
+
+    if current_user.type != "admin":
+        return render_template("page_403.html")
+
+    book_series = BookSeries.query.filter_by(id=id).first()
+    book = Book.query.filter_by(id=book_series.book_id).first()
+    print(book)
+    count_series = book.count_total
+    next_books = NextBook.query.filter_by(id_series_book=book_series.id).all()
+
+    for next in next_books:
+        db.session.delete(next)
+        db.session.commit()
+    entry_logs = EntryLog.query.filter_by(id_book_series=book_series.id).all()
+
+    for entry_log in entry_logs:
+        db.session.delete(entry_log)
+        db.session.commit()
+
+    db.session.delete(book_series)
+    db.session.commit()
+    print("count_series=",count_series)
+    if count_series == 1:
+        author = Author.query.filter_by(id=book.author_id).first()
+        count_author_books = Book.query.filter_by(author_id=author.id).count()
+        if count_author_books == 1:
+            db.session.delete(author)
+
+        entry_wishlist = EntryWishlist.query.filter_by(id_book=book.id).all()
+
+        for entry in entry_wishlist:
+            db.session.delete(entry)
+            db.session.commit()
+
+        count_type_books = Book.query.filter_by(type_id=book.type_id).count()
+        if count_type_books == 1:
+            BookTypes.query.filter_by(id=book.type_id).delete()
+            db.session.commit()
+
+        db.session.delete(book)
+        db.session.commit()
+    else:
+        book.count_total -= 1
+        book.count_free_books -= 1
+        db.session.commit()
+
+    return jsonify(
+        data={
+            'id' : id
+        }
+    )

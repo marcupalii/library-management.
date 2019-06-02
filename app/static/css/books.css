@@ -33,6 +33,10 @@
 #basic-search-button,#advanced-search-button{
     cursor: pointer;
 }
+.no-padding-row{
+    padding-left: 0!important;
+    padding-right: 0!important;
+}
 #choose-author-container, #author-result-container,.display-none{
     display: none;
 }

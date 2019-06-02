@@ -296,14 +296,16 @@
                 <div class="modal-content">
 
                     <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">Update the book</h4>
-                        <button type="button" id="close-update-book-modal" class="close" data-dismiss="modal">&times;</button>
+                    <div class="d-flex justify-content-end p-2">
+                        <button type="button" id="close-update-book-modal" class="btn btn-secondary"
+                                data-dismiss="modal">&times;
+                        </button>
                     </div>
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <div class="container-fluid">
+                        <h4 class="modal-title mb-2">Update the book</h4>
+                        <div class="container-fluid border-content">
                             <form id="update-book-form" class="mt-2" novalidate>
                                 {{ update_book_form.hidden_tag() }}
                                 {{ update_book_form.update_book_series_id(class_="d-none") }}
@@ -316,7 +318,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_book_name_update_book_error"></small>
                                     </div>
-                                      <div class="col-md-5">
+                                    <div class="col-md-5">
                                         <div class="form-group">
                                             {{ update_book_form.update_book_type.label }}
                                             {{ update_book_form.update_book_type(class_='form-control') }}
@@ -326,7 +328,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                              <div class="col-md-5">
+                                    <div class="col-md-5">
                                         <div class="form-group">
                                             {{ update_book_form.update_book_series.label }}
                                             {{ update_book_form.update_book_series(class_='form-control') }}
@@ -354,14 +356,28 @@
                                     </div>
                                 </div>
                             </form>
+                            <button type="Submit" id="update-book-button" class="btn btn-secondary mt-2 mb-2"><i
+                                    class="">Update</i>
+                            </button>
                         </div>
 
                     </div>
-                    <div class="modal-footer">
-                        <button type="Submit" id="update-book-button" class="btn btn-secondary"><i class="">Update</i>
-                        </button>
-                    </div>
 
+                    <div class="modal-body">
+                        <h4 class="modal-title mb-2">Delete the book</h4>
+                        <div class="container-fluid border-content">
+                            <div class="col mt-2 no-padding-row">
+                                Are you sure you want to delete the book?
+                            </div>
+                            <div class="col mt-3 mb-2 no-padding-row">
+                                <button id="delete-book-button" class="btn btn-secondary"><i
+                                        class="">Yes</i>
+                                </button>
+                                <button type="Submit" class="btn btn-secondary" data-dismiss="modal"><i class="">No</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
