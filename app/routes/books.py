@@ -871,7 +871,11 @@ def delete_book_series(id):
     next_books = NextBook.query.filter_by(id_series_book=book_series.id).all()
 
     for next in next_books:
-        db.session.delete(next)
+        next.id_book = 0
+        next.id_series_book = 0
+        next.rank = 0
+        next.status = "None"
+        next.period = 0
         db.session.commit()
     entry_logs = EntryLog.query.filter_by(id_book_series=book_series.id).all()
 

@@ -86,6 +86,9 @@ def write_result_of_matching(matched):
                 status="available"
             ).first()
 
+            if not book_series:
+                continue
+
             book_series.status = "taken"
 
             book = Book.query.filter_by(id=matched[user_id]['book_id']).first()
