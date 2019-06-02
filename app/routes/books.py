@@ -459,16 +459,99 @@ def update_book():
 
     form = Update_book()
     if form.validate_on_submit():
+        print(
+            form.update_book_name.data,
+            form.update_book_type.data,
+            form.update_book_series.data,
+            form.update_author_first_name.data,
+            form.update_author_last_name.data,
+            form.update_book_series_id.data
+        )
+
         book_series = BookSeries.query.filter_by(id=form.update_book_series_id.data).first()
         book_old = Book.query.filter_by(id=book_series.book_id).first()
         type_old = BookTypes.query.filter_by(id=book_old.type_id).first()
         author_old = Author.query.filter_by(id=book_old.author_id).first()
 
+        # just series
         if book_series.series != form.update_book_series.data:
-            book_series = form.update_book_series.data
+            book_series.series = form.update_book_series.data
+            db.session.commit()
+        # book name, author name, type
+        if form.update_book_name.data != book_old.name\
+            and (form.update_author_last_name.data != author_old.last_name
+                 or form.update_author_first_name.data != author_old.first_name
+                )\
+            and form.update_book_type != type_old.type_name:
+
+            new_author = Author.query.filter_by(
+                first_name=form.update_author_first_name.data,
+                last_name=form.update_author_last_name.data
+            ).first()
+            if not new_author:
+                new_author = Author(
+                    first_name=form.update_author_first_name.data,
+                    last_name=form.update_author_last_name.data,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(new_author)
+                db.session.commit()
+                db.session.refresh(new_author)
+
+            type_new = BookTypes.query.filter_by(
+                type_name=form.update_book_type.data
+            ).first()
+            if not type_new:
+                type_new = BookTypes(
+                    type_name=form.update_book_type.data,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(type_new)
+                db.session.commit()
+                db.session.refresh(type_new)
+
+            book_new = Book.query.filter_by(
+                name=form.update_book_name.data,
+            ).first()
+            if book_new:
+                book_new.count_total += 1
+                book_new.count_free_books += 1
+                db.session.commit()
+
+            if not book_new:
+                book_new = Book(
+                    name=form.update_book_name.data,
+                    count_total=1,
+                    count_free_books=1,
+                    type_id=type_new.id,
+                    author_id=new_author.id,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(book_new)
+                db.session.commit()
+                db.session.refresh(book_new)
+
+            book_series.book_id = book_new.id
             db.session.commit()
 
-        if form.update_book_name.data != book_old.name:
+            count = BookSeries.query.filter_by(book_id=book_old.id).count()
+            if count == 0:
+                db.session.delete(book_old)
+                db.session.commit()
+            count = Book.query.filter_by(author_id=author_old.id).count()
+            if count == 0:
+                db.session.delete(author_old)
+                db.session.commit()
+            count = Book.query.filter_by(type_id=type_old.id).count()
+            if count == 0:
+                db.session.delete(type_old)
+                db.session.commit()
+                
+        #just book name
+        elif form.update_book_name.data != book_old.name:
             book_new = Book(
                 name=form.update_book_name.data,
                 count_total=1,
@@ -487,7 +570,8 @@ def update_book():
                 db.session.delete(book_old)
                 db.session.commit()
 
-        if form.update_book_type.data != type_old.type_name:
+        # just book type
+        elif form.update_book_type.data != type_old.type_name:
             type_exists = BookTypes.query.filter_by(
                 type_name=form.update_book_type.data
             ).first()
@@ -513,6 +597,32 @@ def update_book():
             if count == 0:
                 db.session.delete(type_old)
                 db.session.commit()
+        # just author name
+        elif form.update_author_first_name.data != author_old.first_name\
+            or form.update_author_last_name.data != author_old.last_name:
+
+            new_author = Author.query.filter_by(
+                first_name=form.update_author_first_name.data,
+                last_name=form.update_author_last_name.data,
+            ).first()
+            if not new_author:
+                new_author = Author(
+                    first_name=form.update_author_first_name.data,
+                    last_name=form.update_author_last_name.data,
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(new_author)
+                db.session.commit()
+                db.session.refresh(new_author)
+
+            book_old.author = new_author
+            db.session.commit()
+
+            count = Book.query.filter_by(author_id=author_old.id).count()
+            if count == 0:
+                db.session.delete(author_old)
+                db.session.commit()
 
         # if form.update_book_name.data != book_old.name\
         #     and (form.update_author_last_name.data != author_old.last_name
@@ -529,14 +639,7 @@ def update_book():
         # elif form.update_book_name.data != book_old.name and form.update_book_type != type_old.type_name:
         #         print("Vai de veata mea!!")
 
-        # print(
-        #     form.update_book_name.data,
-        #     form.update_book_type.data,
-        #     form.update_book_series.data,
-        #     form.update_author_first_name.data,
-        #     form.update_author_last_name.data,
-        #     form.update_book_series_id.data
-        # )
+
         return jsonify(
             data={
                 'id': str(form.update_book_series_id.data)
