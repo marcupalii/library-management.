@@ -430,38 +430,114 @@ $(function () {
         $('#update-user-modal').modal('show');
         let row_id = $(this).attr("id");
         $('#update_user_id').val(
-            $('#user-id-row-content-search-users-'+row_id).text()
+            $('#user-id-row-content-search-users-' + row_id).text()
         );
         $('#update_user_first_name').val(
-            $('#user-first-name-row-content-search-users-'+row_id).text()
+            $('#user-first-name-row-content-search-users-' + row_id).text()
         );
         $('#update_user_last_name').val(
-           $('#user-last-name-row-content-search-users-'+row_id).text()
+            $('#user-last-name-row-content-search-users-' + row_id).text()
         );
         $('#update_user_library_card_id').val(
-             $('#user-library-card-id-row-content-search-users-'+row_id).text()
+            $('#user-library-card-id-row-content-search-users-' + row_id).text()
         );
         $('#update_user_book_return_coeff').val(
-            $('#user-trust-coeff-row-content-search-users-'+row_id).text()
+            $('#user-trust-coeff-row-content-search-users-' + row_id).text()
         );
         $('#update_user_email').val(
-             $('#user-email-row-content-search-users-'+row_id).text()
+            $('#user-email-row-content-search-users-' + row_id).text()
         );
         $('#update_user_type').val(
-             $('#user-type-row-content-search-users-'+row_id).text()
+            $('#user-type-row-content-search-users-' + row_id).text()
         );
         $('#update_user_address').val(
-            $('#user-address-row-content-search-users-'+row_id).text()
+            $('#user-address-row-content-search-users-' + row_id).text()
         );
         $('#update_user_zip_code').val(
-            $('#user-zip-code-row-content-search-users-'+row_id).text()
+            $('#user-zip-code-row-content-search-users-' + row_id).text()
         );
         $('#update_user_city').val(
-            $('#user-city-row-content-search-users-'+row_id).text()
+            $('#user-city-row-content-search-users-' + row_id).text()
         );
         $('#update_user_country').val(
-            $('#user-country-row-content-search-users-'+row_id).text()
+            $('#user-country-row-content-search-users-' + row_id).text()
         );
     });
 
+
+    $('#update-user-button').on("click", function (e) {
+        e.preventDefault();
+        $('#update_user_first_name').removeClass("has-error");
+        $('#update_user_last_name').removeClass("has-error");
+        $('#update_user_library_card_id').removeClass("has-error");
+        $('#update_user_book_return_coeff').removeClass("has-error");
+        $('#update_user_type').removeClass("has-error");
+        $('#update_user_address').removeClass("has-error");
+        $('#update_user_zip_code').removeClass("has-error");
+        $('#update_user_city').removeClass("has-error");
+        $('#update_user_email').removeClass("has-error");
+        $('#update_user_country').removeClass("has-error");
+
+
+        $('#update_user_book_return_coeff')
+            .prop("disabled", false);
+        $('#update_user_type')
+            .prop("disabled", false);
+        let form_bytes = $('#update-user-form').serialize();
+        $('#update_user_book_return_coeff')
+            .prop("disabled", true);
+        $('#update_user_type')
+            .prop("disabled", true);
+        $.ajax({
+            type: "POST",
+            url: "/update_user/",
+            data: form_bytes,
+            success: function (data) {
+                console.log(data['data']);
+                if (data['data'].hasOwnProperty("id") === false) {
+                    for (key in data['data']) {
+                        $('#' + key + '_update_user_error')
+                            .css("visibility", "visible")
+                            .text(data['data'][key]);
+                        $('#' + key).addClass("has-error");
+                    }
+                } else {
+                    $('.err-msg').each(function () {
+                        $(this).css("visibility", "hidden");
+                    });
+                    $('#new-user-form').trigger("reset");
+                    $('#update-user-modal').modal('hide');
+                }
+                get_data();
+            }
+
+        });
+    });
+    $(document).on("click", '#close-update-user-modal', function () {
+        $('#update_user_first_name').removeClass("has-error");
+        $('#update_user_last_name').removeClass("has-error");
+        $('#update_user_library_card_id').removeClass("has-error");
+        $('#update_user_book_return_coeff').removeClass("has-error");
+        $('#update_user_type').removeClass("has-error");
+        $('#update_user_address').removeClass("has-error");
+        $('#update_user_zip_code').removeClass("has-error");
+        $('#update_user_city').removeClass("has-error");
+        $('#update_user_email').removeClass("has-error");
+        $('#update_user_country').removeClass("has-error");
+        $('.err-msg').each(function () {
+            $(this).css("visibility", "hidden");
+        });
+    });
+
+     $(document).on('click','#delete-user-button', function (e) {
+        $.ajax({
+            type: "DELETE",
+            url: "/delete_user/" + $('#update_user_id').val() + "/",
+            success: function (data) {
+                console.log(data['data']);
+                $('#update-user-modal').modal('hide');
+                get_data();
+            }
+        });
+    });
 });

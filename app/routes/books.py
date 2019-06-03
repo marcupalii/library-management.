@@ -3,10 +3,10 @@ from app import app, db
 from flask_login import current_user, login_required
 from app.forms import New_Book, Choose_Author, Basic_search, Advanced_search_admnin, Update_book
 import hashlib
-from app.models import User, Author, Book, BookTypes, BookSeries,NextBook, EntryWishlist, Log, EntryLog
+from app.models import User, Author, Book, BookTypes, BookSeries, NextBook, EntryWishlist, Log, EntryLog
 from datetime import datetime, timedelta
 import pytz
-
+from app import not_found
 
 @app.route('/books')
 @login_required
@@ -40,15 +40,15 @@ def add_new_book():
 
     if new_book.validate_on_submit():
         print(
-            "\nname=",new_book.name.data,
-            "\ntype=",new_book.type.data,
-            "\ntype_author=",new_book.type_author.data,
-            "\ntype_string_field=",new_book.type_string_field.data,
-            "\nseries=",new_book.series.data,
-            "\nauthor_first_name=",new_book.author_first_name.data,
-            "\nauthor_last_name=",new_book.author_last_name.data
+            "\nname=", new_book.name.data,
+            "\ntype=", new_book.type.data,
+            "\ntype_author=", new_book.type_author.data,
+            "\ntype_string_field=", new_book.type_string_field.data,
+            "\nseries=", new_book.series.data,
+            "\nauthor_first_name=", new_book.author_first_name.data,
+            "\nauthor_last_name=", new_book.author_last_name.data
         )
-        print("type new_book.type_author.data=",type(new_book.type_author.data))
+        print("type new_book.type_author.data=", type(new_book.type_author.data))
         book = Book.query.filter_by(name=new_book.name.data).first()
         book_type = None
         author = None
@@ -484,11 +484,11 @@ def update_book():
             book_series.series = form.update_book_series.data
             db.session.commit()
         # book name, author name, type
-        if form.update_book_name.data != book_old.name\
-            and (form.update_author_last_name.data != author_old.last_name
-                 or form.update_author_first_name.data != author_old.first_name
-                )\
-            and form.update_book_type != type_old.type_name:
+        if form.update_book_name.data != book_old.name \
+                and (form.update_author_last_name.data != author_old.last_name
+                     or form.update_author_first_name.data != author_old.first_name
+        ) \
+                and form.update_book_type != type_old.type_name:
 
             new_author = Author.query.filter_by(
                 first_name=form.update_author_first_name.data,
@@ -573,10 +573,10 @@ def update_book():
                 db.session.commit()
 
         # book name and author
-        elif form.update_book_name.data != book_old.name\
-            and (form.update_author_last_name.data != author_old.last_name
-                 or form.update_author_first_name.data != author_old.first_name
-                ):
+        elif form.update_book_name.data != book_old.name \
+                and (form.update_author_last_name.data != author_old.last_name
+                     or form.update_author_first_name.data != author_old.first_name
+        ):
 
             new_author = Author.query.filter_by(
                 first_name=form.update_author_first_name.data,
@@ -714,7 +714,8 @@ def update_book():
                 db.session.commit()
 
         # type and author
-        elif (form.update_author_last_name.data != author_old.last_name or form.update_author_first_name.data != author_old.first_name)\
+        elif (
+                form.update_author_last_name.data != author_old.last_name or form.update_author_first_name.data != author_old.first_name) \
                 and (form.update_book_type.data != type_old.type_name):
 
             new_author = Author.query.filter_by(
@@ -771,7 +772,7 @@ def update_book():
                 # db.session.commit()
                 return jsonify(
                     data={
-                        'update_book_name' : 'Book name already exists !'
+                        'update_book_name': 'Book name already exists !'
                     }
                 )
 
@@ -821,8 +822,8 @@ def update_book():
                 db.session.commit()
 
         # just author name
-        elif form.update_author_first_name.data != author_old.first_name\
-            or form.update_author_last_name.data != author_old.last_name:
+        elif form.update_author_first_name.data != author_old.first_name \
+                or form.update_author_last_name.data != author_old.last_name:
 
             new_author = Author.query.filter_by(
                 first_name=form.update_author_first_name.data,
@@ -857,11 +858,9 @@ def update_book():
         return jsonify(data=form.errors)
 
 
-
-@app.route("/delete_book_series/<int:id>/",methods=["DELETE"])
+@app.route("/delete_book_series/<int:id>/", methods=["DELETE"])
 @login_required
 def delete_book_series(id):
-
     if current_user.type != "admin":
         return render_template("page_403.html")
 
@@ -891,7 +890,7 @@ def delete_book_series(id):
 
     db.session.delete(book_series)
     db.session.commit()
-    print("count_series=",count_series)
+    print("count_series=", count_series)
     if count_series == 1:
         author = Author.query.filter_by(id=book.author_id).first()
         count_author_books = Book.query.filter_by(author_id=author.id).count()
@@ -918,6 +917,63 @@ def delete_book_series(id):
 
     return jsonify(
         data={
-            'id' : id
+            'id': id
         }
     )
+
+
+@app.route("/get_user_taken_book/<int:id>/", methods=["GET"])
+@login_required
+def get_user_taken_book(id):
+    if current_user.type != "admin":
+        return render_template("page_403.html")
+
+    entry_log = db.session() \
+        .query(EntryLog) \
+        .filter(
+            (EntryLog.id_book_series == id)
+            &(EntryLog.status.in_(["Reserved","Unreturned"]))
+    ).first()
+    if not entry_log:
+        return not_found("nu exista cartea")
+
+    log = Log.query.filter_by(id=entry_log.id_log).first()
+    user = User.query.filter_by(id=log.id_user).first()
+    return jsonify(
+        data={
+            'user_first_name': user.first_name,
+            'user_last_name': user.last_name,
+            'user_library_card_id': user.library_card_id,
+            'user_trust_coeff': user.trust_coeff,
+            'user_entry_status': entry_log.status,
+            'user_period_start': entry_log.period_start,
+            'user_period_end':  entry_log.period_end,
+            'user_period_diff': entry_log.period_diff
+        }
+    )
+
+@app.route("/rent_book/<int:id>",methods=["GET"])
+@login_required
+def rent_book(id):
+    if current_user.type != "admin":
+        return render_template("page_403.html")
+
+    entry_log = db.session() \
+        .query(EntryLog) \
+        .filter(
+        (EntryLog.id_book_series == id)
+        & (EntryLog.status.in_(["Reserved", "Unreturned"]))
+    ).first()
+    if not entry_log:
+        return not_found("nu exista cartea")
+
+    log = Log.query.filter_by(id=entry_log.id_log).first()
+    user = User.query.filter_by(id=log.id_user).first()
+    if entry_log.status == "Reserved":
+        entry_log.status = "Unreturned"
+        db.session.commit()
+    else:
+        diff = entry_log.period_end - entry_log.period_start
+
+        if entry.period_start + timedelta(seconds=120) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest')):

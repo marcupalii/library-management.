@@ -207,7 +207,7 @@ class Advanced_search_users(FlaskForm):
 class Update_user(FlaskForm):
     update_user_id = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
     update_user_book_return_coeff = StringField(label='Book`s return coefficient: ', validators=[InputRequired('Field can not be empty !')])
-    update_user_file = FileField(label="Choose file...", validators=[InputRequired()])
+    # update_user_file = FileField(label="Choose file...", validators=[InputRequired()])
     update_user_first_name = StringField(label='First Name: ', validators=[InputRequired('Field can not be empty !')])
     update_user_last_name = StringField(label='Last Name: ', validators=[InputRequired('Field can not be empty !')])
     update_user_email = StringField('Email address',validators=[InputRequired("Please insert a valid email."), Email(message='Invalid email'),

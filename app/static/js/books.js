@@ -737,6 +737,59 @@ $(document).ready(function () {
                 .val($('#author-last-name-row-content-search-books-' + row_id).text())
                 .prop("disabled", "true");
         }
+        if (status == "taken") {
+            $('#msg-rent').text("");
+            $('#title-rent').text("");
+            $.ajax({
+                type: "GET",
+                url: "/get_user_taken_book/" + $('#update_book_series_id').val() + "/",
+                success: function (data) {
+                    console.log(data['data']);
+                    // $('#update-book-modal').modal('hide');
+                    // get_data();
+                    $('#rent-book-container').removeClass("d-none");
+                    for (let key in data['data']) {
+                        $('#' + key + '_rent').text(data['data'][key]);
+                    }
+                    if (data['data'['user_entry_status']] == "Reserved") {
+                        $('#msg-rent').text(
+                            "Are you sure you want to rent the book?"
+                        );
+                        $('#title-rent').text("Rent the book")
+                    } else {
+                        $('#msg-rent').text(
+                            "Are you sure you want to receive the book?"
+                        );
+                        $('#title-rent').text("Receive the book")
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    $('#update-book-modal').modal('hide');
+                    get_data();
+                }
+            });
+        }
+    });
+    $(document).on("click", '#rent-book-button', function () {
+        $.ajax({
+            type: "GET",
+            url: "/rent_book/" + $('#update_book_series_id').val() + "/",
+            success: function (data) {
+                console.log(data['data']);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                $('#update-book-modal').modal('hide');
+                get_data();
+            }
+        });
+
     });
     $('#update-book-button').on("click", function (e) {
         e.preventDefault();
@@ -789,7 +842,7 @@ $(document).ready(function () {
         $('#only_unreturned').prop("checked", false);
     });
 
-    $(document).on('click','#delete-book-button', function (e) {
+    $(document).on('click', '#delete-book-button', function (e) {
         if ($(this).hasClass("disabled")) {
             e.stopPropagation();
             e.preventDefault();

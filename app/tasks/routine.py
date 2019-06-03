@@ -190,7 +190,7 @@ def update_remaining_book_time():
         entry.period_diff = entry.period_end - entry.period_start
         db.session.commit()
         # timedelta(hours=24)
-        if entry.period_start + timedelta(seconds=60) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
+        if entry.period_start + timedelta(seconds=120) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
             entry.status = "Reserved expired"
             entry.period_end = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                 pytz.timezone('Europe/Bucharest'))
@@ -198,7 +198,12 @@ def update_remaining_book_time():
 
             log = Log.query.filter_by(id=entry.id_log).first()
             book_series = BookSeries.query.filter_by(id=entry.id_book_series).first()
+            book_series.status = "available"
+            db.session.commit()
             book = Book.query.filter_by(id=book_series.book_id).first()
+            book.count_free_books += 1
+            db.session.commit()
+
             notification = Notifications(
                 id_user=log.id_user,
                 content="The 24 hours reservation on book {} expired !".format(book.name),

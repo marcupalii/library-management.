@@ -5,12 +5,14 @@ from app.forms import Add_user, Advanced_search_users, Basic_search_users, Updat
 import os
 from app import APP_ROOT
 from werkzeug.utils import secure_filename
-from app.models import User, Wishlist, NextBook, User_settings
+from app.models import User, Wishlist, NextBook, User_settings, EntryWishlist, Log, EntryLog
 import hashlib
 from datetime import datetime, timedelta
 import pytz
 import re
+
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -110,8 +112,8 @@ def add_user():
             db.session.commit()
 
             db.session.refresh(user)
-            new_name = re.sub("/[_a-zA-Z]+\.","/"+str(user.id)+".",destination)
-            os.rename(destination,new_name)
+            new_name = re.sub("/[_a-zA-Z]+\.", "/" + str(user.id) + ".", destination)
+            os.rename(destination, new_name)
             user.img_src = new_name.split(target)[1]
             db.session.commit()
 
@@ -146,7 +148,10 @@ def admin_dashboard_basic_search_users():
                 name = '%' + form.basic_search_name.data + '%'
 
             users = User.query \
-                .filter(User.first_name.like(name)| User.last_name.like(name)) \
+                .filter(
+                (User.first_name.like(name) | User.last_name.like(name))
+                    &(User.type == "user")
+                ) \
                 .paginate(
                 per_page=15,
                 page=form.basic_page_number.data,
@@ -165,7 +170,7 @@ def admin_dashboard_basic_search_users():
                             'user_library_card_id': user.library_card_id,
                             'user_address': user.address,
                             'user_city': user.city,
-                            'user_country:': user.country,
+                            'user_country': user.country,
                             'user_zip_code': user.zip_code,
                         }
                     })
@@ -179,8 +184,6 @@ def admin_dashboard_basic_search_users():
             )
         # print(form.errors)
         return jsonify(data=form.errors)
-
-
 
 
 @app.route("/admin_dashboard_advanced_search_users/", methods=["POST"])
@@ -213,11 +216,12 @@ def admin_dashboard_advanced_search_users():
 
             users = User.query \
                 .filter(
-                    User.first_name.like(f_name)
-                   & User.last_name.like(l_name)
-                   & User.email.like(email)
-                   & User.library_card_id.like(library_card_id)
-                ) \
+                User.first_name.like(f_name)
+                & User.last_name.like(l_name)
+                & User.email.like(email)
+                & User.library_card_id.like(library_card_id)
+                & (User.type == "user")
+            ) \
                 .paginate(
                 per_page=15,
                 page=form.advanced_page_number.data,
@@ -236,7 +240,7 @@ def admin_dashboard_advanced_search_users():
                             'user_library_card_id': user.library_card_id,
                             'user_address': user.address,
                             'user_city': user.city,
-                            'user_country:': user.country,
+                            'user_country': user.country,
                             'user_zip_code': user.zip_code,
                         }
                     })
@@ -250,3 +254,112 @@ def admin_dashboard_advanced_search_users():
             )
         print(form.errors)
         return jsonify(data=form.errors)
+
+
+@app.route("/update_user/", methods=["POST"])
+@login_required
+def update_user():
+    if current_user.type != "admin":
+        return render_template("page_403.html")
+
+    form = Update_user()
+    if form.validate_on_submit():
+        user = User.query.filter_by(id=form.update_user_id.data).first()
+        if not user:
+            pass
+        if user.type == "admin":
+            return jsonify(
+                data={
+                    'update_user_type': 'Can not modify admin !'
+                }
+            )
+        exists_email = User.query.filter_by(email=form.update_user_email.data).first()
+        if exists_email and exists_email.id != form.update_user_id.data:
+            return jsonify(
+                data={
+                    'update_user_email': 'Email already exists !'
+                }
+            )
+        exists_library_card_id = User.query.filter_by(
+            library_card_id=form.update_user_library_card_id.data
+        ).first()
+        if exists_library_card_id and exists_library_card_id.id != form.update_user_id.data:
+            return jsonify(
+                data={
+                    'update_user_library_card_id': 'Library card id already exists !'
+                }
+            )
+        user.first_name = form.update_user_first_name.data
+        user.last_name = form.update_user_last_name.data
+        user.email = form.update_user_email.data
+        user.library_card_id = form.update_user_library_card_id.data
+        user.city = form.update_user_city.data
+        user.country = form.update_user_country.data
+        user.zip_code = form.update_user_zip_code.data
+        user.address = form.update_user_address.data
+        db.session.commit()
+        print(
+            form.update_user_id.data,
+            form.update_user_book_return_coeff.data,
+            form.update_user_first_name.data,
+            form.update_user_last_name.data,
+            form.update_user_email.data,
+            form.update_user_library_card_id.data,
+            form.update_user_city.data,
+            form.update_user_country.data,
+            form.update_user_zip_code.data,
+            form.update_user_address.data,
+            form.update_user_type.data
+        )
+        return jsonify(
+            data={
+                'id': str(form.update_user_id.data)
+            }
+        )
+    else:
+        print(form.errors)
+        return jsonify(data=form.errors)
+
+
+@app.route("/delete_user/<int:id>/", methods=["DELETE"])
+@login_required
+def delete_user(id):
+    if current_user.type != "admin":
+        return render_template("page_403.html")
+
+    user = User.query.filter_by(id=id).first()
+    if user.type == "admin":
+        return jsonify(
+            data={
+                'id': user.id
+            }
+        )
+    next_book = user.next_book
+    db.session.delete(next_book)
+    # db.session.commit()
+
+    wishlist = Wishlist.query.filter_by(id_user=user.id).first()
+    entry_wishlists = EntryWishlist.query.filter_by(id_wishlist=wishlist.id).all()
+    for entry in entry_wishlists:
+        db.session.delete(entry)
+        # db.session.commit()
+    db.session.delete(wishlist)
+    # db.session.commit()
+
+    log = Log.query.filter_by(id_user=user.id).first()
+    if log:
+        entry_logs = EntryLog.query.filter_by(id_log=log.id).all()
+        for entry in entry_logs:
+            db.session.delete(entry)
+            # db.session.commit()
+
+        db.session.delete(log)
+
+    id = user.id
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify(
+        data={
+            'id': id
+        }
+    )
