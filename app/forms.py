@@ -190,9 +190,7 @@ class Advanced_search_users(FlaskForm):
     advanced_user_first_name = StringField(label='User first name : ', validators=[Optional()])
     advanced_user_last_name = StringField(label='User last name : ', validators=[Optional()])
     advanced_user_library_card_id = StringField(label='User library card id: ',validators=[Optional()])
-    advanced_user_email = StringField('Email address : ',
-                        validators=[InputRequired("Please insert a valid email."), Email(message='Invalid email'),
-                                    Length(max=50)])
+    advanced_user_email = StringField('Email address : ',validators=[Optional()])
 
     search_substring = BooleanField('Search sub-string')
 

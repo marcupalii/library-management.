@@ -187,20 +187,38 @@ def admin_dashboard_advanced_search_users():
     response = {}
     num_list = []
 
-    if current_user.email:
-        form = Basic_search_users()
+    if current_user.type == "admin":
+        form = Advanced_search_users()
+        # form.advanced_user_first_name.data
+        # form.advanced_user_last_name.data
+        # form.advanced_user_library_card_id.data
+        # form.advanced_user_email.data
         if form.validate_on_submit():
-            name = ""
-            if form.basic_search_substring.data == False:
-                name = form.basic_search_name.data if form.basic_search_name.data != "all" else "%%"
+            f_name = ""
+            l_name = ""
+            email = ""
+            library_card_id = ""
+            if form.search_substring.data == False:
+                f_name = form.advanced_user_first_name.data if form.advanced_user_first_name.data else "%%"
+                l_name = form.advanced_user_last_name.data if form.advanced_user_last_name.data else "%%"
+                email = form.advanced_user_email.data if form.advanced_user_email.data else "%%"
+                library_card_id = form.advanced_user_library_card_id.data if form.advanced_user_library_card_id.data else "%%"
             else:
-                name = '%' + form.basic_search_name.data + '%'
+                f_name = '%' + form.advanced_user_first_name.data + '%'
+                l_name = '%' + form.advanced_user_last_name.data + '%'
+                email = '%' + form.advanced_user_email.data + '%'
+                library_card_id = '%' + form.advanced_user_library_card_id.data + '%'
 
             users = User.query \
-                .filter(User.name.like(name)) \
+                .filter(
+                    User.first_name.like(f_name)
+                   & User.last_name.like(l_name)
+                   & User.email.like(email)
+                   & User.library_card_id.like(library_card_id)
+                ) \
                 .paginate(
                 per_page=15,
-                page=form.basic_page_number.data,
+                page=form.advanced_page_number.data,
                 error_out=True
             )
 
@@ -223,10 +241,10 @@ def admin_dashboard_advanced_search_users():
 
                 for i in users.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-
+            print(response)
             return jsonify(
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
             )
-        # print(form.errors)
+        print(form.errors)
         return jsonify(data=form.errors)
