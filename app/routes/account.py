@@ -12,6 +12,7 @@ import re
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
 def user_trust_coeff_statistics():
+    print(current_user.trust_coeff)
     return jsonify({
         'coeff': current_user.trust_coeff
     })
@@ -24,7 +25,10 @@ def book_type_statistics():
     log = Log.query.filter_by(id_user=current_user.id).first()
     entry_logs = None
     if log:
-        entry_logs = EntryLog.query.filter_by(id_log=log.id).all()
+        entry_logs = EntryLog.query.filter_by(
+            id_log=log.id,
+            status="Returned"
+        ).all()
 
     if entry_logs:
         for entry_log in entry_logs:

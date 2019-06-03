@@ -751,7 +751,7 @@ $(document).ready(function () {
                     for (let key in data['data']) {
                         $('#' + key + '_rent').text(data['data'][key]);
                     }
-                    if (data['data'['user_entry_status']] == "Reserved") {
+                    if (data['data'['user_entry_status']] === "Reserved") {
                         $('#msg-rent').text(
                             "Are you sure you want to rent the book?"
                         );
@@ -780,6 +780,8 @@ $(document).ready(function () {
             url: "/rent_book/" + $('#update_book_series_id').val() + "/",
             success: function (data) {
                 console.log(data['data']);
+                $('#update-book-modal').modal('hide');
+                get_data();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);

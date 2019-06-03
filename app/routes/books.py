@@ -7,6 +7,8 @@ from app.models import User, Author, Book, BookTypes, BookSeries, NextBook, Entr
 from datetime import datetime, timedelta
 import pytz
 from app import not_found
+import time
+import re
 
 @app.route('/books')
 @login_required
@@ -931,8 +933,8 @@ def get_user_taken_book(id):
     entry_log = db.session() \
         .query(EntryLog) \
         .filter(
-            (EntryLog.id_book_series == id)
-            &(EntryLog.status.in_(["Reserved","Unreturned"]))
+        (EntryLog.id_book_series == id)
+        & (EntryLog.status.in_(["Reserved", "Unreturned"]))
     ).first()
     if not entry_log:
         return not_found("nu exista cartea")
@@ -947,12 +949,29 @@ def get_user_taken_book(id):
             'user_trust_coeff': user.trust_coeff,
             'user_entry_status': entry_log.status,
             'user_period_start': entry_log.period_start,
-            'user_period_end':  entry_log.period_end,
+            'user_period_end': entry_log.period_end,
             'user_period_diff': entry_log.period_diff
         }
     )
 
-@app.route("/rent_book/<int:id>",methods=["GET"])
+
+def get_diff_seconds(diff):
+    days = '0'
+    hours = '0'
+    minutes = '0'
+    seconds = '0'
+    match_days = re.search("\s*(\d+)\s*days?", str(diff))
+    if match_days:
+        days = match_days.groups(0)[0]
+    match = re.search("(\d+):(\d+):(\d+)", str(diff))
+    if match:
+        hours, minutes, seconds = match.groups()
+
+    total = timedelta(days=int(days), hours=int(hours), minutes=int(minutes), seconds=int(seconds))
+    return total.total_seconds()
+
+
+@app.route("/rent_book/<int:id>/", methods=["GET"])
 @login_required
 def rent_book(id):
     if current_user.type != "admin":
@@ -972,8 +991,39 @@ def rent_book(id):
     if entry_log.status == "Reserved":
         entry_log.status = "Unreturned"
         db.session.commit()
+        return jsonify(
+            data={
+                'id': entry_log.id,
+            }
+        )
     else:
         diff = entry_log.period_end - entry_log.period_start
+        period_max = get_diff_seconds(diff)
 
-        if entry.period_start + timedelta(seconds=120) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-            pytz.timezone('Europe/Bucharest')):
+        time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+        period_current = get_diff_seconds(time_now-entry_log.period_start)
+
+        procent = (100* period_current) / period_max
+        ############# period_max este 0????
+        procent = int(float("{0:.0f}".format(procent)))
+        if procent == 100:
+            procent = 0
+        elif procent >100:
+            procent = - procent
+        else:
+            procent = 100 - procent
+
+        user.trust_coeff += procent
+        db.session.commit()
+        entry_log.status = "Returned"
+        db.session.commit()
+
+        book_series = BookSeries.query.filter_by(id=entry_log.id_book_series).first()
+        book_series.status = "available"
+        db.session.commit()
+
+        return jsonify(
+            data={
+                'procent': procent,
+            }
+        )
