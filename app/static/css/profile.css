@@ -9,6 +9,11 @@
 .card-user .image {
     height: 110px;
 }
+
+#profile-img{
+    max-width: 250px;
+    max-height: 250px;
+}
 .card .image {
     width: 100%;
     overflow: hidden;

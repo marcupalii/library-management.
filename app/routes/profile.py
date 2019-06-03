@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, jsonify
+from flask import render_template, url_for, redirect, jsonify, send_file
 from app import app, db
 from flask_login import current_user, login_required
 from app.forms import Wishlist_settings, Change_password, Profile
@@ -26,19 +26,24 @@ def profile():
     profile_form.zip_code.default = current_user.zip_code
     profile_form.email.default = current_user.email
     profile_form.process()
-    target = re.sub("[\\\]+", "/", os.path.join(APP_ROOT, 'images'))
-    img_src = "21.png"
-    # if current_user.img_src:
-    #     img_src = target+ current_user.img_src
 
     return render_template(
         "profile.html",
         wishlist_settings=wishlist_settings,
         change_password=change_password,
         profile_form=profile_form,
-        img_src=img_src
     )
 
+
+@app.route("/get_profile_img",methods=["GET"])
+@login_required
+def get_profile_img():
+    target = re.sub("[\\\]+", "/", os.path.join(APP_ROOT, 'images'))
+    img_src = "21.png"
+    if current_user.img_src:
+        return send_file(target+current_user.img_src, mimetype='image/gif')
+    else:
+        return send_file(target+"/default.png", mimetype='image/gif')
 
 @app.route("/change_password/",methods=["POST"])
 @login_required

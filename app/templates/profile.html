@@ -21,7 +21,8 @@
                 <div class="col-md-8">
                     <div class="card">
                         <div class="header">
-                            <h4 class="title">Edit Profile</h4>
+                            <h4 class="title">Your Profile</h4>
+{#                            <h4 class="title">Edit Profile</h4>#}
                         </div>
                         <div class="content-profile">
                             <form id="profile-form">
@@ -30,13 +31,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ profile_form.first_name.label }}
-                                            {{ profile_form.first_name(class_='form-control') }}
+                                            {{ profile_form.first_name(class_='form-control',disabled="true") }}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ profile_form.last_name.label }}
-                                            {{ profile_form.last_name(class_='form-control') }}
+                                            {{ profile_form.last_name(class_='form-control',disabled="true") }}
                                         </div>
                                     </div>
                                 </div>
@@ -61,7 +62,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             {{ profile_form.address.label }}
-                                            {{ profile_form.address(class_='form-control') }}
+                                            {{ profile_form.address(class_='form-control',disabled="true") }}
                                         </div>
                                     </div>
                                 </div>
@@ -70,37 +71,36 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             {{ profile_form.city.label }}
-                                            {{ profile_form.city(class_='form-control') }}
+                                            {{ profile_form.city(class_='form-control',disabled="true") }}
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             {{ profile_form.country.label }}
-                                            {{ profile_form.country(class_='form-control') }}
+                                            {{ profile_form.country(class_='form-control',disabled="true") }}
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             {{ profile_form.zip_code.label }}
-                                            {{ profile_form.zip_code(class_='form-control') }}
+                                            {{ profile_form.zip_code(class_='form-control',disabled="true") }}
                                         </div>
                                     </div>
                                 </div>
 
-                                <button type="submit" id="update-profile-button"
-                                        class="btn btn-info btn-fill pull-right">
-                                    Update Profile
-                                </button>
-                                <div class="clearfix"></div>
+{#                                <button type="submit" id="update-profile-button"#}
+{#                                        class="btn btn-info btn-fill pull-right">#}
+{#                                    Update Profile#}
+{#                                </button>#}
                             </form>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card card-user">
-                        <div class="image">
-                            {#                        <img src="{{url_for('.images', filename='{{ img_src }}')}}"#}
-                            {#                             alt="..."/>#}
+                        <div class="image d-flex align-items-center justify-content-center">
+                            <img id="profile-img" src="{{ url_for('get_profile_img') }}"
+                                 alt="..."/>
                         </div>
                         <div class="content-profile">
                             <div class="author">
