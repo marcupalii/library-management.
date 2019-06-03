@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, DecimalField, DateField, RadioField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, DecimalField, DateField, RadioField, SelectField, FileField
 from wtforms.validators import InputRequired, Email, Length, NumberRange, Optional
 from app.models import BookTypes
+from flask_wtf.file import FileAllowed
 
 class LoginForm(FlaskForm):
     email = StringField('Email address',
@@ -161,3 +162,18 @@ class Choose_Author(FlaskForm):
     author_name = StringField(label='Author first name: ', validators=[InputRequired('Field can not be empty !')])
     page_nr = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
     search_substring = BooleanField('Search sub-string')
+
+
+
+
+class Add_user(FlaskForm):
+    file = FileField(label="Choose file...", validators=[InputRequired()])
+    first_name = StringField(label='First Name: ', validators=[InputRequired('Field can not be empty !')])
+    last_name = StringField(label='Last Name: ', validators=[InputRequired('Field can not be empty !')])
+    email = StringField('Email address',validators=[InputRequired("Please insert a valid email."), Email(message='Invalid email'),
+                                    Length(max=50)])
+    library_card_id = StringField(label='Library Card Id : ', validators=[InputRequired('Field can not be empty !')])
+    city = StringField(label='City: ', validators=[InputRequired('Field can not be empty !')])
+    country = StringField(label='Country: ', validators=[InputRequired('Field can not be empty !')])
+    zip_code = StringField(label='Postal Code: ', validators=[InputRequired('Field can not be empty !')])
+    address = StringField(label='Address: ', validators=[InputRequired('Field can not be empty !')])

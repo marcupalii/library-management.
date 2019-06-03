@@ -6,6 +6,8 @@
     {{ super() }}
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('.static', filename='css/table.css') }}">
+     <link rel="stylesheet" type="text/css"
+          href="{{ url_for('.static', filename='css/users.css') }}">
 {% endblock %}
 {% block scripts %}
     {{ super() }}
@@ -13,19 +15,110 @@
 {% endblock %}
 {% block content %}
     <div class="container-fluid">
-        <form class="col-4" id="upload-form" action="{{ url_for('add_user') }}" method="POST"
-              enctype="multipart/form-data">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <input type="submit" value="Upload" class="input-group-text" id="upload-button">
-                    {#                    <span class="input-group-text" type="submit" id="upload">Upload</span>#}
+        <div class="container-fluid mt-4 mb-3 p-3 border-content">
+            <h3 class="mt-5 mb-4 p-3">Add new user</h3>
+            <form id="new-user" method="POST" action="{{ url_for('add_user') }}"
+                  enctype="multipart/form-data" novalidate>
+                {{ new_user.hidden_tag() }}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_user.first_name.label }}
+                            {{ new_user.first_name(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="first_name_new_user_error">{{ new_user.first_name.errors[0] }}</small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_user.last_name.label }}
+                            {{ new_user.last_name(class_='form-control') }}
+                        </div>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="last_name_new_user_error">{{ new_user.last_name.errors[0] }}</small>
+
+                    </div>
                 </div>
-                <div class="custom-file">
-                    <input id="file-picker" type="file" class="custom-file-input" name="file" accept="image/*"
-                           aria-describedby="upload-button">
-                    <label class="custom-file-label" for="file-picker">Choose file</label>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_user.library_card_id.label }}
+                            {{ new_user.library_card_id(class_='form-control') }}
+                        </div>
+                         <small class="form-group row err-msg no-margin-row"
+                           id="card_id_new_user_error">{{ new_user.library_card_id.errors[0] }}</small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_user.email.label }}
+                            {{ new_user.email(class_='form-control') }}
+                        </div>
+                         <small class="form-group row err-msg no-margin-row"
+                           id="email_new_user_error">{{ new_user.email.errors[0] }}</small>
+                    </div>
+
                 </div>
-            </div>
-        </form>
+
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            {{ new_user.address.label }}
+                            {{ new_user.address(class_='form-control') }}
+                        </div>
+                         <small class="form-group row err-msg no-margin-row"
+                           id="address_new_user_error">{{ new_user.address.errors[0] }}</small>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_user.city.label }}
+                            {{ new_user.city(class_='form-control') }}
+                        </div>
+                         <small class="form-group row err-msg no-margin-row"
+                           id="city_new_user_error">{{ new_user.city.errors[0] }}</small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_user.country.label }}
+                            {{ new_user.country(class_='form-control') }}
+                        </div>
+                         <small class="form-group row err-msg no-margin-row"
+                           id="country_new_user_error">{{ new_user.country.errors[0] }}</small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ new_user.zip_code.label }}
+                            {{ new_user.zip_code(class_='form-control') }}
+                        </div>
+                         <small class="form-group row err-msg no-margin-row"
+                           id="zip_code_new_user_error">{{ new_user.zip_code.errors[0] }}</small>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="label-text">User image: </div>
+                            <div class="custom-file">
+                                {{ new_user.file(class_="custom-file-input") }}
+                                {{ new_user.file.label(class_="custom-file-label") }}
+                            </div>
+                        </div>
+                         <small class="form-group row err-msg no-margin-row"
+                               id="first_name_new_user_error">{{ new_user.file.errors[0] }}</small>
+                    </div>
+                </div>
+                <button type="submit" id="add-new-user-button"
+                        class="btn btn-info btn-fill pull-right mt-4 mb-3">
+                    Save
+                </button>
+            </form>
+        </div>
     </div>
 {% endblock %}

@@ -1,0 +1,13 @@
+.has-error {
+    border-color: #dc3545
+}
+
+.err-msg {
+    margin-top: -15px;
+    color: #dc3545 !important;
+}
+
+.label-text {
+    display: inline-block;
+    margin-bottom: .5rem;
+}

@@ -4,8 +4,9 @@ from flask_login import current_user, login_required
 from app.forms import Wishlist_settings, Change_password, Profile
 import hashlib
 from app.models import User
-
-
+from app import APP_ROOT
+import re
+import os
 @app.route('/profile')
 @login_required
 def profile():
@@ -25,11 +26,17 @@ def profile():
     profile_form.zip_code.default = current_user.zip_code
     profile_form.email.default = current_user.email
     profile_form.process()
+    target = re.sub("[\\\]+", "/", os.path.join(APP_ROOT, 'images'))
+    img_src = "21.png"
+    # if current_user.img_src:
+    #     img_src = target+ current_user.img_src
+
     return render_template(
         "profile.html",
         wishlist_settings=wishlist_settings,
         change_password=change_password,
-        profile_form=profile_form
+        profile_form=profile_form,
+        img_src=img_src
     )
 
 

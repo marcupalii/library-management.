@@ -16,159 +16,162 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row mt-5">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="header">
-                        <h4 class="title">Edit Profile</h4>
-                    </div>
-                    <div class="content-profile">
-                        <form id="profile-form">
-                            {{ profile_form.hidden_tag() }}
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        {{ profile_form.first_name.label }}
-                                        {{ profile_form.first_name(class_='form-control') }}
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="header">
+                            <h4 class="title">Edit Profile</h4>
+                        </div>
+                        <div class="content-profile">
+                            <form id="profile-form">
+                                {{ profile_form.hidden_tag() }}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ profile_form.first_name.label }}
+                                            {{ profile_form.first_name(class_='form-control') }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ profile_form.last_name.label }}
+                                            {{ profile_form.last_name(class_='form-control') }}
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        {{ profile_form.last_name.label }}
-                                        {{ profile_form.last_name(class_='form-control') }}
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        {{ profile_form.library_card_id.label }}
-                                        {{ profile_form.library_card_id(class_='form-control',disabled="true") }}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ profile_form.library_card_id.label }}
+                                            {{ profile_form.library_card_id(class_='form-control',disabled="true") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ profile_form.email.label }}
+                                            {{ profile_form.email(class_='form-control') }}
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        {{ profile_form.email.label }}
-                                        {{ profile_form.email(class_='form-control') }}
-                                    </div>
-                                </div>
-                            </div>
 
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        {{ profile_form.address.label }}
-                                        {{ profile_form.address(class_='form-control') }}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            {{ profile_form.address.label }}
+                                            {{ profile_form.address(class_='form-control') }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {{ profile_form.city.label }}
-                                        {{ profile_form.city(class_='form-control') }}
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            {{ profile_form.city.label }}
+                                            {{ profile_form.city(class_='form-control') }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            {{ profile_form.country.label }}
+                                            {{ profile_form.country(class_='form-control') }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            {{ profile_form.zip_code.label }}
+                                            {{ profile_form.zip_code(class_='form-control') }}
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {{ profile_form.country.label }}
-                                        {{ profile_form.country(class_='form-control') }}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {{ profile_form.zip_code.label }}
-                                        {{ profile_form.zip_code(class_='form-control') }}
-                                    </div>
-                                </div>
-                            </div>
 
-                            <button type="submit" id="update-profile-button" class="btn btn-info btn-fill pull-right">
-                                Update Profile
-                            </button>
-                            <div class="clearfix"></div>
-                        </form>
+                                <button type="submit" id="update-profile-button"
+                                        class="btn btn-info btn-fill pull-right">
+                                    Update Profile
+                                </button>
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-user">
-                    <div class="image">
-{#                        <img src="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"#}
-{#                             alt="..."/>#}
-                    </div>
-                    <div class="content-profile">
-                        <div class="author">
-                            <h4 class="title d-flex justify-content-center">{{ current_user.first_name }} {{ current_user.last_name }}<br/>
-                            </h4>
+                <div class="col-md-3">
+                    <div class="card card-user">
+                        <div class="image">
+                            {#                        <img src="{{url_for('.images', filename='{{ img_src }}')}}"#}
+                            {#                             alt="..."/>#}
+                        </div>
+                        <div class="content-profile">
+                            <div class="author">
+                                <h4 class="title d-flex justify-content-center">{{ current_user.first_name }} {{ current_user.last_name }}<br/>
+                                </h4>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row mt-5">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="header">
-                        <h4 class="title">Change password</h4>
-                    </div>
-                    <div class="content-profile">
-                        <form id="change-password-form" novalidate>
-                            <div class="container-fluid">
-                                {{ change_password.hidden_tag() }}
-                                <div class="row form-group ">
-                                    <div class="col-sm-5">
-                                        {{ change_password.old_password.label }}
-                                        <small class="form-group row err-msg" id="old_password_error"></small>
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="header">
+                            <h4 class="title">Change password</h4>
+                        </div>
+                        <div class="content-profile">
+                            <form id="change-password-form" novalidate>
+                                <div class="container-fluid">
+                                    {{ change_password.hidden_tag() }}
+                                    <div class="row form-group ">
+                                        <div class="col-sm-5">
+                                            {{ change_password.old_password.label }}
+                                            <small class="form-group row err-msg" id="old_password_error"></small>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            {{ change_password.old_password(class_="form-control") }}
+                                        </div>
+
                                     </div>
 
-                                    <div class="col-sm-6">
-                                        {{ change_password.old_password(class_="form-control") }}
+                                    <div class="row form-group ">
+                                        <div class="col-sm-5">
+                                            {{ change_password.new_password.label }}
+                                            <small class="form-group row err-msg" id="new_password_error"></small>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            {{ change_password.new_password(class_="form-control") }}
+                                        </div>
                                     </div>
 
+                                    <div class="row form-group ">
+                                        <div class="col-sm-5">
+                                            {{ change_password.retype_password.label }}
+                                            <small class="form-group row err-msg" id="retype_password_error"></small>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            {{ change_password.retype_password(class_="form-control") }}
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div class="row form-group ">
-                                    <div class="col-sm-5">
-                                        {{ change_password.new_password.label }}
-                                        <small class="form-group row err-msg" id="new_password_error"></small>
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        {{ change_password.new_password(class_="form-control") }}
-                                    </div>
-                                </div>
-
-                                <div class="row form-group ">
-                                    <div class="col-sm-5">
-                                        {{ change_password.retype_password.label }}
-                                        <small class="form-group row err-msg" id="retype_password_error"></small>
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        {{ change_password.retype_password(class_="form-control") }}
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <button type="submit" id="update-password-button" class="btn btn-info btn-fill pull-right">
-                            Update Password
-                        </button>
+                            </form>
+                            <button type="submit" id="update-password-button" class="btn btn-info btn-fill pull-right">
+                                Update Password
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 
 {% endblock %}
 {% block sidebar_settings %}
-    <div class="container">
+    <div class="">
         <div class="modal fade" id="sidebar-modal-settings" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">

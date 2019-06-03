@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     city = db.Column(db.String(80), nullable=False)
     country = db.Column(db.String(80), nullable=False)
     zip_code = db.Column(db.String(20), nullable=False)
-    # img = db.Column(db.LargeBinary,nullable=True)
+    img_src = db.Column(db.String(80), nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     type = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(255), nullable=False)
