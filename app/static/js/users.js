@@ -102,7 +102,7 @@ $(function () {
                     .attr("id", "tr-collapse-id-search-users-" + row_index.toString())
                     .append(
                         $('<td/>')
-                            .attr("colspan", "6")
+                            .attr("colspan", "7")
                             .addClass("hiddenRow")
                             .append(
                                 $('<div/>')
@@ -113,6 +113,7 @@ $(function () {
                                             .append(
                                                 $('<span/>')
                                                     .text(row['user_trust_coeff'])
+                                                    .attr("id", "user-trust-coeff-row-content-search-users-" + row_index.toString())
                                             )
                                     )
                                     .append(
@@ -121,6 +122,7 @@ $(function () {
                                             .append(
                                                 $('<span/>')
                                                     .text(row['user_address'])
+                                                    .attr("id", "user-address-row-content-search-users-" + row_index.toString())
                                             )
                                     )
                                     .append(
@@ -129,6 +131,7 @@ $(function () {
                                             .append(
                                                 $('<span/>')
                                                     .text(row['user_city'])
+                                                    .attr("id", "user-city-row-content-search-users-" + row_index.toString())
                                             )
                                     )
                                     .append(
@@ -137,6 +140,7 @@ $(function () {
                                             .append(
                                                 $('<span/>')
                                                     .text(row['user_country'])
+                                                    .attr("id", "user-country-row-content-search-users-" + row_index.toString())
                                             )
                                     )
                                     .append(
@@ -145,6 +149,7 @@ $(function () {
                                             .append(
                                                 $('<span/>')
                                                     .text(row['user_zip_code'])
+                                                    .attr("id", "user-zip-code-row-content-search-users-" + row_index.toString())
                                             )
                                     )
                                     .append(
@@ -419,5 +424,44 @@ $(function () {
 
     $('#basic_search_name').val("all");
     $('#basic-search-button').trigger('click');
+
+    $(document).on("click", '.edit-search-users-button', function () {
+
+        $('#update-user-modal').modal('show');
+        let row_id = $(this).attr("id");
+        $('#update_user_id').val(
+            $('#user-id-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_first_name').val(
+            $('#user-first-name-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_last_name').val(
+           $('#user-last-name-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_library_card_id').val(
+             $('#user-library-card-id-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_book_return_coeff').val(
+            $('#user-trust-coeff-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_email').val(
+             $('#user-email-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_type').val(
+             $('#user-type-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_address').val(
+            $('#user-address-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_zip_code').val(
+            $('#user-zip-code-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_city').val(
+            $('#user-city-row-content-search-users-'+row_id).text()
+        );
+        $('#update_user_country').val(
+            $('#user-country-row-content-search-users-'+row_id).text()
+        );
+    });
 
 });

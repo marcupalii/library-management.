@@ -239,3 +239,142 @@
         </div>
     </div>
 {% endblock %}
+
+{% block modal_edit_user %}
+    <div class="">
+        <div class="modal fade" id="update-user-modal" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="d-flex justify-content-end p-2">
+                        <button type="button" id="close-update-user-modal" class="btn btn-secondary"
+                                data-dismiss="modal">&times;
+                        </button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <h4 class="modal-title mb-2">Update the user</h4>
+                        <div class="container-fluid border-content">
+                            <form id="update-user-form" class="mt-2" novalidate>
+                                {{ update_user.hidden_tag() }}
+                                {{ update_user.update_user_id(class_="d-none") }}
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_first_name.label }}
+                                            {{ update_user.update_user_first_name(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_first_name_update_user_error"></small>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_last_name.label }}
+                                            {{ update_user.update_user_last_name(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_last_name_update_user_error"></small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_library_card_id.label }}
+                                            {{ update_user.update_user_library_card_id(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_library_card_id_update_user_error"></small>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_book_return_coeff.label }}
+                                            {{ update_user.update_user_book_return_coeff(class_='form-control',disabled="true") }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_book_return_coeff_update_user_error"></small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_email.label }}
+                                            {{ update_user.update_user_email(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_email_update_user_error"></small>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_type.label }}
+                                            {{ update_user.update_user_type(class_='form-control',disabled="true") }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_type_update_user_error"></small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_address.label }}
+                                            {{ update_user.update_user_address(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_address_update_user_error"></small>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_zip_code.label }}
+                                            {{ update_user.update_user_zip_code(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_zip_code_update_user_error"></small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_city.label }}
+                                            {{ update_user.update_user_city(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_city_update_user_error"></small>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ update_user.update_user_country.label }}
+                                            {{ update_user.update_user_country(class_='form-control') }}
+                                        </div>
+                                        <small class="form-group row err-msg no-margin-row"
+                                               id="update_user_country_update_user_error"></small>
+                                    </div>
+                                </div>
+                            </form>
+                            <button type="Submit" id="update-book-button" class="btn btn-secondary mt-2 mb-2"><i
+                                    class="">Update</i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-body">
+                        <h4 class="modal-title mb-2">Delete the user</h4>
+                        <div class="container-fluid border-content">
+                            <div class="col mt-2 no-padding-row">
+                                Are you sure you want to delete the user?
+                            </div>
+                            <div class="col mt-3 mb-2 no-padding-row">
+                                <button id="delete-book-button" class="btn btn-secondary"><i
+                                        class="">Yes</i>
+                                </button>
+                                <button type="Submit" class="btn btn-secondary" data-dismiss="modal"><i class="">No</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

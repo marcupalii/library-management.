@@ -202,3 +202,20 @@ class Advanced_search_users(FlaskForm):
             self.advanced_user_first_name.errors.append(msg)
             return False
         return True
+
+
+class Update_user(FlaskForm):
+    update_user_id = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
+    update_user_book_return_coeff = StringField(label='Book`s return coefficient: ', validators=[InputRequired('Field can not be empty !')])
+    update_user_file = FileField(label="Choose file...", validators=[InputRequired()])
+    update_user_first_name = StringField(label='First Name: ', validators=[InputRequired('Field can not be empty !')])
+    update_user_last_name = StringField(label='Last Name: ', validators=[InputRequired('Field can not be empty !')])
+    update_user_email = StringField('Email address',validators=[InputRequired("Please insert a valid email."), Email(message='Invalid email'),
+                                    Length(max=50)])
+    update_user_library_card_id = StringField(label='Library Card Id : ', validators=[InputRequired('Field can not be empty !')])
+    update_user_city = StringField(label='City: ', validators=[InputRequired('Field can not be empty !')])
+    update_user_country = StringField(label='Country: ', validators=[InputRequired('Field can not be empty !')])
+    update_user_zip_code = StringField(label='Postal Code: ', validators=[InputRequired('Field can not be empty !')])
+    update_user_address = StringField(label='Address: ', validators=[InputRequired('Field can not be empty !')])
+    update_user_type = StringField(label='User type: ', validators=[InputRequired('Field can not be empty !')])
+

@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, jsonify
 from app import app, db
 from flask_login import current_user, login_required
-from app.forms import Add_user, Advanced_search_users, Basic_search_users
+from app.forms import Add_user, Advanced_search_users, Basic_search_users, Update_user
 import os
 from app import APP_ROOT
 from werkzeug.utils import secure_filename
@@ -22,9 +22,11 @@ def users():
     new_user = Add_user()
     basic_search_form = Basic_search_users()
     advanced_search_form = Advanced_search_users()
+    update_user = Update_user()
     return render_template(
         "users.html",
         new_user=new_user,
+        update_user=update_user,
         basic_search_form=basic_search_form,
         advanced_search_form=advanced_search_form
     )
@@ -170,7 +172,7 @@ def admin_dashboard_basic_search_users():
 
                 for i in users.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-
+            print(response)
             return jsonify(
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
