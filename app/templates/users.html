@@ -6,7 +6,7 @@
     {{ super() }}
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('.static', filename='css/table.css') }}">
-     <link rel="stylesheet" type="text/css"
+    <link rel="stylesheet" type="text/css"
           href="{{ url_for('.static', filename='css/users.css') }}">
 {% endblock %}
 {% block scripts %}
@@ -46,8 +46,8 @@
                             {{ new_user.library_card_id.label }}
                             {{ new_user.library_card_id(class_='form-control') }}
                         </div>
-                         <small class="form-group row err-msg no-margin-row"
-                           id="card_id_new_user_error">{{ new_user.library_card_id.errors[0] }}</small>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="card_id_new_user_error">{{ new_user.library_card_id.errors[0] }}</small>
                     </div>
 
                     <div class="col-md-4">
@@ -55,8 +55,8 @@
                             {{ new_user.email.label }}
                             {{ new_user.email(class_='form-control') }}
                         </div>
-                         <small class="form-group row err-msg no-margin-row"
-                           id="email_new_user_error">{{ new_user.email.errors[0] }}</small>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="email_new_user_error">{{ new_user.email.errors[0] }}</small>
                     </div>
 
                 </div>
@@ -68,8 +68,8 @@
                             {{ new_user.address.label }}
                             {{ new_user.address(class_='form-control') }}
                         </div>
-                         <small class="form-group row err-msg no-margin-row"
-                           id="address_new_user_error">{{ new_user.address.errors[0] }}</small>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="address_new_user_error">{{ new_user.address.errors[0] }}</small>
                     </div>
 
                 </div>
@@ -79,8 +79,8 @@
                             {{ new_user.city.label }}
                             {{ new_user.city(class_='form-control') }}
                         </div>
-                         <small class="form-group row err-msg no-margin-row"
-                           id="city_new_user_error">{{ new_user.city.errors[0] }}</small>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="city_new_user_error">{{ new_user.city.errors[0] }}</small>
                     </div>
 
                     <div class="col-md-4">
@@ -88,8 +88,8 @@
                             {{ new_user.country.label }}
                             {{ new_user.country(class_='form-control') }}
                         </div>
-                         <small class="form-group row err-msg no-margin-row"
-                           id="country_new_user_error">{{ new_user.country.errors[0] }}</small>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="country_new_user_error">{{ new_user.country.errors[0] }}</small>
                     </div>
 
                     <div class="col-md-4">
@@ -97,20 +97,20 @@
                             {{ new_user.zip_code.label }}
                             {{ new_user.zip_code(class_='form-control') }}
                         </div>
-                         <small class="form-group row err-msg no-margin-row"
-                           id="zip_code_new_user_error">{{ new_user.zip_code.errors[0] }}</small>
+                        <small class="form-group row err-msg no-margin-row"
+                               id="zip_code_new_user_error">{{ new_user.zip_code.errors[0] }}</small>
                     </div>
                 </div>
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <div class="label-text">User image: </div>
+                            <div class="label-text">User image:</div>
                             <div class="custom-file">
                                 {{ new_user.file(class_="custom-file-input") }}
                                 {{ new_user.file.label(class_="custom-file-label") }}
                             </div>
                         </div>
-                         <small class="form-group row err-msg no-margin-row"
+                        <small class="form-group row err-msg no-margin-row"
                                id="first_name_new_user_error">{{ new_user.file.errors[0] }}</small>
                     </div>
                 </div>
@@ -119,6 +119,123 @@
                     Save
                 </button>
             </form>
+        </div>
+
+
+        <div class="container-fluid p-3 border-content mt-5 mb-3" id="current-users-container">
+            <div class="container-fluid border-content mt-5">
+                <div class="row m-2">
+                    <div class="col-sm-3 btn border-content search btn btn-secondary"
+                         id="basic-search-change-container">
+                        Basic Search
+                    </div>
+                    <div class="col-sm-3 btn border-content search btn btn-secondary"
+                         id="advance-search-change-container">
+                        Advanced Search
+                    </div>
+                </div>
+                <div class="container-fluid  border-content  m-2 mb-3" id="basic-search-container">
+                    <form id="basic-search-form" class="row" method="post" novalidate>
+                        {{ basic_search_form.hidden_tag() }}
+                        {{ basic_search_form.basic_page_number(class_="d-none") }}
+                        <div class="col-md-5 mt-2 ml-4">
+                            <div class="form-group form-inline row">
+                                {{ basic_search_form.basic_search_name(placeholder="User first name or last name",class_="form-control mr-3 w-75") }}
+                                <i class="fas fa-search" id="basic-search-button" aria-hidden="true"></i>
+                            </div>
+                            <small class="form-group row err-msg" id="basic_search_name_error"></small>
+                        </div>
+                        <div class="col-md-5 mt-2 ml-4">
+                            <div class="form-group row">
+                                {{ basic_search_form.basic_search_substring.label }}
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    {{ basic_search_form.basic_search_substring }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="container-fluid border-content m-2 mb-3 d-none" id="advanced-search-container">
+
+                    <form id="advanced-search-form" class="row" method="post" novalidate>
+                        {{ advanced_search_form.hidden_tag() }}
+                        <div class="col-md mt-4">
+                            {{ advanced_search_form.advanced_page_number(class_="d-none") }}
+                            <div class="form-group row">
+                                {{ advanced_search_form.advanced_user_first_name.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.advanced_user_first_name(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                {{ advanced_search_form.advanced_user_last_name.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.advanced_user_last_name(class_="form-control") }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                {{ advanced_search_form.advanced_user_library_card_id.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.advanced_user_library_card_id(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                {{ advanced_search_form.advanced_user_email.label(class_="col-sm-6 col-form-label") }}
+                                <div class="col-sm-6">
+                                    {{ advanced_search_form.advanced_user_email(class_="form-control") }}
+                                </div>
+                            </div>
+                            <small class="" id="advanced_user_first_name"></small>
+                        </div>
+                        <div class="col-md mt-4">
+                            <div class="form-group row">
+                                {{ advanced_search_form.search_substring.label(class_="col-8 col-form-label") }}
+                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                    {{ advanced_search_form.search_substring }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="form-group row">
+                        <div class="col-2">
+                            <button class="btn btn-secondary" type="Submit" id="advanced-search-button">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div id="collapse-table-search-users" class="container-fluid">
+
+                    <table class="table table-bordered" style="border-collapse:collapse;">
+                        <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>First name</th>
+                            <th>Last name</th>
+                            <th class="d-none d-md-block">Library card id</th>
+                            <th class="d-none d-md-block">Type</th>
+                            <th class="d-none d-lg-block">Email</th>
+                        </tr>
+                        </thead>
+                        <tbody id="content-table-search-users">
+                        </tbody>
+                    </table>
+                    <div class="border-content d-flex justify-content-center p-2" id="empty-results-search-users">No
+                        results found !
+                    </div>
+
+                    <div>
+                        <ul class="pagination d-flex justify-content-end" id="paginationBox-search-users">
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

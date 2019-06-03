@@ -177,3 +177,30 @@ class Add_user(FlaskForm):
     country = StringField(label='Country: ', validators=[InputRequired('Field can not be empty !')])
     zip_code = StringField(label='Postal Code: ', validators=[InputRequired('Field can not be empty !')])
     address = StringField(label='Address: ', validators=[InputRequired('Field can not be empty !')])
+
+
+class Basic_search_users(FlaskForm):
+    basic_page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
+    basic_search_name = StringField(label='Firs name or last name: ', validators=[InputRequired("Book name is required!")])
+    basic_search_substring = BooleanField('Search sub-string')
+
+
+class Advanced_search_users(FlaskForm):
+    advanced_page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
+    advanced_user_first_name = StringField(label='User first name : ', validators=[Optional()])
+    advanced_user_last_name = StringField(label='User last name : ', validators=[Optional()])
+    advanced_user_library_card_id = StringField(label='User library card id: ',validators=[Optional()])
+    advanced_user_email = StringField('Email address : ',
+                        validators=[InputRequired("Please insert a valid email."), Email(message='Invalid email'),
+                                    Length(max=50)])
+
+    search_substring = BooleanField('Search sub-string')
+
+    def validate(self):
+        if not super(Advanced_search_users, self).validate():
+            return False
+        if not self.advanced_user_first_name.data and not self.advanced_user_last_name.data and not self.advanced_user_library_card_id.data and not self.advanced_user_email.data:
+            msg = 'At least one of fields can not be empty!'
+            self.advanced_user_first_name.errors.append(msg)
+            return False
+        return True

@@ -1,7 +1,7 @@
-from flask import render_template, url_for, redirect
+from flask import render_template, url_for, redirect, jsonify
 from app import app, db
 from flask_login import current_user, login_required
-from app.forms import Add_user
+from app.forms import Add_user, Advanced_search_users, Basic_search_users
 import os
 from app import APP_ROOT
 from werkzeug.utils import secure_filename
@@ -9,23 +9,26 @@ from app.models import User, Wishlist, NextBook, User_settings
 import hashlib
 from datetime import datetime, timedelta
 import pytz
-@app.route("/users")
-@login_required
-def users():
-    new_user = Add_user()
-    return render_template(
-        "users.html",
-        new_user=new_user
-    )
-
-
 import re
-
-
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route("/users")
+@login_required
+def users():
+    new_user = Add_user()
+    basic_search_form = Basic_search_users()
+    advanced_search_form = Advanced_search_users()
+    return render_template(
+        "users.html",
+        new_user=new_user,
+        basic_search_form=basic_search_form,
+        advanced_search_form=advanced_search_form
+    )
+
 
 @app.route('/add_user/', methods=['GET', 'POST'])
 @login_required
@@ -123,3 +126,107 @@ def add_user():
             'users.html',
             new_user=form
         )
+
+
+@app.route("/admin_dashboard_basic_search_users/", methods=["POST"])
+@login_required
+def admin_dashboard_basic_search_users():
+    response = {}
+    num_list = []
+
+    if current_user.email:
+        form = Basic_search_users()
+        if form.validate_on_submit():
+            name = ""
+            if form.basic_search_substring.data == False:
+                name = form.basic_search_name.data if form.basic_search_name.data != "all" else "%%"
+            else:
+                name = '%' + form.basic_search_name.data + '%'
+
+            users = User.query \
+                .filter(User.first_name.like(name)| User.last_name.like(name)) \
+                .paginate(
+                per_page=15,
+                page=form.basic_page_number.data,
+                error_out=True
+            )
+
+            if users:
+                for user in users.items:
+                    response.update({
+                        str(user.id): {
+                            'user_first_name': user.first_name,
+                            'user_last_name': user.last_name,
+                            'user_type': user.type,
+                            'user_email': user.email,
+                            'user_trust_coeff': user.trust_coeff,
+                            'user_library_card_id': user.library_card_id,
+                            'user_address': user.address,
+                            'user_city': user.city,
+                            'user_country:': user.country,
+                            'user_zip_code': user.zip_code,
+                        }
+                    })
+
+                for i in users.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+                    num_list.append(i)
+
+            return jsonify(
+                data={key: response[key] for key in response.keys()},
+                pages_lst=[value for value in num_list]
+            )
+        # print(form.errors)
+        return jsonify(data=form.errors)
+
+
+
+
+@app.route("/admin_dashboard_advanced_search_users/", methods=["POST"])
+@login_required
+def admin_dashboard_advanced_search_users():
+    response = {}
+    num_list = []
+
+    if current_user.email:
+        form = Basic_search_users()
+        if form.validate_on_submit():
+            name = ""
+            if form.basic_search_substring.data == False:
+                name = form.basic_search_name.data if form.basic_search_name.data != "all" else "%%"
+            else:
+                name = '%' + form.basic_search_name.data + '%'
+
+            users = User.query \
+                .filter(User.name.like(name)) \
+                .paginate(
+                per_page=15,
+                page=form.basic_page_number.data,
+                error_out=True
+            )
+
+            if users:
+                for user in users.items:
+                    response.update({
+                        str(user.id): {
+                            'user_first_name': user.first_name,
+                            'user_last_name': user.last_name,
+                            'user_type': user.type,
+                            'user_email': user.email,
+                            'user_trust_coeff': user.trust_coeff,
+                            'user_library_card_id': user.library_card_id,
+                            'user_address': user.address,
+                            'user_city': user.city,
+                            'user_country:': user.country,
+                            'user_zip_code': user.zip_code,
+                        }
+                    })
+
+                for i in users.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
+                    num_list.append(i)
+
+            return jsonify(
+                data={key: response[key] for key in response.keys()},
+                pages_lst=[value for value in num_list]
+            )
+        # print(form.errors)
+        return jsonify(data=form.errors)
