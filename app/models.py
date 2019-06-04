@@ -395,7 +395,7 @@ if __name__ == "__main__":
             email='user{}@gmail.com'.format(i),
             type='user',
             password=hashlib.sha512("user{}".format(i).encode()).hexdigest(),
-            trust_coeff=random.choice([-20, -10, 10, 0, 20, 40]),
+            trust_coeff=0,
             created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                 pytz.timezone('Europe/Bucharest')),
             library_card_id=library_card_id,

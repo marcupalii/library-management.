@@ -158,17 +158,32 @@ $(function () {
     }
 
     function create_books_statistics(books) {
-        console.log(books);
-        let chartData = {
-            labels: ['Later', 'Earlier'],
-            datasets: [
-                {
-                    backgroundColor: colors.slice(0, 3),
-                    borderWidth: 0,
-                    data: [0, 0]
-                }
-            ]
-        };
+        let chartData = NaN;
+        if (books['total'] !== 0) {
+            chartData = {
+                labels: ['Total', 'Failed'],
+                datasets: [
+                    {
+                        backgroundColor: colors.slice(0, 3),
+                        borderWidth: 0,
+                        data: [books['total'], books['failed']]
+                    }
+                ]
+            };
+        } else {
+            chartData = {
+                labels: ["No data to display"],
+                datasets: [
+                    {
+                        backgroundColor: grey,
+                        borderWidth: 0,
+                        fillColor: grey,
+                        data: [100]
+                    }
+                ]
+            };
+        }
+
         let chart = document.getElementById("chDonut3");
         chart.height = 200;
         if (chart) {
@@ -197,23 +212,39 @@ $(function () {
 
     }
 
-    var data_per_month = [];
+    var data_per_month_late = [];
+    var data_per_month_in_time = [];
 
-    function generateData() {
+    function generateData(type) {
         let response = [];
         if ($(window).width() < 500) {
-            for (let i = 0; i < 5; i++) {
-                response.push(data_per_month[i])
+            if (type === "late") {
+                for (let i = 0; i < 5; i++) {
+                    response.push(data_per_month_late[i])
+                }
+            } else {
+                for (let i = 0; i < 5; i++) {
+                    response.push(data_per_month_in_time[i])
+                }
             }
             return response
         } else if ($(window).width() < 1024) {
-            for (let i = 0; i < 7; i++) {
-                response.push(data_per_month[i])
+            if (type === "late") {
+                for (let i = 0; i < 7; i++) {
+                    response.push(data_per_month_late[i])
+                }
+            } else {
+                for (let i = 0; i < 7; i++) {
+                    response.push(data_per_month_in_time[i])
+                }
             }
             return response
-
         } else {
-            return data_per_month
+            if (type === "late") {
+                return data_per_month_late
+            } else {
+                return data_per_month_in_time
+            }
         }
     }
 
@@ -231,7 +262,7 @@ $(function () {
                 bodyFontSize: 14,
             },
             legend: {
-                display: false
+                display: false,
             },
             scales: {
                 xAxes: [{
@@ -263,7 +294,7 @@ $(function () {
     get_data_book_per_month_statistics();
 
     function resize_data(size) {
-        var data = data_per_month.slice();
+        var data = data_per_month_in_time.slice();
         var labels = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
 
@@ -331,17 +362,18 @@ $(function () {
     });
 
     function save_data(data) {
-        data_per_month = data.slice();
+        data_per_month_late = data['late'].slice();
+        data_per_month_in_time = data['in_time'].slice();
         let chartData = {
             labels: generateLabels(),
             datasets: [{
-                data: generateData(),
+                data: generateData('in_time'),
                 backgroundColor: 'transparent',
                 borderColor: colors[0],
                 borderWidth: 2,
-                pointBackgroundColor: colors[0]
+                pointBackgroundColor: colors[0],
             }, {
-                data: generateData(),
+                data: generateData('late'),
                 backgroundColor: 'transparent',
                 borderColor: colors[1],
                 borderWidth: 2,
@@ -358,7 +390,6 @@ $(function () {
             url: "/statistics_book_per_month/",
             dataType: "json",
             success: function (data) {
-                console.log("data=", data['data']);
                 save_data(data['data'])
             }
         });

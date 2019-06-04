@@ -96,7 +96,7 @@ $(document).ready(function () {
             url: "/add_new_book/",
             data: $('#new-book-form').serialize(),
             success: function (data) {
-
+                console.log(data);
                 if (data['data'].hasOwnProperty("id") === false) {
                     for (key in data['data']) {
                         $('#' + key + '_new_book_error')

@@ -186,9 +186,8 @@ def add_new_book():
             'code': 200
         })
 
-
-
     else:
+        print(new_book.errors)
         return jsonify(data=new_book.errors)
 
 

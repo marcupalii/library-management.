@@ -5,7 +5,7 @@ from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Aut
 from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_book_date, Wishlist_settings
 from flask_login import login_required, current_user
 from flask import jsonify
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 from app import not_found
 # from sqlalchemy import func
@@ -566,27 +566,24 @@ def save_settings():
 @app.route("/books_count/", methods=["GET"])
 @login_required
 def books_count():
-    # log = Log.query.filter_by(id_user=current_user.id).first()
-    # total = EntryLog.query.filter_by(
-    #     id_log=log.id
-    # ).count()
-    # entry_logs = EntryLog.query.filter_by(
-    #     id_log=log.id,
-    #     status="Returned"
-    # )
-    # count_late = 0
-    # count_in_time = 0
-    # if entry_logs:
-    #     for entry in entry_logs:
-    #         if re.search("-",str(entry.period_diff)):
-    #                 count_late += 1
-    #         else:
-    #             count_in_time += 1
+    log = Log.query.filter_by(id_user=current_user.id).first()
+    if not log:
+        return jsonify({
+            "total": 0,
+            "failed": 0,
+        })
+
+    total = EntryLog.query.filter_by(
+        id_log=log.id
+    ).count()
+    failed = EntryLog.query.filter_by(
+        id_log=log.id,
+        status="Reserved failed"
+    ).count()
 
     return jsonify({
-        "total": 0,
-        "count_late": 0,
-        "count_in_time": 0
+        "total": total,
+        "failed": failed,
     })
 
 
@@ -594,32 +591,43 @@ def books_count():
 @login_required
 def statistics_book_per_month():
     log = Log.query.filter_by(id_user=current_user.id).first()
-    # ["", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
-    count_total = {'01': 0, '02': 0, '03': 0, '04': 0, '05': 0, '06': 0, '07': 0, '08': 0, '09': 0, '10': 0, '11': 0,
-                '12': 0}
-    for key in count_total.keys():
-
-        # month = "%-{}-%".format(key)
-        # print(month)
-        # print(db.session.query(EntryLog) \
-        #         .filter(
-        #             (EntryLog.id_log == log.id)
-        #             & (EntryLog.status == "Returned")
-        #             & (func.month(EntryLog.period_start) == key)
-        #         ).all()
-        #       )
-        count_total.update(
-            {
-                key: db.session \
-                .query(EntryLog) \
-                .filter(
-                    (EntryLog.id_log == log.id)
-                    & (EntryLog.status == "Returned")
-                    & (extract('month', EntryLog.period_start) == key)
-                ).count()
+    count_total_in_time = {'01': 0, '02': 0, '03': 0, '04': 0, '05': 0, '06': 0, '07': 0, '08': 0, '09': 0, '10': 0,
+                           '11': 0,
+                           '12': 0}
+    count_total_late = {'01': 0, '02': 0, '03': 0, '04': 0, '05': 0, '06': 0, '07': 0, '08': 0, '09': 0, '10': 0,
+                        '11': 0,
+                        '12': 0}
+    if not log:
+        late = [val for val in count_total_late.values()]
+        in_time = [val for val in count_total_in_time.values()]
+        return jsonify(
+            data={
+                'late': late,
+                'in_time': in_time
             }
         )
-    response = [ val for val in count_total.values()]
+
+    for key in count_total_in_time.keys():
+
+        entry_logs = db.session \
+            .query(EntryLog) \
+            .filter(
+            (EntryLog.id_log == log.id)
+            & (EntryLog.status == "Returned")
+            & (extract('month', EntryLog.period_start) == key)
+        ).all()
+        for entry in entry_logs:
+            match = re.search("-", str(entry.period_diff))
+            if match:
+                count_total_late.update({key: count_total_late[key]+1})
+            else:
+                count_total_in_time.update({key: count_total_in_time[key]+1})
+
+    late = [val for val in count_total_late.values()]
+    in_time = [val for val in count_total_in_time.values()]
     return jsonify(
-        data=response
+        data={
+            'late':late,
+            'in_time': in_time
+        }
     )

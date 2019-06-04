@@ -147,6 +147,12 @@ class New_Book(FlaskForm):
     def validate(self):
         if not super(New_Book, self).validate():
             return False
+        print(
+            self.type_string_field.data,
+            self.type_exists.data,
+            self.type.data,
+            self.type_exists.data
+        )
         if (not self.type_string_field.data and self.type_exists.data == '2')\
             or (not self.type.data and self.type_exists.data == '1'):
 
