@@ -1,13 +1,17 @@
 from flask import render_template, request, url_for, redirect
 from app import app, db
-from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Author, Log, EntryLog, User_settings, BookTypes
+from app.models import User, EntryWishlist, Book, BookSeries, Notifications, Author, Log, EntryLog, User_settings, \
+    BookTypes
 from app.forms import Basic_search, Advanced_search, Wishlist_form, Reserved_book_date, Wishlist_settings
 from flask_login import login_required, current_user
 from flask import jsonify
 from datetime import datetime
 import pytz
 from app import not_found
+# from sqlalchemy import func
+from sqlalchemy.sql.expression import func, extract
 import re
+
 
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
@@ -234,13 +238,13 @@ def advanced_search_book():
                 if log:
                     entry_logs = db.session().query(EntryLog).filter(
                         (EntryLog.id_log == log.id)
-                        & ~(EntryLog.status.in_(["Returned","Reserved expired"]))
+                        & ~(EntryLog.status.in_(["Returned", "Reserved expired"]))
                     ).all()
 
                     for entry in entry_logs:
                         ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
-                book_type = db.session()\
-                    .query(BookTypes)\
+                book_type = db.session() \
+                    .query(BookTypes) \
                     .filter(
                     BookTypes.type_name.like(type)
                 ).all()
@@ -279,7 +283,7 @@ def advanced_search_book():
                 if log:
                     entry_logs = db.session().query(EntryLog).filter(
                         (EntryLog.id_log == log.id)
-                        & ~(EntryLog.status.in_(["Returned","Reserved expired"]))
+                        & ~(EntryLog.status.in_(["Returned", "Reserved expired"]))
                     ).all()
 
                     for entry in entry_logs:
@@ -346,7 +350,7 @@ def advanced_search_book():
                 if log:
                     entry_logs = db.session().query(EntryLog).filter(
                         (EntryLog.id_log == log.id)
-                        & ~(EntryLog.status.in_(["Returned","Reserved expired"]))
+                        & ~(EntryLog.status.in_(["Returned", "Reserved expired"]))
                     ).all()
                     for entry in entry_logs:
                         ids_current_books.append(BookSeries.query.filter_by(id=entry.id_book_series).first().book_id)
@@ -469,9 +473,9 @@ def add_to_reserved():
             time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                 pytz.timezone('Europe/Bucharest'))
             period_start = time_now
-            diff = form.end_date.data-form.start_date.data
+            diff = form.end_date.data - form.start_date.data
 
-            period_end = time_now+(diff)
+            period_end = time_now + (diff)
             book_series = BookSeries.query.filter_by(
                 book_id=form.book_id_reserved.data,
                 status="available"
@@ -562,7 +566,6 @@ def save_settings():
 @app.route("/books_count/", methods=["GET"])
 @login_required
 def books_count():
-
     # log = Log.query.filter_by(id_user=current_user.id).first()
     # total = EntryLog.query.filter_by(
     #     id_log=log.id
@@ -582,6 +585,41 @@ def books_count():
 
     return jsonify({
         "total": 0,
-        "count_late" :0,
-        "count_in_time":0
+        "count_late": 0,
+        "count_in_time": 0
     })
+
+
+@app.route("/statistics_book_per_month/", methods=['GET'])
+@login_required
+def statistics_book_per_month():
+    log = Log.query.filter_by(id_user=current_user.id).first()
+    # ["", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    count_total = {'01': 0, '02': 0, '03': 0, '04': 0, '05': 0, '06': 0, '07': 0, '08': 0, '09': 0, '10': 0, '11': 0,
+                '12': 0}
+    for key in count_total.keys():
+
+        # month = "%-{}-%".format(key)
+        # print(month)
+        # print(db.session.query(EntryLog) \
+        #         .filter(
+        #             (EntryLog.id_log == log.id)
+        #             & (EntryLog.status == "Returned")
+        #             & (func.month(EntryLog.period_start) == key)
+        #         ).all()
+        #       )
+        count_total.update(
+            {
+                key: db.session \
+                .query(EntryLog) \
+                .filter(
+                    (EntryLog.id_log == log.id)
+                    & (EntryLog.status == "Returned")
+                    & (extract('month', EntryLog.period_start) == key)
+                ).count()
+            }
+        )
+    response = [ val for val in count_total.values()]
+    return jsonify(
+        data=response
+    )

@@ -4,7 +4,7 @@ $(function () {
     let c3 = '#333333';
     let c4 = '#c3e6cb';
     let c5 = '#dc3545';
-    let c6 =  '#6c757d';
+    let c6 = '#6c757d';
 
     var colors = ['#007bff', '#28a745', '#333333', '#c3e6cb', '#dc3545', '#6c757d'];
     var grey = '#E5E5E5';
@@ -156,6 +156,7 @@ $(function () {
             }
         });
     }
+
     function create_books_statistics(books) {
         console.log(books);
         let chartData = {
@@ -164,7 +165,7 @@ $(function () {
                 {
                     backgroundColor: colors.slice(0, 3),
                     borderWidth: 0,
-                    data: [0,0]
+                    data: [0, 0]
                 }
             ]
         };
@@ -196,42 +197,30 @@ $(function () {
 
     }
 
+    var data_per_month = [];
+
     function generateData() {
+        let response = [];
         if ($(window).width() < 500) {
-            return [0, 5, 3, 0, 0]
+            for (let i = 0; i < 5; i++) {
+                response.push(data_per_month[i])
+            }
+            return response
         } else if ($(window).width() < 1024) {
-            return [0, 5, 3, 0, 0, 0, 0]
+            for (let i = 0; i < 7; i++) {
+                response.push(data_per_month[i])
+            }
+            return response
+
         } else {
-            return [0, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            return data_per_month
         }
     }
 
-    var chartData = {
-        labels: generateLabels(),
-        datasets: [{
-            data: generateData(),
-            backgroundColor: 'transparent',
-            borderColor: colors[0],
-            borderWidth: 2,
-            pointBackgroundColor: colors[0]
-        }, {
-            data: generateData(),
-            backgroundColor: 'transparent',
-            borderColor: colors[1],
-            borderWidth: 2,
-            pointBackgroundColor: colors[1]
-        }, {
-            data: generateData(),
-            backgroundColor: 'transparent',
-            borderColor: colors[2],
-            borderWidth: 2,
-            pointBackgroundColor: colors[2]
-        }]
-    };
 
     var chartTest = null;
 
-    function create_line_chart() {
+    function create_line_chart(chartData) {
 
         var canvasTest = $('#chart-canvas');
         let options = {
@@ -271,11 +260,10 @@ $(function () {
 
     }
 
-    create_line_chart();
-
+    get_data_book_per_month_statistics();
 
     function resize_data(size) {
-        var data = [0, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        var data = data_per_month.slice();
         var labels = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
 
@@ -341,6 +329,40 @@ $(function () {
             resize_data(12);
         }
     });
+
+    function save_data(data) {
+        data_per_month = data.slice();
+        let chartData = {
+            labels: generateLabels(),
+            datasets: [{
+                data: generateData(),
+                backgroundColor: 'transparent',
+                borderColor: colors[0],
+                borderWidth: 2,
+                pointBackgroundColor: colors[0]
+            }, {
+                data: generateData(),
+                backgroundColor: 'transparent',
+                borderColor: colors[1],
+                borderWidth: 2,
+                pointBackgroundColor: colors[1]
+            }
+            ]
+        };
+        create_line_chart(chartData);
+    }
+
+    function get_data_book_per_month_statistics() {
+        $.ajax({
+            type: "GET",
+            url: "/statistics_book_per_month/",
+            dataType: "json",
+            success: function (data) {
+                console.log("data=", data['data']);
+                save_data(data['data'])
+            }
+        });
+    }
 
 });
 
