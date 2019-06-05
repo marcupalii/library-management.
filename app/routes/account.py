@@ -174,7 +174,7 @@ def basic_search_book():
                                 period_diff = entry_log.period_diff
                                 break
 
-                    if status == "":
+                    if status == "" or status == "Returned":
                         if entry_wishlist:
                             status = "Already in wishlist"
                         elif entry[0].count_free_books <= 3:
@@ -425,7 +425,7 @@ def advanced_search_book():
                                 status = entry_log.status
                                 period_diff = entry_log.period_diff
 
-                    if status == "":
+                    if status == "" or status == "Returned":
                         if entry_wishlist:
                             status = "Already in wishlist"
                         elif entry[0].count_free_books <= 3:

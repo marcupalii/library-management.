@@ -441,56 +441,6 @@ if __name__ == "__main__":
     print(EntryWishlist.query.all())
     print(NextBook.query.all())
 
-    # u = User.query.filter_by(id=1).first()
-    # print("user=",u)
-    # print("next_book=",u.next_book)
-    # print("notifications=",Notifications.query.filter_by(id_user=u.id).all())
-    #
-    # print("\n\n\n###############################")
-    # user = User.query.filter_by(id=1).first()
-    # Notifications.query.filter_by(id_user=user.id).delete()
-    # db.session.commit()
-    # print("notifications after delete=",Notifications.query.filter_by(id_user=user.id).all())
-    # log = Log.query.filter_by(id_user=user.id).first()
-    #
-    # if log:
-    #     log_id = log.id
-    #     db.session.delete(log)
-    #     db.session.commit()
-    #     print("entry logs after delete=", EntryLog.query.filter_by(id_log=log_id).all())
-    #
-    # wishlist_id = Wishlist.query.filter_by(id_user=1).first().id
-    # db.session.delete(user)
-    # db.session.commit()
-    # print("wishlist after delete=",Wishlist.query.filter_by(id_user=1).first())
-    # print("entry wishlist after delete=", EntryWishlist.query.filter_by(id_wishlist=wishlist_id).all())
 
-    #
-    # now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-    #             pytz.timezone('Europe/Bucharest'))
-    # after = now +timedelta(weeks=33,days=1,hours=1,minutes=2,seconds=21)
-    #
-    # print(now)
-    # print(after)
-    # diff = now - after
-    # print(diff)
-    # import re
-    #
-    # days = re.search("\s*(\d+)\s*days",str(diff)).groups(0)[0]
-    # hours, minutes, seconds = re.search("(\d+):(\d+):(\d+)",str(diff)).groups()
-    # print(days, hours, minutes, seconds)
-    # user = User.query.filter_by(first_name="first3").first()
-    # log = Log.query.filter_by(id_user=user.id).first()
-    # print(log.id)
-    # for i in range(0, 100):
-    #     log_id = i
-    #     entry_logs = db.session().query(EntryLog).filter(
-    #         (EntryLog.id_log == log_id)
-    #         & ~(EntryLog.status.in_(["Reserved","Reserved"]))
-    #     ).all()
-    #     if entry_logs:
-    #         print(i)
-    #         print(entry_logs)
-    #         break
 # DROP SCHEMA public CASCADE;
 # CREATE SCHEMA public;
