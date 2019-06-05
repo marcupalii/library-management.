@@ -24,9 +24,9 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255), nullable=False)
     trust_coeff = db.Column(db.Integer, nullable=False)
 
-    next_book = db.relationship('NextBook', uselist=False, backref='user')
-    settings = db.relationship('User_settings', uselist=False, backref='user')
-    wishlist = db.relationship('Wishlist', backref='user', uselist=False)
+    next_book = db.relationship('NextBook', uselist=False, backref='user',passive_deletes=True)
+    settings = db.relationship('User_settings', uselist=False, backref='user',passive_deletes=True)
+    wishlist = db.relationship('Wishlist', backref='user', uselist=False,passive_deletes=True)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
@@ -113,9 +113,9 @@ class BookSeries(db.Model):
 
 class Wishlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False,)
 
-    entry_wishlists = db.relationship('EntryWishlist', uselist=True, backref='wishlist')
+    entry_wishlists = db.relationship('EntryWishlist', uselist=True, backref='wishlist', passive_deletes=True)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
@@ -126,7 +126,7 @@ class Wishlist(db.Model):
 
 class EntryWishlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_wishlist = db.Column(db.Integer, db.ForeignKey('wishlist.id'), nullable=False)
+    id_wishlist = db.Column(db.Integer, db.ForeignKey('wishlist.id',ondelete='CASCADE'), nullable=False)
     id_book = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     rank = db.Column(db.Integer, nullable=False)
     period = db.Column(db.Integer, nullable=False)
@@ -146,7 +146,7 @@ class EntryWishlist(db.Model):
 
 class NextBook(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     id_book = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=True)
     id_series_book = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=True)
     rank = db.Column(db.Integer, default=0)
@@ -171,7 +171,7 @@ class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    entryes_log = db.relationship('EntryLog', uselist=True, backref='log')
+    entryes_log = db.relationship('EntryLog', uselist=True, backref='log', passive_deletes=True)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
@@ -186,7 +186,7 @@ class Log(db.Model):
 
 class EntryLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_log = db.Column(db.Integer, db.ForeignKey('log.id'), nullable=False)
+    id_log = db.Column(db.Integer, db.ForeignKey('log.id',ondelete='CASCADE'), nullable=False)
 
     id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
 
@@ -222,7 +222,7 @@ class Notifications(db.Model):
 
 class User_settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     wishlist_option = db.Column(db.Integer, default=1)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
         pytz.timezone('Europe/Bucharest')))
@@ -440,6 +440,31 @@ if __name__ == "__main__":
     print(Wishlist.query.all())
     print(EntryWishlist.query.all())
     print(NextBook.query.all())
+
+    # u = User.query.filter_by(id=1).first()
+    # print("user=",u)
+    # print("next_book=",u.next_book)
+    # print("notifications=",Notifications.query.filter_by(id_user=u.id).all())
+    #
+    # print("\n\n\n###############################")
+    # user = User.query.filter_by(id=1).first()
+    # Notifications.query.filter_by(id_user=user.id).delete()
+    # db.session.commit()
+    # print("notifications after delete=",Notifications.query.filter_by(id_user=user.id).all())
+    # log = Log.query.filter_by(id_user=user.id).first()
+    #
+    # if log:
+    #     log_id = log.id
+    #     db.session.delete(log)
+    #     db.session.commit()
+    #     print("entry logs after delete=", EntryLog.query.filter_by(id_log=log_id).all())
+    #
+    # wishlist_id = Wishlist.query.filter_by(id_user=1).first().id
+    # db.session.delete(user)
+    # db.session.commit()
+    # print("wishlist after delete=",Wishlist.query.filter_by(id_user=1).first())
+    # print("entry wishlist after delete=", EntryWishlist.query.filter_by(id_wishlist=wishlist_id).all())
+
     #
     # now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
     #             pytz.timezone('Europe/Bucharest'))

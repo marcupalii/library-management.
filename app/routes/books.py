@@ -1021,6 +1021,10 @@ def rent_book(id):
         book_series.status = "available"
         db.session.commit()
 
+        book = Book.query.filter_by(id=book_series.book_id).first()
+        book.count_free_books += 1
+        db.session.commit()
+
         return jsonify(
             data={
                 'procent': procent,

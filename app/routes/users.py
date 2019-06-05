@@ -5,7 +5,7 @@ from app.forms import Add_user, Advanced_search_users, Basic_search_users, Updat
 import os
 from app import APP_ROOT
 from werkzeug.utils import secure_filename
-from app.models import User, Wishlist, NextBook, User_settings, EntryWishlist, Log, EntryLog
+from app.models import User, Wishlist, NextBook, User_settings, EntryWishlist, Log, EntryLog, Notifications
 import hashlib
 from datetime import datetime, timedelta
 import pytz
@@ -331,31 +331,17 @@ def delete_user(id):
     if user.type == "admin":
         return jsonify(
             data={
-                'id': user.id
+                'id': id
             }
         )
-    next_book = user.next_book
-    db.session.delete(next_book)
-    # db.session.commit()
-
-    wishlist = Wishlist.query.filter_by(id_user=user.id).first()
-    entry_wishlists = EntryWishlist.query.filter_by(id_wishlist=wishlist.id).all()
-    for entry in entry_wishlists:
-        db.session.delete(entry)
-        # db.session.commit()
-    db.session.delete(wishlist)
-    # db.session.commit()
+    Notifications.query.filter_by(id_user=user.id).delete()
+    db.session.commit()
 
     log = Log.query.filter_by(id_user=user.id).first()
     if log:
-        entry_logs = EntryLog.query.filter_by(id_log=log.id).all()
-        for entry in entry_logs:
-            db.session.delete(entry)
-            # db.session.commit()
-
         db.session.delete(log)
+        db.session.commit()
 
-    id = user.id
     db.session.delete(user)
     db.session.commit()
     return jsonify(
