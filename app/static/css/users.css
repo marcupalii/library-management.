@@ -12,6 +12,9 @@
     margin-right: 3px;
     margin-bottom: 3px;
 }
+.edit-search-users-button{
+     cursor: pointer;
+}
 .label-text {
     display: inline-block;
     margin-bottom: .5rem;
