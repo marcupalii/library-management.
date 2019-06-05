@@ -19,7 +19,9 @@
     min-height: 20%;
     max-height: 20%;
 }
-
+.overlay-z-index-under{
+    z-index: -1!important;
+}
 .row-offcanvas-left {
 
     -ms-flex: 0 0 22%;
