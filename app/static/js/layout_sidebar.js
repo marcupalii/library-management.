@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $(window).resize(function () {
-        if ($('#button-sidebar').attr("aria-expanded") === "false" && $(window).width() <= 1050) {
+        if ($('#button-sidebar').attr("aria-expanded") === "false" && $(window).width() <= 1050 && $(window).width() >= 1010 ) {
             $('.content')
                 .addClass("overlay-z-index-under")
                 .delay(1500)
