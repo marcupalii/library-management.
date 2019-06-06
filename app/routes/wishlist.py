@@ -3,14 +3,14 @@ from app import app, db
 from app.models import User, EntryWishlist, Log, Book, Author, NextBook, EntryLog, BookTypes
 from flask_login import login_required, current_user
 from flask import jsonify
-from app.forms import Wishlist_settings, Accept_next_book
+from app.forms import Wishlist_settings, Accept_next_book,Update_wishlist_book_rank
 from datetime import datetime, timedelta
 import pytz
 from app import not_found
 import re
 
 
-@app.route("/wishlist_delete_entry/<entry_id>", methods=["GET"])
+@app.route("/wishlist_delete_entry/<entry_id>/", methods=["DELETE"])
 @login_required
 def wishlist_delete_entry(entry_id):
     user = User.query.filter_by(email=current_user.email).first()
@@ -32,7 +32,6 @@ def wishlist_delete_entry(entry_id):
                     db.session.commit()
 
         else:
-
             return not_found("nu exista in entrywishlist id="+entry_id)
 
     total = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
@@ -47,7 +46,12 @@ def wishlist_delete_entry(entry_id):
 
     if page > total_pages:
         page = total_pages
-    return redirect(url_for("wishlist", page=page, book_id=0))
+
+    return jsonify(
+        data={
+            'url': url_for('wishlist',page=page, book_id=0)
+        }
+    )
 
 
 @app.route("/wishlist/page/<page>/focus=<book_id>/")
@@ -123,6 +127,7 @@ def wishlist(page, book_id):
 
             ]
         next_book_form = Accept_next_book()
+        update_rank = Update_wishlist_book_rank()
         return render_template(
             'wishlist.html',
             wishlist=response,
@@ -133,7 +138,8 @@ def wishlist(page, book_id):
             nr_of_pages=nr_of_pages,
             wishlist_settings=wishlist_settings,
             next_book=next_book,
-            next_book_form=next_book_form
+            next_book_form=next_book_form,
+            update_rank = update_rank
         )
 
 
@@ -204,3 +210,49 @@ def accept_next_book():
         db.session.commit()
         return jsonify(data={'id': 1}, status=200)
     return jsonify(data=form.errors)
+
+@app.route("/update_wishlist_book/",methods=["POST"])
+@login_required
+def update_wishlist_book():
+
+    form = Update_wishlist_book_rank()
+
+    if form.validate_on_submit():
+        wishlist = current_user.wishlist
+
+        entry_wishlist = EntryWishlist.query.filter_by(
+            id_wishlist=wishlist.id,
+            id=form.update_wishlist_entry_id.data
+        ).first()
+
+        if entry_wishlist.rank != form.update_wishlist_rank.data:
+            max_rank = EntryWishlist.query.filter_by(id_wishlist=wishlist.id).count()
+            if form.update_wishlist_rank.data > max_rank:
+                return jsonify(
+                    data={
+                        'update_wishlist_rank': 'Rank out of range !'
+                    }
+                )
+
+            entry_wishlists = EntryWishlist.query.filter_by(id_wishlist=wishlist.id).all()
+            for entry in entry_wishlists:
+                if entry.rank > entry_wishlist.rank and entry.rank <= form.update_wishlist_rank.data:
+                    entry.rank -= 1
+                    db.session.commit()
+
+            entry_wishlist.rank = form.update_wishlist_rank.data
+            entry_wishlist.updated_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+            db.session.commit()
+
+        if entry_wishlist.period != form.update_wishlist_period.data:
+            entry_wishlist.period = form.update_wishlist_period.data
+            db.session.commit()
+
+        return jsonify(
+            data={
+                'id': entry_wishlist.id
+            }
+        )
+    else:
+        print(form.errors)
+        return jsonify(data=form.errors)

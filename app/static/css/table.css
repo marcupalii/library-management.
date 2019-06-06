@@ -19,20 +19,13 @@ tr:focus {
 }
 
 .last-td {
-    /*border: 0 !important;*/
     padding-right: 0 !important;
     padding-left: 0 !important;
     max-width: 70px !important;
-    /*min-width: 65px !important;*/
     margin-left: 0 !important;
     margin-right: 0 !important;
-    /*width: 10%!important;*/
 }
 
-.no-padding-button {
-    padding-right: 0 !important;
-    padding-left: 0 !important;
-}
 
 .table-button {
     padding-left: .5rem !important;
@@ -77,5 +70,12 @@ tr:focus {
         display: table-cell !important;;
     }
 
+}
+
+@media screen and (max-width: 1024px) {
+    .no-padding-button {
+        padding-left: 0!important;
+        padding-right: 0!important;
+    }
 }
 

@@ -1,8 +1,12 @@
 
-.red {
-    color: red;
+.has-error {
+    border-color: #dc3545
 }
 
+.err-msg {
+    margin-top: -15px;
+    color: #dc3545 !important;
+}
 .no-padding {
     padding-right: 0;
     padding-left: 0;
@@ -12,14 +16,4 @@
 }
 #paginationBox{
     margin-top: -1rem;
-}
-.last-td-next-book{
-    /*border: 0 !important;*/
-    /*padding-right: 0 !important;*/
-    /*padding-left: 0 !important;*/
-    /*max-width: 70px !important;*/
-    /*!*min-width: 65px !important;*!*/
-    /*margin-left: 0 !important;*/
-    /*margin-right: 0 !important;*/
-    /*width: 10%!important;*/
 }

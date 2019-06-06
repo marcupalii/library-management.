@@ -62,12 +62,92 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: "/accept_next_book/",
-            data:  $('#accept-next-book-form').serialize(),
+            data: $('#accept-next-book-form').serialize(),
             success: function (data) {
                 console.log(data);
                 $('#next-book-modal').modal('hide');
                 window.location = "/wishlist/page/1/focus=0/";
             }
         });
+    });
+
+    $(document).on('click', '.edit-wishlist-book-button', function (e) {
+        e.preventDefault();
+        let id_row = $(this).attr("id");
+        $('#update-wishlist-rank-modal').modal('show');
+        $('#update_wishlist_entry_id').val(
+            $('#entry-wishlist-id-nr-row-content-' + id_row).text()
+        );
+        console.log($('#entry-wishlist-id-nr-row-content-' + id_row).text());
+        $('#book-name-update-rank').text(
+            $('#book-name-row-content-' + id_row).text()
+        );
+
+        $('#book-type-update-rank').text(
+            $('#book-type-row-content-' + id_row).text()
+        );
+        $('#author-first-name-update-rank').text(
+            $('#author-first-name-row-content-' + id_row).text()
+        );
+        $('#author-last-name-update-rank').text(
+            $('#author-last-name-row-content-' + id_row).text()
+        );
+        $('#update_wishlist_rank').val(
+            $('#nr-row-content-' + id_row).text().trim()
+        );
+        $('#update_wishlist_period').val(
+            $('#period-row-content-' + id_row).text().trim()
+        );
+
+
+    });
+
+    $('#update-wishlist-rank-button').on("click", function () {
+        $.ajax({
+            type: "POST",
+            url: "/update_wishlist_book/",
+            data: $('#update-wishlist-rank-form').serialize(),
+            success: function (data) {
+                console.log(data['data']);
+                if (!data['data'].hasOwnProperty("id")) {
+                    for (let key in data['data']) {
+                        for (key in data['data']) {
+                            $('#' + key + '_update_rank_error')
+                                .css("visibility", "visible")
+                                .text(data['data'][key]);
+                            $('#' + key).addClass("has-error");
+                        }
+                    }
+                } else {
+                    $('#update-wishlist-rank-modal').modal('hide');
+                    window.location = $(location).attr('href')
+                }
+            }
+            , error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                window.location = $(location).attr('href')
+            }
+        });
+    });
+    $('#delete-wishlist-book-button').on("click", function () {
+        $.ajax({
+            type: "DELETE",
+            url: "/wishlist_delete_entry/"+$('#update_wishlist_entry_id').val()+"/",
+            success: function (data) {
+                console.log(data['data']);
+                $('#update-wishlist-rank-modal').modal('hide');
+                window.location = data['data']['url'];
+            }
+            , error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                $('#update-wishlist-rank-modal').modal('hide');
+                window.location = "/wishlist/page/1/focus=0/";
+            }
+        });
+
     });
 });

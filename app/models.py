@@ -24,11 +24,14 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255), nullable=False)
     trust_coeff = db.Column(db.Integer, nullable=False)
 
-    next_book = db.relationship('NextBook', uselist=False, backref='user',passive_deletes=True)
-    settings = db.relationship('User_settings', uselist=False, backref='user',passive_deletes=True)
-    wishlist = db.relationship('Wishlist', backref='user', uselist=False,passive_deletes=True)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    next_book = db.relationship('NextBook', uselist=False, backref='user', passive_deletes=True)
+    settings = db.relationship('User_settings', uselist=False, backref='user', passive_deletes=True)
+    wishlist = db.relationship('Wishlist', backref='user', uselist=False, passive_deletes=True)
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -46,8 +49,11 @@ class BookTypes(db.Model):
     __tablename__ = 'booktypes'
     id = db.Column(db.Integer, primary_key=True)
     type_name = db.Column(db.String(30), nullable=False)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
 
@@ -60,8 +66,11 @@ class Book(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
     lazy = "dynamic"
     type_id = db.Column(db.Integer, db.ForeignKey('booktypes.id'), nullable=False)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -78,8 +87,11 @@ class Author(db.Model):
     first_name = db.Column(db.String(80), unique=True, nullable=False)
     last_name = db.Column(db.String(80), unique=True, nullable=False)
     books = db.relationship('Book', backref='author', uselist=True)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
     lazy = "dynamic"
 
@@ -98,8 +110,11 @@ class BookSeries(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     series = db.Column(db.String(100), unique=True, nullable=False)
     status = db.Column(db.String(20), nullable=False)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -113,11 +128,14 @@ class BookSeries(db.Model):
 
 class Wishlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_user = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False,)
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False, )
 
     entry_wishlists = db.relationship('EntryWishlist', uselist=True, backref='wishlist', passive_deletes=True)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -126,12 +144,14 @@ class Wishlist(db.Model):
 
 class EntryWishlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_wishlist = db.Column(db.Integer, db.ForeignKey('wishlist.id',ondelete='CASCADE'), nullable=False)
+    id_wishlist = db.Column(db.Integer, db.ForeignKey('wishlist.id', ondelete='CASCADE'), nullable=False)
     id_book = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     rank = db.Column(db.Integer, nullable=False)
     period = db.Column(db.Integer, nullable=False)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -152,8 +172,11 @@ class NextBook(db.Model):
     rank = db.Column(db.Integer, default=0)
     period = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(20), nullable=False)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -172,8 +195,11 @@ class Log(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     entryes_log = db.relationship('EntryLog', uselist=True, backref='log', passive_deletes=True)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -186,7 +212,7 @@ class Log(db.Model):
 
 class EntryLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_log = db.Column(db.Integer, db.ForeignKey('log.id',ondelete='CASCADE'), nullable=False)
+    id_log = db.Column(db.Integer, db.ForeignKey('log.id', ondelete='CASCADE'), nullable=False)
 
     id_book_series = db.Column(db.Integer, db.ForeignKey('bookseries.id'), nullable=False)
 
@@ -195,8 +221,11 @@ class EntryLog(db.Model):
         pytz.timezone('Europe/Bucharest')))
     period_end = db.Column(db.DateTime(timezone=True), nullable=False)
     period_diff = db.Column(db.String(30), nullable=False)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
@@ -215,8 +244,11 @@ class Notifications(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(10), nullable=False)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
 
@@ -224,8 +256,11 @@ class User_settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     wishlist_option = db.Column(db.Integer, default=1)
-    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest')))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')),
+        onupdate=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+    )
     created_at = db.Column(db.DateTime(timezone=True), nullable=False)
 
 
@@ -275,8 +310,8 @@ if __name__ == "__main__":
 
     type1 = BookTypes(
         type_name="type1",
-        created_at= datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-        pytz.timezone('Europe/Bucharest'))
+        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
     )
 
     type2 = BookTypes(
@@ -433,14 +468,12 @@ if __name__ == "__main__":
         db.session.add(settings)
         db.session.commit()
 
-
     print(User.query.all())
     print(Book.query.all())
     print(BookSeries.query.all())
     print(Wishlist.query.all())
     print(EntryWishlist.query.all())
     print(NextBook.query.all())
-
 
 # DROP SCHEMA public CASCADE;
 # CREATE SCHEMA public;

@@ -128,6 +128,10 @@ class Profile(FlaskForm):
 class Accept_next_book(FlaskForm):
     next_book_id = DecimalField(validators=[InputRequired("Missing book id"), NumberRange(min=1)])
 
+class Update_wishlist_book_rank(FlaskForm):
+    update_wishlist_entry_id = DecimalField(validators=[InputRequired("Missing wishlist entry id"), NumberRange(min=1)])
+    update_wishlist_rank = DecimalField(label="Rank : ",validators=[InputRequired("Missing rank id"), NumberRange(min=1)])
+    update_wishlist_period = DecimalField(label="Period : ",validators=[InputRequired("Missing period"), NumberRange(min=1)])
 
 class New_Book(FlaskForm):
     name = StringField(label='Book name: ', validators=[InputRequired('Field can not be empty !')])

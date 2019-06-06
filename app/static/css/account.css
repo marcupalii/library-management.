@@ -45,7 +45,6 @@
 #chartWrapper {
     width: 100%;
     min-height: 200px!important;
-    /*max-height: 500px !important;*/
 }
 #empty-results{
     margin-top: -1rem;
@@ -65,13 +64,3 @@
 .pie-container{
     overflow-x: hidden;
 }
-@media screen and (max-width: 768px) {
-
-    .chart-pie {
-        /*padding: 0!important;*/
-        /*max-width: 300px;*/
-        /*max-height: 300px;*/
-    }
-
-}
-
