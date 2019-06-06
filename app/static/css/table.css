@@ -13,9 +13,11 @@ tr:focus {
 .hidden-content {
     display: none;
 }
-.border-bottom-0{
+
+.border-bottom-0 {
     border-bottom: 0;
 }
+
 .last-td {
     /*border: 0 !important;*/
     padding-right: 0 !important;
@@ -25,6 +27,11 @@ tr:focus {
     margin-left: 0 !important;
     margin-right: 0 !important;
     /*width: 10%!important;*/
+}
+
+.no-padding-button {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
 }
 
 .table-button {
@@ -53,9 +60,10 @@ tr:focus {
 }
 
 .no-margin-row {
-    margin-right: 0!important;
-    margin-left: 0!important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
 }
+
 @media (min-width: 768px) {
     .d-md-block {
         display: table-cell !important;;
