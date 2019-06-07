@@ -434,7 +434,7 @@ $(function () {
         $('#book_id').val($('#book-id').text());
 
         let rank = $('#rank').val();
-        let rank_range = $('#rank-parent').contents().first().text().split("-");
+        let rank_range = $('#rank-range').text().split("-");
         if (rank_range.length === 2) {
             if (parseInt(rank) < parseInt(rank_range[0].match(/[0-9]+/)[0]) ||
                 parseInt(rank) > parseInt(rank_range[1].match(/[0-9]+/)[0])
@@ -474,17 +474,19 @@ $(function () {
                     $('#rank-parent').prepend("Range(1-{0})".format(data['data']));
                     $('#days_number').val('');
                     $('#rank').val('');
-                    $('#myModal').modal('hide');
+                    $('#succes-alert-content')
+                        .text('Successfuly added to wishlist !')
+                        .parent().removeClass("d-none");
                 }
-                get_data();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
-                $('#reserved-date-form').trigger('reset');
-                $('#myModal').modal('hide');
-                get_data();
+               $('#reserved-date-form').trigger('reset');
+                $('#fail-alert-content')
+                    .text('The book can not be added to wishlist !')
+                    .parent().removeClass("d-none");
             }
         });
     });
@@ -516,8 +518,9 @@ $(function () {
                     $('#end_date').addClass("has-error");
                 } else {
                     $('#reserved-date-form').trigger('reset');
-                    $('#myModal').modal('hide');
-                    get_data();
+                    $('#succes-alert-content')
+                        .text('Successfuly added to reserved !')
+                        .parent().removeClass("d-none");
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -525,12 +528,25 @@ $(function () {
                 console.log(textStatus);
                 console.log(errorThrown);
                 $('#reserved-date-form').trigger('reset');
-                $('#myModal').modal('hide');
-                get_data();
+                $('#fail-alert-content')
+                    .text('The book is no longer available !')
+                    .parent().removeClass("d-none");
             }
         });
     });
 
+    $('#close-results-book-modal').on("click",function (e) {
+        e.preventDefault();
+        if( !$('#fail-alert-content').parent().hasClass("d-none")){
+            $('#fail-alert-content').parent().addClass("d-none");
+            get_data();
+        }
+        if(!$('#succes-alert-content').parent().hasClass("d-none")){
+            $('#succes-alert-content').parent().addClass("d-none");
+            get_data();
+        }
+        ('#myModal').modal('hide');
+    });
     $('.search').on('click', function () {
 
         $('#collapse-table')
@@ -556,9 +572,14 @@ $(function () {
     $(document).on("click", ".modal-button", function () {
         $('#start_date').removeClass('has-error');
         $('#end_date').removeClass('has-error');
-        $('#end_date_error').css("visibility","hidden");
-        $('#start_date_error').css("visibility","hidden");
-
+        $('#end_date_error').css("visibility", "hidden");
+        $('#start_date_error').css("visibility", "hidden");
+        if(!$('.wishlist-modal').hasClass("d-none")){
+            $('.wishlist-modal').addClass("d-none");
+        }
+         if(!$('.reserved-modal').hasClass("d-none")){
+            $('.reserved-modal').addClass("d-none");
+        }
         let id = $(this).attr("id");
 
         if ($("#status-book-row-content-" + id).text() === "Already in wishlist") {

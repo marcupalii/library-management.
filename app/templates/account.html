@@ -326,6 +326,7 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <div class="form-group">
+
                                             {{ wishlist_form.days_number.label }}
                                             {{ wishlist_form.days_number(class_="form-control") }}
                                         </div>
@@ -333,10 +334,12 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            {{ wishlist_form.rank.label }}
+                                            <div class="label-text" id="rank-range">
+                                                {{ wishlist_form.rank.label }}
+                                            </div>
                                             {{ wishlist_form.rank(class_="form-control") }}
                                         </div>
-                                        <small class="d-flex flex-wrap err-msg-no-padding" id="rank_error"></small>
+                                        <small class="d-flex flex-wrap err-msg" id="rank_error"></small>
                                     </div>
                                 </div>
                             </form>
@@ -366,10 +369,12 @@
                                     </div>
                                 </div>
                             </form>
-                            {#                            <div class="alert alert-success mb-2">#}
-                            {#                                <strong>Success!</strong> Indicates a successful or positive action.#}
-                            {#                            </div>#}
-
+                            <div class="alert alert-success mb-2 mt-2 d-none">
+                                <strong id="succes-alert-content"></strong>
+                            </div>
+                            <div class="alert alert-danger mb-2 mt-2 d-none">
+                                <strong id="fail-alert-content"></strong>
+                            </div>
                             <div class="col mt-3 mb-2 no-padding-row">
                                 <button type="Submit" id="add-to-wishlist-button"
                                         class="btn btn-secondary d-none"><i
