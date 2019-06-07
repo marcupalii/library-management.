@@ -554,6 +554,10 @@ $(function () {
     }
 
     $(document).on("click", ".modal-button", function () {
+        $('#start_date').removeClass('has-error');
+        $('#end_date').removeClass('has-error');
+        $('#end_date_error').css("visibility","hidden");
+        $('#start_date_error').css("visibility","hidden");
 
         let id = $(this).attr("id");
 

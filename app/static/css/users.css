@@ -7,11 +7,17 @@
     color: #dc3545 !important;
 }
 
-#basic-search-change-container, #advance-search-change-container{
+.no-padding-row {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#basic-search-change-container, #advance-search-change-container {
     cursor: pointer;
     margin-right: 3px;
     margin-bottom: 3px;
 }
-.edit-search-users-button{
-     cursor: pointer;
+
+.edit-search-users-button {
+    cursor: pointer;
 }

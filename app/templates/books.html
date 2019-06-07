@@ -19,7 +19,7 @@
     <div class="container-fluid mt-5">
 
         <div class="container-fluid p-3 border-content mt-5 mb-3" id="new-book-container">
-            <h3 class="mt-5 mb-4 p-3">Add new book</h3>
+            <h3 class="mt-5 mb-4">Add new book</h3>
             <div class="container-fluid p-3 border-content">
                 <form id="new-book-form" class="mt-2" novalidate>
                     {{ new_book.hidden_tag() }}
@@ -310,7 +310,7 @@
                                 {{ update_book_form.hidden_tag() }}
                                 {{ update_book_form.update_book_series_id(class_="d-none") }}
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_book_form.update_book_name.label }}
                                             {{ update_book_form.update_book_name(class_='form-control') }}
@@ -318,7 +318,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_book_name_update_book_error"></small>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_book_form.update_book_type.label }}
                                             {{ update_book_form.update_book_type(class_='form-control') }}
@@ -328,7 +328,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_book_form.update_book_series.label }}
                                             {{ update_book_form.update_book_series(class_='form-control') }}
@@ -338,7 +338,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_book_form.update_author_first_name.label }}
                                             {{ update_book_form.update_author_first_name(class_='form-control') }}
@@ -346,7 +346,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_author_first_name_update_book_error"></small>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_book_form.update_author_last_name.label }}
                                             {{ update_book_form.update_author_last_name(class_='form-control') }}
@@ -383,13 +383,13 @@
                         <h4 class="modal-title mb-2" id="title-rent"></h4>
                         <div class="container-fluid border-content">
                             <div class="row mt-2">
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">User first name:</div>
                                         <div class="form-control" id="user_first_name_rent"></div>
                                     </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">User last name:</div>
                                         <div class="form-control" id="user_last_name_rent"></div>
@@ -398,14 +398,14 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">User library card id: </div>
                                         <div class="form-control" id="user_library_card_id_rent"></div>
 
                                     </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">User trust coeff:</div>
                                         <div class="form-control" id="user_trust_coeff_rent"></div>
@@ -414,13 +414,13 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">Period start: </div>
                                         <div class="form-control" id="user_period_start_rent"></div>
                                     </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">Period end:</div>
                                         <div class="form-control" id="user_period_end_rent"></div>
@@ -428,14 +428,14 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">Status: </div>
                                         <div class="form-control" id="user_entry_status_rent"></div>
 
                                     </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="label-text pb-2">Period difference:</div>
                                         <div class="form-control" id="user_period_diff_rent"></div>

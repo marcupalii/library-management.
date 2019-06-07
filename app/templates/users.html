@@ -16,7 +16,7 @@
 {% block content %}
     <div class="container-fluid">
         <div class="container-fluid mt-4 mb-3 p-3 border-content">
-            <h3 class="mt-5 mb-4 p-3">Add new user</h3>
+            <h3 class="mt-5 mb-4">Add new user</h3>
             <form id="new-user" method="POST" action="{{ url_for('add_user') }}"
                   enctype="multipart/form-data" novalidate>
                 {{ new_user.hidden_tag() }}
@@ -261,7 +261,7 @@
                                 {{ update_user.hidden_tag() }}
                                 {{ update_user.update_user_id(class_="d-none") }}
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_first_name.label }}
                                             {{ update_user.update_user_first_name(class_='form-control') }}
@@ -269,7 +269,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_user_first_name_update_user_error"></small>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_last_name.label }}
                                             {{ update_user.update_user_last_name(class_='form-control') }}
@@ -279,7 +279,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_library_card_id.label }}
                                             {{ update_user.update_user_library_card_id(class_='form-control') }}
@@ -287,7 +287,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_user_library_card_id_update_user_error"></small>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_book_return_coeff.label }}
                                             {{ update_user.update_user_book_return_coeff(class_='form-control',disabled="true") }}
@@ -297,7 +297,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_email.label }}
                                             {{ update_user.update_user_email(class_='form-control') }}
@@ -305,7 +305,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_user_email_update_user_error"></small>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_type.label }}
                                             {{ update_user.update_user_type(class_='form-control',disabled="true") }}
@@ -315,7 +315,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_address.label }}
                                             {{ update_user.update_user_address(class_='form-control') }}
@@ -323,7 +323,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_user_address_update_user_error"></small>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_zip_code.label }}
                                             {{ update_user.update_user_zip_code(class_='form-control') }}
@@ -333,7 +333,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_city.label }}
                                             {{ update_user.update_user_city(class_='form-control') }}
@@ -341,7 +341,7 @@
                                         <small class="form-group row err-msg no-margin-row"
                                                id="update_user_city_update_user_error"></small>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             {{ update_user.update_user_country.label }}
                                             {{ update_user.update_user_country(class_='form-control') }}
