@@ -554,10 +554,6 @@ $(function () {
     }
 
     $(document).on("click", ".modal-button", function () {
-        $('.wishlist-modal').css("visibility", "hidden");
-        $('.reserved-modal').css("visibility", "hidden");
-        $('#add-to-wishlist-button').css("visibility", "hidden");
-        $('#add-to-reserved-button').css("visibility", "hidden");
 
         let id = $(this).attr("id");
 
@@ -568,9 +564,9 @@ $(function () {
         } else {
 
             if ($("#status-book-row-content-" + id).text() === "Unavailable") {
-                $('.modal-title').text("Add book to wishlist");
-                $('#add-to-wishlist-button').css("visibility", "visible");
-                $('.wishlist-modal').css("visibility", "visible");
+                $('#results-book-modal-title').text("Add book to wishlist");
+                $('#add-to-wishlist-button').removeClass("d-none");
+                $('.wishlist-modal').removeClass("d-none");
             } else {
 
                 var currentdate = new Date();
@@ -594,9 +590,9 @@ $(function () {
                     .addClass("form-control");
 
 
-                $('.reserved-modal').css("visibility", "visible");
-                $('#add-to-reserved-button').css("visibility", "visible");
-                $('.modal-title').text("Reserv the book");
+                $('.reserved-modal').removeClass("d-none");
+                $('#add-to-reserved-button').removeClass("d-none");
+                $('#results-book-modal-title').text("Reserv the book");
 
             }
 

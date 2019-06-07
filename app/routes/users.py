@@ -177,12 +177,11 @@ def admin_dashboard_basic_search_users():
 
                 for i in users.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-            print(response)
             return jsonify(
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
             )
-        # print(form.errors)
+        print(form.errors)
         return jsonify(data=form.errors)
 
 
@@ -247,7 +246,7 @@ def admin_dashboard_advanced_search_users():
 
                 for i in users.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-            print(response)
+
             return jsonify(
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
@@ -298,19 +297,7 @@ def update_user():
         user.zip_code = form.update_user_zip_code.data
         user.address = form.update_user_address.data
         db.session.commit()
-        print(
-            form.update_user_id.data,
-            form.update_user_book_return_coeff.data,
-            form.update_user_first_name.data,
-            form.update_user_last_name.data,
-            form.update_user_email.data,
-            form.update_user_library_card_id.data,
-            form.update_user_city.data,
-            form.update_user_country.data,
-            form.update_user_zip_code.data,
-            form.update_user_address.data,
-            form.update_user_type.data
-        )
+
         return jsonify(
             data={
                 'id': str(form.update_user_id.data)

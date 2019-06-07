@@ -155,17 +155,20 @@ class New_Book(FlaskForm):
             self.type_string_field.data,
             self.type_exists.data,
             self.type.data,
-            self.type_exists.data
         )
-        if (not self.type_string_field.data and self.type_exists.data == '2')\
-            or (not self.type.data and self.type_exists.data == '1'):
 
+        if (self.type_string_field.data and self.type_exists.data == '2')\
+            or (self.type.data and self.type_exists.data == '1'):
+            print("\ninput is valid\n")
+            return True
+        elif not self.type_string_field.data and self.type_exists.data == '2':
             msg = 'Field can not be empty !'
             self.type_string_field.errors.append(msg)
-            self.type.errors.append(msg)
-            print("msg"+msg)
             return False
-        return True
+        elif not self.type.data and self.type_exists.data == '1':
+            msg = 'Field can not be empty !'
+            self.type.errors.append(msg)
+            return False
 
 
 class Choose_Author(FlaskForm):

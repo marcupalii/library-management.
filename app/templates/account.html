@@ -261,107 +261,122 @@
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
 
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title"></h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <div class="d-flex justify-content-end p-2">
+                        <button type="button" id="close-results-book-modal" class="btn btn-secondary"
+                                data-dismiss="modal">&times;
+                        </button>
                     </div>
 
-                    <!-- Modal body -->
                     <div class="modal-body">
-                        <div class="container-fluid">
-
-                            <div class="row mb-2 mt-3 ml-1 mr-1">
-                                <div class="col-md-6 p-2">Number :</div>
-                                <div class="col-md-4 border-content p-2" id="no"></div>
+                        <h4 id="results-book-modal-title"></h4>
+                        <div class="container-fluid border-content">
+                            <div class="row mt-2">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <div class="label-text pb-2">Number :</div>
+                                        <div class="form-control" id="no"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <div class="label-text pb-2">Book name :</div>
+                                        <div class="form-control" id="book-name"></div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="row mb-2 mt-3 ml-1 mr-1">
-                                <div class="col-md-6 p-2">Book name :</div>
-                                <div class="col-md-4 border-content p-2" id="book-name"></div>
+                            <div class="row mt-2">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <div class="label-text pb-2">Book type :</div>
+                                        <div class="form-control" id="book-type"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <div class="label-text pb-2">Status :</div>
+                                        <div class="form-control" id="status"></div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="row mb-2 mt-3 ml-1 mr-1">
-                                <div class="col-md-6 p-2">Book type :</div>
-                                <div class="col-md-4 border-content p-2" id="book-type"></div>
+                            <div class="row mt-2">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <div class="label-text pb-2">Author first name :</div>
+                                        <div class="form-control" id="author-first-name"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <div class="label-text pb-2">Author last name :</div>
+                                        <div class="form-control" id="author-last-name"></div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="row mb-2 mt-3 ml-1 mr-1">
-                                <div class="col-md-6 p-2">Author first name :</div>
-                                <div class="col-md-4 border-content p-2" id="author-first-name"></div>
-                            </div>
-                            <div class="row mb-2 mt-3 ml-1 mr-1">
-                                <div class="col-md-6 p-2">Author last name :</div>
-                                <div class="col-md-4 border-content p-2" id="author-last-name"></div>
-                            </div>
-
-                            <div class="row mb-2 mt-3 ml-1 mr-1 mb-5">
-                                <div class="col-md-6 p-2">Status :</div>
-                                <div class="col-md-4 border-content p-2" id="status"></div>
-                            </div>
 
                             <div class="hidden-content" id="book-id"></div>
 
-                            <form id="wishlist-form" class="container-fluid wishlist-modal mt-10" method="post"
+                            <form id="wishlist-form" class="container-fluid wishlist-modal mt-4 d-none no-padding-row" method="post"
                                   novalidate>
                                 {{ wishlist_form.hidden_tag() }}
                                 <div class="hidden-content">{{ wishlist_form.book_id }} </div>
-
-                                <div class="row form-group">
-                                    <div class="col-sm-6">
-                                        {{ wishlist_form.days_number.label }}
+                                <div class="row mt-2">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ wishlist_form.days_number.label }}
+                                            {{ wishlist_form.days_number(class_="form-control") }}
+                                        </div>
                                         <small class="d-flex flex-wrap err-msg" id="days_number_error"></small>
                                     </div>
-                                    <div class="no-padding-row col-sm-4">
-                                        {{ wishlist_form.days_number(class_="form-control") }}
-                                    </div>
-                                </div>
-
-                                <div class="row form-group">
-                                    <div class="col-sm-6" id="rank-parent">
-                                        {{ wishlist_form.rank.label }}
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ wishlist_form.rank.label }}
+                                            {{ wishlist_form.rank(class_="form-control") }}
+                                        </div>
                                         <small class="d-flex flex-wrap err-msg-no-padding" id="rank_error"></small>
                                     </div>
-                                    <div class="no-padding-row col-sm-4">
-                                        {{ wishlist_form.rank(class_="form-control") }}
+                                </div>
+                            </form>
+
+                            <form id="reserved-date-form" class="container-fluid reserved-modal mt-4 d-none no-padding-row"
+                                  method="post"
+                                  novalidate>
+                                {{ reserved_book_date.hidden_tag() }}
+                                <div class="hidden-content">{{ reserved_book_date.book_id_reserved }}</div>
+
+
+                                <div class="row mt-2">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ reserved_book_date.start_date.label }}
+                                            {{ reserved_book_date.start_date(class_="form-control") }}
+                                        </div>
+                                        <small class="d-flex flex-wrap err-msg" id="start_date_error"></small>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            {{ reserved_book_date.end_date.label }}
+                                            {{ reserved_book_date.end_date(class_="form-control") }}
+                                        </div>
+                                        <small class="d-flex flex-wrap err-msg" id="end_date_error"></small>
                                     </div>
                                 </div>
                             </form>
+                            {#                            <div class="alert alert-success mb-2">#}
+                            {#                                <strong>Success!</strong> Indicates a successful or positive action.#}
+                            {#                            </div>#}
+                            <button type="Submit" id="add-to-wishlist-button"
+                                    class="btn btn-secondary d-none row mb-4 mt-3 ml-1 mr-1 p-2"><i
+                                    class="">Save</i>
+                            </button>
+                            <button type="Submit" id="add-to-reserved-button"
+                                    class="btn btn-secondary d-none row mb-4 mt-3 ml-1 mr-1 p-2"><i
+                                    class="">Save</i>
+                            </button>
                         </div>
-
-                        <div class="container-fluid reserved-modal">
-                            <form id="reserved-date-form" class="container-fluid" method="post" novalidate>
-                                {{ reserved_book_date.hidden_tag() }}
-                                <div class="hidden-content">{{ reserved_book_date.book_id_reserved }}</div>
-                                    <div class="row form-group">
-                                        <div class="col-sm-6 mt-3">
-                                            {{ reserved_book_date.start_date.label }}
-                                            <small class="d-flex flex-wrap err-msg" id="start_date_error"></small>
-                                        </div>
-                                        <div class="no-padding-row col-md-4 mt-3">
-                                            {{ reserved_book_date.start_date(class_="form-control") }}
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-sm-6 mt-3">
-                                            {{ reserved_book_date.end_date.label }}
-                                            <small class="d-flex flex-wrap err-msg" id="end_date_error"></small>
-                                        </div>
-                                        <div class="no-padding-row col-md-4 mt-3">
-                                            {{ reserved_book_date.end_date(class_="form-control") }}
-                                        </div>
-                                    </div>
-                            </form>
-                        </div>
-
                     </div>
-                    <div class="modal-footer">
-                        <button type="Submit" id="add-to-wishlist-button" class="btn btn-secondary"><i class="">Save</i>
-                        </button>
-                        <button type="Submit" id="add-to-reserved-button" class="btn btn-secondary"><i class="">Save</i>
-                        </button>
-                    </div>
-
                 </div>
             </div>
         </div>

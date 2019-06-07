@@ -115,7 +115,7 @@ def clean_unaccepted_books():
         time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
         time_entry = entry.updated_at
         # timedelta(hours=3)
-        if (time_now - (time_entry + timedelta(seconds=50))) >= timedelta(seconds=0):
+        if (time_now - (time_entry + timedelta(seconds=100))) >= timedelta(seconds=0):
 
             book = Book.query.filter_by(id=entry.id_book).first()
             book.count_free_books += 1
@@ -190,7 +190,7 @@ def update_remaining_book_time():
         entry.period_diff = entry.period_end - entry.period_start
         db.session.commit()
         # timedelta(hours=24)
-        if entry.period_start + timedelta(seconds=120) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
+        if entry.period_start + timedelta(seconds=100) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
             entry.status = "Reserved expired"
             entry.period_end = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                 pytz.timezone('Europe/Bucharest'))

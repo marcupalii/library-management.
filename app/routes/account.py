@@ -16,7 +16,6 @@ import re
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
 def user_trust_coeff_statistics():
-    print(current_user.trust_coeff)
     return jsonify({
         'coeff': current_user.trust_coeff
     })
@@ -476,12 +475,18 @@ def add_to_reserved():
             diff = form.end_date.data - form.start_date.data
 
             period_end = time_now + (diff)
+            book = Book.query.filter_by(id=form.book_id_reserved.data).first()
+            if not book:
+                return not_found("nu exista cartea")
+            elif book.count_free_books <= 3:
+                return not_found("nr de carti insuficiente")
+
             book_series = BookSeries.query.filter_by(
                 book_id=form.book_id_reserved.data,
                 status="available"
             ).first()
             if not book_series:
-                return not_found("nu exista cartea")
+                return not_found("nr de carti insuficiente")
 
             book_series.status = "taken"
             db.session.commit()

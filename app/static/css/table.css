@@ -56,7 +56,13 @@ tr:focus {
     margin-right: 0 !important;
     margin-left: 0 !important;
 }
-
+.label-text {
+    display: inline-block;
+    margin-bottom: .5rem;
+}
+.display-table-cell{
+    display: table-cell!important;
+}
 @media (min-width: 768px) {
     .d-md-block {
         display: table-cell !important;;
@@ -74,8 +80,9 @@ tr:focus {
 
 @media screen and (max-width: 1024px) {
     .no-padding-button {
-        padding-left: 0!important;
+        padding-left: .3rem!important;
         padding-right: 0!important;
+        padding-top: 0!important;
     }
 }
 

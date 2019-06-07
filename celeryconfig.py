@@ -16,6 +16,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERYBEAT_SCHEDULE = {
     'test-celery': {
         'task': 'app.tasks.routine.stable_matching_routine',
-        'schedule': 30.0
+        'schedule': 120.0
     }
 }

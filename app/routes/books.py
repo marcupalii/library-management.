@@ -41,26 +41,11 @@ def add_new_book():
     new_book = New_Book()
 
     if new_book.validate_on_submit():
-        print(
-            "\nname=", new_book.name.data,
-            "\ntype=", new_book.type.data,
-            "\ntype_author=", new_book.type_author.data,
-            "\ntype_string_field=", new_book.type_string_field.data,
-            "\nseries=", new_book.series.data,
-            "\nauthor_first_name=", new_book.author_first_name.data,
-            "\nauthor_last_name=", new_book.author_last_name.data
-        )
-        print("type new_book.type_author.data=", type(new_book.type_author.data))
+
         book = Book.query.filter_by(name=new_book.name.data).first()
         book_type = None
         author = None
         book_series = None
-        if new_book.type.data == 'None':
-            return jsonify(
-                data={
-                    'type': 'Field can not be empty !',
-                }
-            )
 
         if new_book.type_exists.data == "1":
             book_type = BookTypes.query.filter_by(id=str(new_book.type.data)).first()
@@ -305,7 +290,7 @@ def admin_dashboard_basic_search_book():
                 data={key: response[key] for key in response.keys()},
                 pages_lst=[value for value in num_list]
             )
-        # print(form.errors)
+        print(form.errors)
         return jsonify(data=form.errors)
 
 
@@ -430,8 +415,6 @@ def admin_dashboard_advanced_search_book():
 
             if book_author_join:
                 for entry in book_author_join.items:
-                    # print(entry)
-
                     response.update({
                         str(entry[4]): {
                             'author_first_name': entry[2],
@@ -460,14 +443,6 @@ def update_book():
 
     form = Update_book()
     if form.validate_on_submit():
-        print(
-            form.update_book_name.data,
-            form.update_book_type.data,
-            form.update_book_series.data,
-            form.update_author_first_name.data,
-            form.update_author_last_name.data,
-            form.update_book_series_id.data
-        )
 
         book_series = BookSeries.query.filter_by(id=form.update_book_series_id.data).first()
         book_old = Book.query.filter_by(id=book_series.book_id).first()
@@ -523,9 +498,6 @@ def update_book():
                 name=form.update_book_name.data,
             ).first()
             if book_new:
-                # book_new.count_total += 1
-                # book_new.count_free_books += 1
-                # db.session.commit()
                 return jsonify(
                     data={
                         'update_book_name': 'Book name already exists !'
@@ -546,23 +518,13 @@ def update_book():
                 db.session.commit()
                 db.session.refresh(book_new)
 
-            all_book_series = book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
-            # book_series.book_id = book_new.id
+            all_book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
             for entry in all_book_series:
                 entry.book_id = book_new.id
                 db.session.commit()
 
             db.session.delete(book_old)
             db.session.commit()
-
-            # count = BookSeries.query.filter_by(book_id=book_old.id).count()
-            # if count == 0:
-            #     db.session.delete(book_old)
-            #     db.session.commit()
-            # else:
-            #     book_old.count_total -= 1
-            #     book_old.count_free_books -= 1
-            #     db.session.commit()
 
             count = Book.query.filter_by(author_id=author_old.id).count()
             if count == 0:
@@ -598,9 +560,6 @@ def update_book():
                 name=form.update_book_name.data,
             ).first()
             if book_new:
-                # book_new.count_total += 1
-                # book_new.count_free_books += 1
-                # db.session.commit()
                 return jsonify(
                     data={
                         'update_book_name': 'Book name already exists !'
@@ -621,25 +580,13 @@ def update_book():
                 db.session.commit()
                 db.session.refresh(book_new)
 
-            all_book_series = book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
+            all_book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
             for entry in all_book_series:
                 entry.book_id = book_new.id
                 db.session.commit()
 
             db.session.delete(book_old)
             db.session.commit()
-
-            # book_series.book_id = book_new.id
-            # db.session.commit()
-            #
-            # count = BookSeries.query.filter_by(book_id=book_old.id).count()
-            # if count == 0:
-            #     db.session.delete(book_old)
-            #     db.session.commit()
-            # else:
-            #     book_old.count_total -= 1
-            #     book_old.count_free_books -= 1
-            #     db.session.commit()
 
             count = Book.query.filter_by(author_id=author_old.id).count()
             if count == 0:
@@ -666,9 +613,6 @@ def update_book():
                 name=form.update_book_name.data,
             ).first()
             if book_new:
-                # book_new.count_total += 1
-                # book_new.count_free_books += 1
-                # db.session.commit()
                 return jsonify(
                     data={
                         'update_book_name': 'Book name already exists !'
@@ -689,25 +633,13 @@ def update_book():
                 db.session.commit()
                 db.session.refresh(book_new)
 
-            all_book_series = book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
+            all_book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
             for entry in all_book_series:
                 entry.book_id = book_new.id
                 db.session.commit()
 
             db.session.delete(book_old)
             db.session.commit()
-
-            # book_series.book_id = book_new.id
-            # db.session.commit()
-            #
-            # count = BookSeries.query.filter_by(book_id=book_old.id).count()
-            # if count == 0:
-            #     db.session.delete(book_old)
-            #     db.session.commit()
-            # else:
-            #     book_old.count_total -= 1
-            #     book_old.count_free_books -= 1
-            #     db.session.commit()
 
             count = Book.query.filter_by(type_id=type_old.id).count()
             if count == 0:
@@ -768,9 +700,6 @@ def update_book():
                 name=form.update_book_name.data,
             ).first()
             if book_new:
-                # book_new.count_total += 1
-                # book_new.count_free_books += 1
-                # db.session.commit()
                 return jsonify(
                     data={
                         'update_book_name': 'Book name already exists !'
@@ -791,7 +720,7 @@ def update_book():
                 db.session.commit()
                 db.session.refresh(book_new)
 
-            all_book_series = book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
+            all_book_series = BookSeries.query.filter_by(book_id=book_old.id).all()
             for entry in all_book_series:
                 entry.book_id = book_new.id
                 db.session.commit()
@@ -855,7 +784,7 @@ def update_book():
             }
         )
     else:
-        # print(form.errors)
+        print(form.errors)
         return jsonify(data=form.errors)
 
 
@@ -891,7 +820,7 @@ def delete_book_series(id):
 
     db.session.delete(book_series)
     db.session.commit()
-    print("count_series=", count_series)
+
     if count_series == 1:
         author = Author.query.filter_by(id=book.author_id).first()
         count_author_books = Book.query.filter_by(author_id=author.id).count()
@@ -1003,7 +932,7 @@ def rent_book(id):
         period_current = get_diff_seconds(time_now-entry_log.period_start)
 
         procent = (100* period_current) / period_max
-        ############# period_max este 0????
+
         procent = int(float("{0:.0f}".format(procent)))
         if procent == 100:
             procent = 0

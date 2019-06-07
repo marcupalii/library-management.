@@ -108,7 +108,7 @@
                             <th>Book name</th>
                             <th class="d-none d-md-block">Book type</th>
                             <th class="d-none d-md-block">Author first name</th>
-                            <th class="d-none d-sm-block">Author last name</th>
+                            <th class="d-none d-sm-table-cell">Author last name</th>
                             <th>Period</th>
                             <th class="d-none d-lg-block">Last updated</th>
                         </tr>
@@ -131,7 +131,7 @@
                                 <td class="d-none d-md-block" id="author-first-name-row-content-{{ entry[0] }}">
                                     {{ entry[3] }}
                                 </td>
-                                <td class="d-none d-sm-block" id="author-last-name-row-content-{{ entry[0] }}">
+                                <td class="d-none d-sm-block display-table-cell" id="author-last-name-row-content-{{ entry[0] }}">
                                     {{ entry[4] }}
                                 </td>
                                 <td id="period-row-content-{{ entry[0] }}">
@@ -140,14 +140,14 @@
                                 <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">
                                     {{ entry[6] }}
                                 </td>
-                                <td class="last-td row">
-                                    <button class="btn accordion-toggle d-lg-none table-button" data-toggle="collapse"
+                                <td class="last-td">
+                                    <button class="btn accordion-toggle d-lg-none table-button no-padding-button" data-toggle="collapse"
                                             data-target="#tr-collapse-id-{{ entry[0] }}"
                                             aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}"
                                             type="button">
                                         <i class="fas fa-expand-arrows-alt"></i>
                                     </button>
-                                    <button type="button" class="btn edit-wishlist-book-button" id="{{ entry[0] }}">
+                                    <button type="button" class="btn edit-wishlist-book-button no-padding-button" id="{{ entry[0] }}">
                                         <i class="far fa-edit"></i>
                                     </button>
                                 </td>
