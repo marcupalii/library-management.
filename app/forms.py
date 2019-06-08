@@ -194,7 +194,7 @@ class Add_user(FlaskForm):
 
 class Basic_search_users(FlaskForm):
     basic_page_number = DecimalField(validators=[InputRequired(), NumberRange(min=1)])
-    basic_search_name = StringField(label='Firs name or last name: ', validators=[InputRequired("Book name is required!")])
+    basic_search_name = StringField(label='Firs name or last name: ', validators=[InputRequired("User first name or last name is required!")])
     basic_search_substring = BooleanField('Search sub-string')
 
 

@@ -58,6 +58,7 @@ $(document).ready(function () {
     $('#close-next-book-modal').on("click", function () {
         $('#next-book-modal').modal('hide');
     });
+
     $('#next-book-save-button').on("click", function () {
         $.ajax({
             type: "POST",
@@ -67,6 +68,11 @@ $(document).ready(function () {
                 console.log(data);
                 $('#next-book-modal').modal('hide');
                 window.location = "/wishlist/page/1/focus=0/";
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
             }
         });
     });
@@ -134,7 +140,7 @@ $(document).ready(function () {
     $('#delete-wishlist-book-button').on("click", function () {
         $.ajax({
             type: "DELETE",
-            url: "/wishlist_delete_entry/"+$('#update_wishlist_entry_id').val()+"/",
+            url: "/wishlist_delete_entry/" + $('#update_wishlist_entry_id').val() + "/",
             success: function (data) {
                 console.log(data['data']);
                 $('#update-wishlist-rank-modal').modal('hide');

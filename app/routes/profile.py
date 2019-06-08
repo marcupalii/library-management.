@@ -39,7 +39,6 @@ def profile():
 @login_required
 def get_profile_img():
     target = re.sub("[\\\]+", "/", os.path.join(APP_ROOT, 'images'))
-    img_src = "21.png"
     if current_user.img_src:
         return send_file(target+current_user.img_src, mimetype='image/gif')
     else:

@@ -180,7 +180,7 @@ def accept_next_book():
             id_user=current_user.id
         ).first()
         if not next_book:
-            return not_found("nu exista cartea")
+            return not_found("nu cartea nu mai este valabila")
         log = Log.query.filter_by(id_user=current_user.id).first()
         if not log:
             log = Log(
@@ -210,6 +210,7 @@ def accept_next_book():
         db.session.commit()
         return jsonify(data={'id': 1}, status=200)
     return jsonify(data=form.errors)
+
 
 @app.route("/update_wishlist_book/",methods=["POST"])
 @login_required

@@ -131,7 +131,8 @@
                                 <td class="d-none d-md-block" id="author-first-name-row-content-{{ entry[0] }}">
                                     {{ entry[3] }}
                                 </td>
-                                <td class="d-none d-sm-block display-table-cell" id="author-last-name-row-content-{{ entry[0] }}">
+                                <td class="d-none d-sm-block display-table-cell"
+                                    id="author-last-name-row-content-{{ entry[0] }}">
                                     {{ entry[4] }}
                                 </td>
                                 <td id="period-row-content-{{ entry[0] }}">
@@ -141,13 +142,15 @@
                                     {{ entry[6] }}
                                 </td>
                                 <td class="last-td">
-                                    <button class="btn accordion-toggle d-lg-none table-button no-padding-button" data-toggle="collapse"
+                                    <button class="btn accordion-toggle d-lg-none table-button no-padding-button"
+                                            data-toggle="collapse"
                                             data-target="#tr-collapse-id-{{ entry[0] }}"
                                             aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}"
                                             type="button">
                                         <i class="fas fa-expand-arrows-alt"></i>
                                     </button>
-                                    <button type="button" class="btn edit-wishlist-book-button no-padding-button" id="{{ entry[0] }}">
+                                    <button type="button" class="btn edit-wishlist-book-button no-padding-button"
+                                            id="{{ entry[0] }}">
                                         <i class="far fa-edit"></i>
                                     </button>
                                 </td>
@@ -260,8 +263,7 @@
             </div>
         </div>
     </div>
-{% endblock %}
-{% block sidebar_settings %}
+{% endblock %}{% block sidebar_settings %}
     <div class="">
         <div class="modal fade" id="sidebar-modal-settings" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog modal-lg modal-dialog-centered">

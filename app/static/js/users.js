@@ -14,9 +14,12 @@ $(function () {
 
     var data_form = "";
     var nr_of_pages_search_users = 1;
+
     $('#advance-search-change-container').on("click", function () {
         $("#basic-search-container").addClass("d-none");
         $("#advanced-search-container").removeClass("d-none");
+        $('#basic_search_name').removeClass("has-error");
+        $('#basic_search_name_error').css("visibility","hidden");
     });
     $('#basic-search-change-container').on("click", function () {
         $('#advanced-search-container').addClass("d-none");
@@ -505,7 +508,7 @@ $(function () {
                     $('.err-msg').each(function () {
                         $(this).css("visibility", "hidden");
                     });
-                    $('#new-user-form').trigger("reset");
+                    // $('#new-user-form').trigger("reset");
                     $('#update-user-modal').modal('hide');
                 }
                 get_data();

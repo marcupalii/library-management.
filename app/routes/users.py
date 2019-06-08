@@ -5,9 +5,9 @@ from app.forms import Add_user, Advanced_search_users, Basic_search_users, Updat
 import os
 from app import APP_ROOT
 from werkzeug.utils import secure_filename
-from app.models import User, Wishlist, NextBook, User_settings, EntryWishlist, Log, EntryLog, Notifications
+from app.models import User, Wishlist, NextBook, User_settings, Log, Notifications
 import hashlib
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
 import re
 
@@ -24,11 +24,11 @@ def users():
     new_user = Add_user()
     basic_search_form = Basic_search_users()
     advanced_search_form = Advanced_search_users()
-    update_user = Update_user()
+    update_user_form = Update_user()
     return render_template(
         "users.html",
         new_user=new_user,
-        update_user=update_user,
+        update_user_form=update_user_form,
         basic_search_form=basic_search_form,
         advanced_search_form=advanced_search_form
     )
@@ -52,7 +52,10 @@ def add_user():
                 form.library_card_id.errors.append("Id already exists !")
                 return render_template(
                     'users.html',
-                    new_user=form
+                    new_user=form,
+                    update_user_form=Update_user(),
+                    basic_search_form=Basic_search_users(),
+                    advanced_search_form=Advanced_search_users()
                 )
             exists_email = User.query.filter_by(
                 email=form.email.data
@@ -61,7 +64,10 @@ def add_user():
                 form.email.errors.append("Email already exists !")
                 return render_template(
                     'users.html',
-                    new_user=form
+                    new_user=form,
+                    update_user_form=Update_user(),
+                    basic_search_form=Basic_search_users(),
+                    advanced_search_form=Advanced_search_users()
                 )
 
             user = User(
@@ -122,13 +128,19 @@ def add_user():
             form.file.errors.append("Invalid extesion !")
             return render_template(
                 'users.html',
-                new_user=form
+                new_user=form,
+                update_user_form=Update_user(),
+                basic_search_form=Basic_search_users(),
+                advanced_search_form=Advanced_search_users()
             )
 
     else:
         return render_template(
             'users.html',
-            new_user=form
+            new_user=form,
+            update_user_form=Update_user(),
+            basic_search_form=Basic_search_users(),
+            advanced_search_form=Advanced_search_users()
         )
 
 
@@ -193,10 +205,13 @@ def admin_dashboard_advanced_search_users():
 
     if current_user.type == "admin":
         form = Advanced_search_users()
-        # form.advanced_user_first_name.data
-        # form.advanced_user_last_name.data
-        # form.advanced_user_library_card_id.data
-        # form.advanced_user_email.data
+        print(
+            form.advanced_user_first_name.data,
+            form.advanced_user_last_name.data,
+            form.advanced_user_library_card_id.data,
+            form.advanced_user_email.data
+        )
+
         if form.validate_on_submit():
             f_name = ""
             l_name = ""

@@ -483,7 +483,7 @@ $(function () {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
-               $('#reserved-date-form').trigger('reset');
+                $('#reserved-date-form').trigger('reset');
                 $('#fail-alert-content')
                     .text('The book can not be added to wishlist !')
                     .parent().removeClass("d-none");
@@ -535,19 +535,19 @@ $(function () {
         });
     });
 
-    $('#close-results-book-modal').on("click",function (e) {
+    $('#close-results-book-modal').on("click", function (e) {
         e.preventDefault();
-        if(!$('#add-to-reserved-button').hasClass("d-none")){
+        if (!$('#add-to-reserved-button').hasClass("d-none")) {
             $('#add-to-reserved-button').addClass("d-none");
         }
-        if(!$('#add-to-wishlist-button').hasClass("d-none")){
+        if (!$('#add-to-wishlist-button').hasClass("d-none")) {
             $('#add-to-wishlist-button').removeClass("d-none");
         }
-        if( !$('#fail-alert-content').parent().hasClass("d-none")){
+        if (!$('#fail-alert-content').parent().hasClass("d-none")) {
             $('#fail-alert-content').parent().addClass("d-none");
             get_data();
         }
-        if(!$('#succes-alert-content').parent().hasClass("d-none")){
+        if (!$('#succes-alert-content').parent().hasClass("d-none")) {
             $('#succes-alert-content').parent().addClass("d-none");
             get_data();
         }
@@ -563,9 +563,17 @@ $(function () {
         if ($(this).attr("id") === "basic-search-change-container") {
             $('#basic-search-container').removeClass("hide");
             $('#advanced-search-container').addClass("hide");
+            $('#search_name').removeClass("has-error");
+            $('#search_author_first_name').removeClass("has-error");
+            $('#search_author_last_name').removeClass("has-error");
+            $('#search_author_last_name').removeClass("has-error");
+            $('#search_type').removeClass("has-error");
+            $('#search_name_error').css("visibility", "hidden");
         } else {
             $('#basic-search-container').addClass("hide");
             $('#advanced-search-container').removeClass("hide");
+            $('#basic_search_name').removeClass("has-error");
+            $('#basic_search_name_error').css("visibility", "hidden");
         }
     });
 
@@ -580,10 +588,10 @@ $(function () {
         $('#end_date').removeClass('has-error');
         $('#end_date_error').css("visibility", "hidden");
         $('#start_date_error').css("visibility", "hidden");
-        if(!$('.wishlist-modal').hasClass("d-none")){
+        if (!$('.wishlist-modal').hasClass("d-none")) {
             $('.wishlist-modal').addClass("d-none");
         }
-         if(!$('.reserved-modal').hasClass("d-none")){
+        if (!$('.reserved-modal').hasClass("d-none")) {
             $('.reserved-modal').addClass("d-none");
         }
         let id = $(this).attr("id");
