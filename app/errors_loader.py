@@ -21,13 +21,6 @@ def FUN_403(error):
 
 @app.errorhandler(404)
 def not_found(error):
-    """
-    Gives error message when any invalid url are requested.
-    Args:
-        error (string):
-    Returns:
-        Error message.
-    """
     print(error)
     return make_response(jsonify({'error': 'Not found'}), 404)
 

@@ -304,20 +304,25 @@ $(document).ready(function () {
         $('#author_last_name').val(
             $('#author-last-name-row-content-' + $(this).attr("id")).text()
         );
-        // $(this).trigger("blur");
+
     });
 
 
-    // #####################################################
-    // #####################################################
-    // #####################################################
-    // #####################################################
     var nr_of_pages_search_books = 1;
     $('#advance-search-change-container').on("click", function () {
         $("#basic-search-container").addClass("d-none");
         $("#advanced-search-container").removeClass("d-none");
+        $('#basic_search_name').removeClass("has-error");
+        $('#basic_search_name_error').css("visibility","hidden");
     });
     $('#basic-search-change-container').on("click", function () {
+        $('#search_name').removeClass("has-error");
+        $('#search_author_first_name').removeClass("has-error");
+        $('#search_author_last_name').removeClass("has-error");
+        $('#search_author_last_name').removeClass("has-error");
+        $('#search_type').removeClass("has-error");
+        $('#search_name_error').css("visibility","hidden");
+
         $('#advanced-search-container').addClass("d-none");
         $("#basic-search-container").removeClass("d-none");
     });
@@ -525,7 +530,7 @@ $(document).ready(function () {
         }
         for (key in data['data']) {
             index_start += 1;
-            write_row(data['data'][key], index_start, key);
+            write_row(data['data'][key], index_start, data['data'][key]['book_series_id']);
 
         }
         if (index_start === 0) {
@@ -571,8 +576,8 @@ $(document).ready(function () {
                 url: "/admin_dashboard_basic_search_book/",
                 data: data_form,
                 success: function (data) {
+                    console.log(data['data']);
 
-                    // $('#basic-search-form').trigger('reset');
                     $('#content-table-search-books').empty();
                     if (data['data'].hasOwnProperty("basic_search_name")) {
 
@@ -581,7 +586,7 @@ $(document).ready(function () {
                         }
 
                         $('#basic_search_name_error')
-                            .text(data['data']['basic_search_name']['0'])
+                            .text(data['data']['basic_search_name'][0])
                             .css("visibility", "visible");
 
                         if ($('#collapse-table-search-books').css("display") !== "none") {
@@ -619,8 +624,7 @@ $(document).ready(function () {
                             $('#search_author_last_name.form-control').addClass('has-error');
                         }
 
-
-                        $('#search_name_error').text(data['data']['search_name']['0']);
+                        $('#search_name_error').text(data['data']['search_name'][0]);
                         $('#search_name_error').css("visibility", "visible");
 
                         if ($('#collapse-table-search-books').css("display") !== "none") {
@@ -744,9 +748,8 @@ $(document).ready(function () {
                 type: "GET",
                 url: "/get_user_taken_book/" + $('#update_book_series_id').val() + "/",
                 success: function (data) {
-                    console.log(data['data']);
-                    // $('#update-book-modal').modal('hide');
-                    // get_data();
+                    // console.log(data['data']);
+
                     $('#rent-book-container').removeClass("d-none");
                     for (let key in data['data']) {
                         $('#' + key + '_rent').text(data['data'][key]);
@@ -779,7 +782,6 @@ $(document).ready(function () {
             type: "GET",
             url: "/rent_book/" + $('#update_book_series_id').val() + "/",
             success: function (data) {
-                console.log(data['data']);
                 $('#update-book-modal').modal('hide');
                 get_data();
             },

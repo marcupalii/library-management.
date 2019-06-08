@@ -8,7 +8,6 @@ from flask import jsonify
 from datetime import datetime, timedelta
 import pytz
 from app import not_found
-# from sqlalchemy import func
 from sqlalchemy.sql.expression import func, extract
 import re
 
@@ -100,6 +99,8 @@ def add_to_wishlist():
                 return not_found("nu exista cartea")
 
             if book:
+                if book.count_free_books > 3:
+                    return not_found("nu se poate adauga la wishlist, este available")
                 wishlist = current_user.wishlist
 
                 entrywishlist = wishlist.entry_wishlists

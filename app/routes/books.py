@@ -9,6 +9,8 @@ import pytz
 from app import not_found
 import time
 import re
+from sqlalchemy import desc
+
 
 @app.route('/books')
 @login_required
@@ -220,12 +222,13 @@ def choose_author():
 @app.route("/admin_dashboard_basic_search_book/", methods=["POST"])
 @login_required
 def admin_dashboard_basic_search_book():
-    response = {}
+    response = []
     num_list = []
 
     if current_user.email:
         form = Basic_search()
         if form.validate_on_submit():
+            print("page=", form.basic_page_number.data)
             name = ""
             if form.basic_search_substring.data == False:
                 name = form.basic_search_name.data if form.basic_search_name.data != "all" else "%%"
@@ -236,7 +239,7 @@ def admin_dashboard_basic_search_book():
                 .filter(Book.name.like(name)) \
                 .join(Author, Book.author_id == Author.id) \
                 .join(BookSeries, BookSeries.book_id == Book.id) \
-                .order_by(Book.name) \
+                .order_by(desc(BookSeries.status)) \
                 .add_columns(Author.id, Author.first_name, Author.last_name, BookSeries.id) \
                 .paginate(
                 per_page=15,
@@ -246,48 +249,27 @@ def admin_dashboard_basic_search_book():
 
             if book_author_join:
                 for entry in book_author_join.items:
+                    book_series = BookSeries.query.filter_by(
+                        id=entry[4],
+                    ).first()
 
-                    book_series_available = BookSeries.query.filter_by(
-                        book_id=entry[0].id,
-                        status="available"
-                    ).all()
-
-                    book_series_unavailable = db.session \
-                        .query(BookSeries) \
-                        .filter(
-                        (BookSeries.book_id == entry[0].id)
-                        & ~(BookSeries.status == "available")
-                    ).all()
-
-                    for not_available in book_series_unavailable:
-                        response.update({
-                            str(not_available.id): {
-                                'author_first_name': entry[2],
-                                'author_last_name': entry[3],
-                                'book_name': entry[0].name,
-                                'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
-                                'status': not_available.status,
-                                'book_series': not_available.series,
-                            }
-                        })
-
-                    for available in book_series_available:
-                        response.update({
-                            str(available.id): {
-                                'author_first_name': entry[2],
-                                'author_last_name': entry[3],
-                                'book_name': entry[0].name,
-                                'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
-                                'status': available.status,
-                                'book_series': available.series,
-                            }
-                        })
+                    response.append(
+                        {
+                            'book_series_id': str(book_series.id),
+                            'author_first_name': entry[2],
+                            'author_last_name': entry[3],
+                            'book_name': entry[0].name,
+                            'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
+                            'status': book_series.status,
+                            'book_series': book_series.series,
+                        }
+                    )
 
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-
+            data = sorted(response,key=lambda e: e['status'],reverse=True)
             return jsonify(
-                data={key: response[key] for key in response.keys()},
+                data=data.copy(),
                 pages_lst=[value for value in num_list]
             )
         print(form.errors)
@@ -297,7 +279,7 @@ def admin_dashboard_basic_search_book():
 @app.route("/admin_dashboard_advanced_search_book/", methods=["POST"])
 @login_required
 def admin_dashboard_advanced_search_book():
-    response = {}
+    response = []
     num_list = []
 
     if current_user.email:
@@ -415,8 +397,8 @@ def admin_dashboard_advanced_search_book():
 
             if book_author_join:
                 for entry in book_author_join.items:
-                    response.update({
-                        str(entry[4]): {
+                    response.append({
+                            'book_series_id': entry[4],
                             'author_first_name': entry[2],
                             'author_last_name': entry[3],
                             'book_name': entry[0].name,
@@ -424,12 +406,13 @@ def admin_dashboard_advanced_search_book():
                             'status': entry[6],
                             'book_series': entry[5]
                         }
-                    })
+                    )
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
 
+            data = sorted(response, key=lambda e: e['status'], reverse=True)
             return jsonify(
-                data={key: response[key] for key in response.keys()},
+                data=data.copy(),
                 pages_lst=[value for value in num_list]
             )
         return jsonify(data=form.errors)
@@ -929,14 +912,14 @@ def rent_book(id):
         period_max = get_diff_seconds(diff)
 
         time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
-        period_current = get_diff_seconds(time_now-entry_log.period_start)
+        period_current = get_diff_seconds(time_now - entry_log.period_start)
 
-        procent = (100* period_current) / period_max
+        procent = (100 * period_current) / period_max
 
         procent = int(float("{0:.0f}".format(procent)))
         if procent == 100:
             procent = 0
-        elif procent >100:
+        elif procent > 100:
             procent = - procent
         else:
             procent = 100 - procent

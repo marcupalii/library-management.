@@ -537,6 +537,12 @@ $(function () {
 
     $('#close-results-book-modal').on("click",function (e) {
         e.preventDefault();
+        if(!$('#add-to-reserved-button').hasClass("d-none")){
+            $('#add-to-reserved-button').addClass("d-none");
+        }
+        if(!$('#add-to-wishlist-button').hasClass("d-none")){
+            $('#add-to-wishlist-button').removeClass("d-none");
+        }
         if( !$('#fail-alert-content').parent().hasClass("d-none")){
             $('#fail-alert-content').parent().addClass("d-none");
             get_data();
@@ -545,7 +551,7 @@ $(function () {
             $('#succes-alert-content').parent().addClass("d-none");
             get_data();
         }
-        ('#myModal').modal('hide');
+        $('#myModal').modal('hide');
     });
     $('.search').on('click', function () {
 
