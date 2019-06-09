@@ -77,15 +77,24 @@ $(function () {
                 success: function (data) {
                     count = 0;
                     notifications.length = 0;
-                    $.each(data, function (k, item) {
-                        notifications.push({
-                            date: item.date_,
-                            href: item.href_,
-                            text: item.text_,
-                            id_not: k,
+                    for (let key in data){
+                          notifications.push({
+                            date: data[key].date_,
+                            href: data[key].href_,
+                            text: data[key].text_,
+                            id_not: data[key].notification_id,
                         });
                         count += 1;
-                    });
+                    }
+                    // $.each(data, function (item) {
+                    //     notifications.push({
+                    //         date: item.date_,
+                    //         href: item.href_,
+                    //         text: item.text_,
+                    //         id_not: item.notification_id,
+                    //     });
+                    //     count += 1;
+                    // });
                 }
             });
 
@@ -109,7 +118,6 @@ $(function () {
 
                     var template = $('#notificationTemplate').html();
                     template = template.replace("{ href }", notifications[i].href);
-                    // template = template.replace("{{image}}", notifications[i].image);
                     template = template.replace("{ text }", notifications[i].text);
                     template = template.replace("{ date }", notifications[i].date);
                     template = template.replace("{ notification_id }", notifications[i].id_not);

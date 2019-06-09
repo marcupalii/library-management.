@@ -69,7 +69,7 @@
 }
 
 .dropdown-notification {
-    white-space: normal;
+    white-space: normal!important;
 }
 .notification-body{
     margin-bottom: 20px;

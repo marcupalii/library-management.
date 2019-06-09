@@ -10,7 +10,7 @@ import pytz
 from app import not_found
 from sqlalchemy.sql.expression import func, extract
 import re
-
+from sqlalchemy import desc, asc
 
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
@@ -519,43 +519,41 @@ def add_to_reserved():
 @app.route("/get_notification/", methods=['GET'])
 @login_required
 def get_notification():
-    _email = current_user.email
-    response = {}
-    if _email:
-        _user = User.query.filter_by(email=_email).first()
-        _notifications = Notifications.query.filter_by(
-            id_user=_user.id,
-            status="unread"
-        )
-        if _notifications:
-            for _notification in _notifications:
-                response.update({
-                    str(_notification.id): {
-                        'href_': '/notifications',
-                        'text_': _notification.content,
-                        'date_': _notification.created_at
+    response = []
+    notifications = db.session\
+        .query(Notifications)\
+        .filter(
+            (Notifications.id_user == current_user.id) & (Notifications.status=="unread")
+        )\
+        .order_by(desc(Notifications.created_at))
 
-                    }
-                })
-        return jsonify({key: response[key] for key in response.keys()})
+    if notifications:
+        for notification in notifications:
+            response.append(
+                {
+                    'notification_id': str(notification.id),
+                    'href_': '/notifications',
+                    'text_': notification.content,
+                    'date_': notification.created_at
+
+                }
+            )
+    return jsonify(response.copy())
 
 
 @app.route("/mark_notification_read/", methods=['POST'])
 @login_required
 def mark_notification_read():
-    _email = current_user.email
 
-    if _email:
-        _user = User.query.filter_by(email=_email).first()
-        _notification = Notifications.query.filter_by(
-            id_user=_user.id,
-            id=int(request.data.decode().split("=")[1])
-        ).first()
-        if _notification:
-            _notification.status = "read"
-            db.session.commit()
+    notification = Notifications.query.filter_by(
+        id_user=current_user.id,
+        id=int(request.data.decode().split("=")[1])
+    ).first()
+    if notification:
+        notification.status = "read"
+        db.session.commit()
 
-        return render_template("layout.html", id_user=current_user.id)
+    return render_template("layout.html", id_user=current_user.id)
 
 
 @app.route("/save_settings/", methods=["POST"])

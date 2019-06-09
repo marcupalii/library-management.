@@ -4,6 +4,7 @@ from app.models import User, Notifications
 from flask_login import login_required, current_user
 from app.forms import Wishlist_settings
 import re
+
 @app.route("/notifications/page/<page>/focus=<id>/")
 @login_required
 def notifications(page, id):
