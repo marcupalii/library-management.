@@ -15,8 +15,11 @@ import re
 @app.route('/user_trust_coeff_statistics/', methods=["GET"])
 @login_required
 def user_trust_coeff_statistics():
+    coeff = 0
+    if current_user.count_books_returned != 0:
+        coeff = current_user.trust_coeff / current_user.count_books_returned
     return jsonify({
-        'coeff': current_user.trust_coeff
+        'coeff': coeff
     })
 
 

@@ -82,6 +82,7 @@ def add_user():
                 password=hashlib.sha512(form.library_card_id.data.encode()).hexdigest(),
                 type="user",
                 trust_coeff=0,
+                count_books_returned=0,
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                     pytz.timezone('Europe/Bucharest')),
             )
@@ -244,13 +245,16 @@ def admin_dashboard_advanced_search_users():
 
             if users:
                 for user in users.items:
+                    coeff = 0
+                    if user.count_books_returned != 0:
+                        coeff = user.trust_coeff/ user.count_books_returned
                     response.update({
                         str(user.id): {
                             'user_first_name': user.first_name,
                             'user_last_name': user.last_name,
                             'user_type': user.type,
                             'user_email': user.email,
-                            'user_trust_coeff': user.trust_coeff,
+                            'user_trust_coeff': coeff,
                             'user_library_card_id': user.library_card_id,
                             'user_address': user.address,
                             'user_city': user.city,

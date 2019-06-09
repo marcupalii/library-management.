@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
     type = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     trust_coeff = db.Column(db.Integer, nullable=False)
-
+    count_books_returned = db.Column(db.Integer, nullable=False)
     next_book = db.relationship('NextBook', uselist=False, backref='user', passive_deletes=True)
     settings = db.relationship('User_settings', uselist=False, backref='user', passive_deletes=True)
     wishlist = db.relationship('Wishlist', backref='user', uselist=False, passive_deletes=True)
@@ -382,6 +382,7 @@ if __name__ == "__main__":
             pytz.timezone('Europe/Bucharest')),
         password=hashlib.sha512("admin".encode()).hexdigest(),
         trust_coeff=0,
+        count_books_returned=0,
         library_card_id="100AAA0000",
         zip_code="932010",
         country="Romania",
@@ -431,6 +432,7 @@ if __name__ == "__main__":
             type='user',
             password=hashlib.sha512("user{}".format(i).encode()).hexdigest(),
             trust_coeff=0,
+            count_books_returned=0,
             created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                 pytz.timezone('Europe/Bucharest')),
             library_card_id=library_card_id,

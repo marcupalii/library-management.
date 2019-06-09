@@ -922,6 +922,7 @@ def rent_book(id):
             procent = 100 - procent
 
         user.trust_coeff += procent
+        user.count_books_returned += 1
         db.session.commit()
         entry_log.status = "Returned"
         db.session.commit()

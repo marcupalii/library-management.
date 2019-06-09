@@ -25,7 +25,10 @@ def update_state():
 
                 if wishlist.id_user not in trust_coeffs.keys():
                     user = User.query.filter_by(id=wishlist.id_user).first()
-                    trust_coeffs.update({wishlist.id_user: user.trust_coeff})
+                    coeff = 0
+                    if user.count_books_returned != 0:
+                        coeff = user.trust_coeff / user.count_books_returned
+                    trust_coeffs.update({wishlist.id_user: coeff})
 
                 for entry in entry_wishlist:
                     book = Book.query.filter_by(id=entry.id_book).first()
