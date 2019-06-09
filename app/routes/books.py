@@ -267,7 +267,7 @@ def admin_dashboard_basic_search_book():
 
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
-            data = sorted(response,key=lambda e: e['status'],reverse=True)
+            data = sorted(response, key=lambda e: e['status'], reverse=True)
             return jsonify(
                 data=data.copy(),
                 pages_lst=[value for value in num_list]
@@ -398,14 +398,14 @@ def admin_dashboard_advanced_search_book():
             if book_author_join:
                 for entry in book_author_join.items:
                     response.append({
-                            'book_series_id': entry[4],
-                            'author_first_name': entry[2],
-                            'author_last_name': entry[3],
-                            'book_name': entry[0].name,
-                            'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
-                            'status': entry[6],
-                            'book_series': entry[5]
-                        }
+                        'book_series_id': entry[4],
+                        'author_first_name': entry[2],
+                        'author_last_name': entry[3],
+                        'book_name': entry[0].name,
+                        'book_type': BookTypes.query.filter_by(id=entry[0].type_id).first().type_name,
+                        'status': entry[6],
+                        'book_series': entry[5]
+                    }
                     )
                 for i in book_author_join.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2):
                     num_list.append(i)
@@ -908,20 +908,17 @@ def rent_book(id):
             }
         )
     else:
+
         diff = entry_log.period_end - entry_log.period_start
         period_max = get_diff_seconds(diff)
 
         time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
         period_current = get_diff_seconds(time_now - entry_log.period_start)
+        procent = 0
 
-        procent = (100 * period_current) / period_max
-
-        procent = int(float("{0:.0f}".format(procent)))
-        if procent == 100:
-            procent = 0
-        elif procent > 100:
-            procent = - procent
-        else:
+        if period_max != 0:
+            procent = (100 * period_current) / period_max
+            procent = int(float("{0:.0f}".format(procent)))
             procent = 100 - procent
 
         user.trust_coeff += procent
@@ -936,6 +933,17 @@ def rent_book(id):
         book = Book.query.filter_by(id=book_series.book_id).first()
         book.count_free_books += 1
         db.session.commit()
+
+        next_book = NextBook.query.filter_by(
+            id_user=current_user.id,
+            status="Have one"
+        ).first()
+
+        if next_book:
+            next_book.rank = 0
+            next_book.period = 0
+            next_book.status = "None"
+            db.session.commit()
 
         return jsonify(
             data={

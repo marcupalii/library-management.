@@ -45,6 +45,8 @@ $(document).ready(function () {
         $('#paginationBox').css("visibility", "hidden");
     }
     $('#open-next-book-modal').on("click", function () {
+        $('#next-book-deny-button').removeClass("d-none");
+        $('#next-book-save-button').removeClass("d-none");
         $('#next_book_id').val($('#next-book-id').text());
         $('#modal-book-name').text($('#book-name-next-book').text());
         $('#modal-book-type').text($('#book-type-next-book').text());
@@ -59,20 +61,52 @@ $(document).ready(function () {
         $('#next-book-modal').modal('hide');
     });
 
-    $('#next-book-save-button').on("click", function () {
+    $('#close-next-book-modal').on("click", function () {
+        window.location = "/wishlist/page/1/focus=0/";
+    });
+    $('#next-book-deny-button').on("click", function () {
+        $(this).addClass("d-none");
+        $('#next-book-save-button').addClass("d-none");
         $.ajax({
             type: "POST",
-            url: "/accept_next_book/",
+            url: "/deny_next_book/",
             data: $('#accept-next-book-form').serialize(),
             success: function (data) {
                 console.log(data);
-                $('#next-book-modal').modal('hide');
-                window.location = "/wishlist/page/1/focus=0/";
+                $('#succes-alert-content').parent().removeClass("d-none");
+                $('#succes-alert-content').text("You have successfully deny the new book !");
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
+                $('#fail-alert-content').parent().removeClass("d-none");
+                $('#fail-alert-content').text("The book is no longer available !")
+
+
+            }
+        });
+    });
+    $('#next-book-save-button').on("click", function () {
+        $(this).addClass("d-none");
+        $('#next-book-deny-button').addClass("d-none");
+        $.ajax({
+            type: "POST",
+            url: "/accept_next_book/",
+            data: $('#accept-next-book-form').serialize(),
+            success: function (data) {
+                $('#succes-alert-content').parent().removeClass("d-none");
+                $('#succes-alert-content').text("You have successfully accepted the new book !");
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                $('#fail-alert-content').parent().removeClass("d-none");
+                $('#fail-alert-content').text("The book is no longer available !");
+
             }
         });
     });

@@ -1,9 +1,9 @@
 from flask import render_template, request, url_for, redirect, abort
 from app import app, db
-from app.models import User, EntryWishlist, Log, Book, Author, NextBook, EntryLog, BookTypes
+from app.models import User, EntryWishlist, Log, Book, BookSeries, Author, NextBook, EntryLog, BookTypes
 from flask_login import login_required, current_user
 from flask import jsonify
-from app.forms import Wishlist_settings, Accept_next_book,Update_wishlist_book_rank
+from app.forms import Wishlist_settings, Accept_next_book, Update_wishlist_book_rank
 from datetime import datetime, timedelta
 import pytz
 from app import not_found
@@ -32,7 +32,7 @@ def wishlist_delete_entry(entry_id):
                     db.session.commit()
 
         else:
-            return not_found("nu exista in entrywishlist id="+entry_id)
+            return not_found("nu exista in entrywishlist id=" + entry_id)
 
     total = EntryWishlist.query.filter_by(id_wishlist=current_user.wishlist.id).count()
     page = 1
@@ -49,7 +49,7 @@ def wishlist_delete_entry(entry_id):
 
     return jsonify(
         data={
-            'url': url_for('wishlist',page=page, book_id=0)
+            'url': url_for('wishlist', page=page, book_id=0)
         }
     )
 
@@ -139,7 +139,7 @@ def wishlist(page, book_id):
             wishlist_settings=wishlist_settings,
             next_book=next_book,
             next_book_form=next_book_form,
-            update_rank = update_rank
+            update_rank=update_rank
         )
 
 
@@ -170,6 +170,35 @@ def wishlist_book(book_id):
     })
 
 
+@app.route("/deny_next_book/", methods=["POST"])
+@login_required
+def deny_next_book():
+    form = Accept_next_book()
+    if form.validate_on_submit():
+
+        next_book = NextBook.query.filter_by(
+            id=form.next_book_id.data,
+            id_user=current_user.id
+        ).first()
+        if not next_book:
+            return not_found("cartea nu mai este valabila")
+
+        next_book.status = "None"
+        next_book.period = 0
+        db.session.commit()
+
+        book = Book.query.filter_by(id=next_book.id_book).first()
+        book.count_free_books += 1
+        db.session.commit()
+
+        book_series = BookSeries.query.filter_by(id=next_book.id_series_book).first()
+        book_series.status = "available"
+        db.session.commit()
+
+        return jsonify(data={'id': 1}, status=200)
+    return jsonify(data=form.errors)
+
+
 @app.route("/accept_next_book/", methods=["POST"])
 @login_required
 def accept_next_book():
@@ -180,7 +209,7 @@ def accept_next_book():
             id_user=current_user.id
         ).first()
         if not next_book:
-            return not_found("nu cartea nu mai este valabila")
+            return not_found("cartea nu mai este valabila")
         log = Log.query.filter_by(id_user=current_user.id).first()
         if not log:
             log = Log(
@@ -212,10 +241,9 @@ def accept_next_book():
     return jsonify(data=form.errors)
 
 
-@app.route("/update_wishlist_book/",methods=["POST"])
+@app.route("/update_wishlist_book/", methods=["POST"])
 @login_required
 def update_wishlist_book():
-
     form = Update_wishlist_book_rank()
 
     if form.validate_on_submit():
@@ -242,7 +270,8 @@ def update_wishlist_book():
                     db.session.commit()
 
             entry_wishlist.rank = form.update_wishlist_rank.data
-            entry_wishlist.updated_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
+            entry_wishlist.updated_at = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
             db.session.commit()
 
         if entry_wishlist.period != form.update_wishlist_period.data:

@@ -1,5 +1,6 @@
 from app import celery, logger, db
-from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications, User_settings, User, EntryLog, Log
+from app.models import NextBook, BookSeries, Book, EntryWishlist, Wishlist, Notifications, User_settings, User, \
+    EntryLog, Log
 from app.Stable_matching_algorithm.algorithm import Stable_matching
 from datetime import datetime, timedelta
 import pytz
@@ -181,19 +182,19 @@ def clean_unaccepted_books():
 
 
 def update_remaining_book_time():
-    entry_logs = db.session()\
-        .query(EntryLog)\
-        .filter(~(EntryLog.status.in_(["Returned","Reserved expired"]))
-        ).all()
+    entry_logs = db.session() \
+        .query(EntryLog) \
+        .filter(~(EntryLog.status.in_(["Returned", "Reserved expired"]))
+                ).all()
 
     for entry in entry_logs:
-        entry.period_diff = entry.period_end - entry.period_start
+        entry.period_diff = entry.period_end - datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+            pytz.timezone('Europe/Bucharest'))
         db.session.commit()
         # timedelta(hours=24)
-        if entry.period_start + timedelta(seconds=100) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest')):
+        if entry.period_start + timedelta(seconds=100) < datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest')) and entry.status == "Reserved":
             entry.status = "Reserved expired"
-            entry.period_end = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                pytz.timezone('Europe/Bucharest'))
             db.session.commit()
 
             log = Log.query.filter_by(id=entry.id_log).first()
@@ -208,12 +209,13 @@ def update_remaining_book_time():
                 id_user=log.id_user,
                 content="The 24 hours reservation on book {} expired !".format(book.name),
                 status="unread",
-                created_at= datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                pytz.timezone('Europe/Bucharest'))
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                    pytz.timezone('Europe/Bucharest'))
             )
             print(notification)
             db.session.add(notification)
             db.session.commit()
+
 
 @celery.task()
 def stable_matching_routine():

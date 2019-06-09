@@ -52,7 +52,7 @@ from app.routes.about import about
 from app.routes.account import account, add_to_reserved, add_to_wishlist, mark_notification_read, Advanced_search, Basic_search, get_notification,save_settings, books_count, statistics_book_per_month
 from app.routes.books_log import books_log, reserved_book
 from app.routes.notifications import notifications
-from app.routes.wishlist import wishlist_delete_entry, wishlist, wishlist_book, accept_next_book
+from app.routes.wishlist import wishlist_delete_entry, wishlist, wishlist_book, accept_next_book, deny_next_book
 from app.routes.profile import profile,change_password, get_profile_img
 from app.routes.books import books, admin_dashboard_basic_search_book,admin_dashboard_advanced_search_book, delete_book_series
 from app.routes.users import add_user, users, admin_dashboard_advanced_search_users, admin_dashboard_basic_search_users, delete_user

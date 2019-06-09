@@ -453,7 +453,6 @@ $(function () {
             return
         }
 
-
         $.ajax({
             type: "POST",
             url: "/add_to_wishlist/",
@@ -474,6 +473,7 @@ $(function () {
                     $('#rank-parent').prepend("Range(1-{0})".format(data['data']));
                     $('#days_number').val('');
                     $('#rank').val('');
+                    $('#add-to-wishlist-button').addClass("d-none");
                     $('#succes-alert-content')
                         .text('Successfuly added to wishlist !')
                         .parent().removeClass("d-none");
@@ -484,6 +484,7 @@ $(function () {
                 console.log(textStatus);
                 console.log(errorThrown);
                 $('#reserved-date-form').trigger('reset');
+                $('#add-to-wishlist-button').addClass("d-none");
                 $('#fail-alert-content')
                     .text('The book can not be added to wishlist !')
                     .parent().removeClass("d-none");
@@ -517,6 +518,7 @@ $(function () {
                         .text(data['data']['end_date']);
                     $('#end_date').addClass("has-error");
                 } else {
+                    $('#add-to-reserved-button').addClass("d-none");
                     $('#reserved-date-form').trigger('reset');
                     $('#succes-alert-content')
                         .text('Successfuly added to reserved !')
@@ -527,6 +529,7 @@ $(function () {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
+                $('#add-to-reserved-button').addClass("d-none");
                 $('#reserved-date-form').trigger('reset');
                 $('#fail-alert-content')
                     .text('The book is no longer available !')
