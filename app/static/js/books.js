@@ -96,7 +96,7 @@ $(document).ready(function () {
             url: "/add_new_book/",
             data: $('#new-book-form').serialize(),
             success: function (data) {
-                console.log(data);
+
                 if (data['data'].hasOwnProperty("id") === false) {
                     for (key in data['data']) {
                         $('#' + key + '_new_book_error')
@@ -313,7 +313,7 @@ $(document).ready(function () {
         $("#basic-search-container").addClass("d-none");
         $("#advanced-search-container").removeClass("d-none");
         $('#basic_search_name').removeClass("has-error");
-        $('#basic_search_name_error').css("visibility","hidden");
+        $('#basic_search_name_error').css("visibility", "hidden");
     });
     $('#basic-search-change-container').on("click", function () {
         $('#search_name').removeClass("has-error");
@@ -321,7 +321,7 @@ $(document).ready(function () {
         $('#search_author_last_name').removeClass("has-error");
         $('#search_author_last_name').removeClass("has-error");
         $('#search_type').removeClass("has-error");
-        $('#search_name_error').css("visibility","hidden");
+        $('#search_name_error').css("visibility", "hidden");
 
         $('#advanced-search-container').addClass("d-none");
         $("#basic-search-container").removeClass("d-none");
@@ -576,7 +576,6 @@ $(document).ready(function () {
                 url: "/admin_dashboard_basic_search_book/",
                 data: data_form,
                 success: function (data) {
-                    console.log(data['data']);
 
                     $('#content-table-search-books').empty();
                     if (data['data'].hasOwnProperty("basic_search_name")) {
@@ -748,7 +747,6 @@ $(document).ready(function () {
                 type: "GET",
                 url: "/get_user_taken_book/" + $('#update_book_series_id').val() + "/",
                 success: function (data) {
-                    // console.log(data['data']);
 
                     $('#rent-book-container').removeClass("d-none");
                     for (let key in data['data']) {
@@ -783,6 +781,7 @@ $(document).ready(function () {
             url: "/rent_book/" + $('#update_book_series_id').val() + "/",
             success: function (data) {
                 $('#update-book-modal').modal('hide');
+                $('#rent-book-container').addClass("d-none");
                 get_data();
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -790,6 +789,7 @@ $(document).ready(function () {
                 console.log(textStatus);
                 console.log(errorThrown);
                 $('#update-book-modal').modal('hide');
+                $('#rent-book-container').addClass("d-none");
                 get_data();
             }
         });
@@ -811,7 +811,7 @@ $(document).ready(function () {
             url: "/update_book/",
             data: $('#update-book-form').serialize(),
             success: function (data) {
-                console.log(data['data']);
+
                 if (data['data'].hasOwnProperty("id") === false) {
                     for (key in data['data']) {
                         $('#' + key + '_update_book_error')
@@ -857,7 +857,6 @@ $(document).ready(function () {
             type: "DELETE",
             url: "/delete_book_series/" + $('#update_book_series_id').val() + "/",
             success: function (data) {
-                console.log(data['data']);
                 $('#update-book-modal').modal('hide');
                 get_data();
             }

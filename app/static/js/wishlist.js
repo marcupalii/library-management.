@@ -72,7 +72,7 @@ $(document).ready(function () {
             url: "/deny_next_book/",
             data: $('#accept-next-book-form').serialize(),
             success: function (data) {
-                console.log(data);
+
                 $('#succes-alert-content').parent().removeClass("d-none");
                 $('#succes-alert-content').text("You have successfully deny the new book !");
 
@@ -118,7 +118,7 @@ $(document).ready(function () {
         $('#update_wishlist_entry_id').val(
             $('#entry-wishlist-id-nr-row-content-' + id_row).text()
         );
-        console.log($('#entry-wishlist-id-nr-row-content-' + id_row).text());
+
         $('#book-name-update-rank').text(
             $('#book-name-row-content-' + id_row).text()
         );
@@ -148,7 +148,7 @@ $(document).ready(function () {
             url: "/update_wishlist_book/",
             data: $('#update-wishlist-rank-form').serialize(),
             success: function (data) {
-                console.log(data['data']);
+
                 if (!data['data'].hasOwnProperty("id")) {
                     for (let key in data['data']) {
                         for (key in data['data']) {
@@ -176,7 +176,7 @@ $(document).ready(function () {
             type: "DELETE",
             url: "/wishlist_delete_entry/" + $('#update_wishlist_entry_id').val() + "/",
             success: function (data) {
-                console.log(data['data']);
+
                 $('#update-wishlist-rank-modal').modal('hide');
                 window.location = data['data']['url'];
             }

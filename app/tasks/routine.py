@@ -72,6 +72,9 @@ def write_result_of_matching(matched):
 
         # check if user still wanted the book
         wishList = Wishlist.query.filter_by(id_user=user_id).first()
+        if not wishList:
+            continue
+
         entry_wishlit = EntryWishlist.query.filter_by(
             id_wishlist=wishList.id,
             id_book=matched[user_id]['book_id'],
@@ -114,7 +117,9 @@ def write_result_of_matching(matched):
 
 def clean_unaccepted_books():
     next_book = NextBook.query.filter_by(status="Pending").all()
-
+    if not next_book:
+        return
+    
     for entry in next_book:
         time_now = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Europe/Bucharest'))
         time_entry = entry.updated_at

@@ -228,7 +228,6 @@ def admin_dashboard_basic_search_book():
     if current_user.email:
         form = Basic_search()
         if form.validate_on_submit():
-            print("page=", form.basic_page_number.data)
             name = ""
             if form.basic_search_substring.data == False:
                 name = form.basic_search_name.data if form.basic_search_name.data != "all" else "%%"

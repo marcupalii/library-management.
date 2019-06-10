@@ -496,7 +496,7 @@ $(function () {
             url: "/update_user/",
             data: form_bytes,
             success: function (data) {
-                console.log(data['data']);
+
                 if (data['data'].hasOwnProperty("id") === false) {
                     for (key in data['data']) {
                         $('#' + key + '_update_user_error')
@@ -537,7 +537,7 @@ $(function () {
             type: "DELETE",
             url: "/delete_user/" + $('#update_user_id').val() + "/",
             success: function (data) {
-                console.log(data['data']);
+
                 $('#update-user-modal').modal('hide');
                 get_data();
             }

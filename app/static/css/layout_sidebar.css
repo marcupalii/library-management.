@@ -38,7 +38,9 @@
     border: 1px solid rgba(0, 0, 0, .125);
     border-radius: .25rem;
 }
-
+#settings-button{
+    cursor: pointer;
+}
 @media screen and (max-width: 500px) {
     #sidebar-fixed {
         width: 100% !important;
