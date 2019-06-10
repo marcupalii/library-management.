@@ -66,10 +66,6 @@
         background-color: #343a40 !important;
     }
 
-    #sidebar {
-        background-color: grey;
-    }
-
     .row-offcanvas-left {
         z-index: -1;
         min-width: 100%;
@@ -82,7 +78,7 @@
     }
 
     .row-offcanvas-left.active {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.5) !important;
         position: fixed;
         transition: all 0.5s linear;
         z-index: 10;
@@ -91,7 +87,7 @@
     #sidebar-fixed {
 
         transition: all 0.5s linear;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.5) !important;
         width: 30%;
         transform: translate3d(-100%, 0, 0);
     }

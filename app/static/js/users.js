@@ -19,7 +19,7 @@ $(function () {
         $("#basic-search-container").addClass("d-none");
         $("#advanced-search-container").removeClass("d-none");
         $('#basic_search_name').removeClass("has-error");
-        $('#basic_search_name_error').css("visibility","hidden");
+        $('#basic_search_name_error').css("visibility", "hidden");
     });
     $('#basic-search-change-container').on("click", function () {
         $('#advanced-search-container').addClass("d-none");
@@ -304,6 +304,13 @@ $(function () {
     function get_data() {
         $('#basic_search_name_error').css("visibility", "hidden");
         $('#basic_search_name').removeClass("has-error");
+
+        $('#advanced_user_first_name').removeClass('has-error');
+        $('#advanced_user_last_name').removeClass('has-error');
+        $('#advanced_user_library_card_id').removeClass('has-error');
+        $('#advanced_user_email').removeClass('has-error');
+        $('#advanced_user_first_name_error').css("visibility", "hidden");
+
         if ($('#advanced-search-container').hasClass('d-none')) {
             data_form = data_form.replace(/&basic_page_number=\d+&/, "&basic_page_number=" + $('#basic_page_number').val() + "&");
             $.ajax({
@@ -311,7 +318,7 @@ $(function () {
                 url: "/admin_dashboard_basic_search_users/",
                 data: data_form,
                 success: function (data) {
-
+                    console.log(data['data']);
                     // $('#basic-search-form').trigger('reset');
                     $('#content-table-search-users').empty();
                     if (data['data'].hasOwnProperty("basic_search_name")) {
@@ -335,33 +342,35 @@ $(function () {
             });
         } else {
             data_form = data_form.replace(/&advanced_page_number=\d+&/, "&advanced_page_number=" + $('#advanced_page_number').val() + "&");
+            console.log("data_form=", data_form);
             $.ajax({
                 type: "POST",
                 url: "/admin_dashboard_advanced_search_users/",
                 data: data_form,
                 success: function (data) {
+
                     $('#content-table-search-users').empty();
 
-                    if (data['data'].hasOwnProperty("search_name")) {
-
-                        if ($('#search_name.form-control').hasClass('has-error') === false) {
-                            $('#search_name.form-control').addClass('has-error');
+                    if (data['data'].hasOwnProperty("advanced_user_first_name")) {
+                        console.log(data['data']['advanced_user_first_name']['0']);
+                        if ($('#advanced_user_first_name').hasClass('has-error') === false) {
+                            $('#advanced_user_first_name').addClass('has-error');
                         }
 
-                        if ($('#search_type.form-control').hasClass('has-error') === false) {
-                            $('#search_type.form-control').addClass('has-error');
+                        if ($('#advanced_user_last_name').hasClass('has-error') === false) {
+                            $('#advanced_user_last_name').addClass('has-error');
                         }
 
-                        if ($('#search_author_first_name.form-control').hasClass('has-error') === false) {
-                            $('#search_author_first_name.form-control').addClass('has-error');
+                        if ($('#advanced_user_library_card_id').hasClass('has-error') === false) {
+                            $('#advanced_user_library_card_id').addClass('has-error');
                         }
-                        if ($('#search_author_last_name.form-control').hasClass('has-error') === false) {
-                            $('#search_author_last_name.form-control').addClass('has-error');
+                        if ($('#advanced_user_email').hasClass('has-error') === false) {
+                            $('#advanced_user_email').addClass('has-error');
                         }
 
 
-                        $('#search_name_error').text(data['data']['search_name']['0']);
-                        $('#search_name_error').css("visibility", "visible");
+                        $('#advanced_user_first_name_error').text(data['data']['advanced_user_first_name']['0']);
+                        $('#advanced_user_first_name_error').css("visibility", "visible");
 
                         if ($('#collapse-table-search-users').css("display") !== "none") {
                             $('#collapse-table-search-users').slideToggle(0);
@@ -532,7 +541,7 @@ $(function () {
         });
     });
 
-     $(document).on('click','#delete-user-button', function (e) {
+    $(document).on('click', '#delete-user-button', function (e) {
         $.ajax({
             type: "DELETE",
             url: "/delete_user/" + $('#update_user_id').val() + "/",

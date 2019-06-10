@@ -21,10 +21,10 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-        <div class="container-fluid p-3 border-content white-background" id="content-wishlist">
+        <div class="container-fluid p-3" id="content-wishlist">
             {% if next_book %}
                 <h3 class="mt-5 mb-4">Accept the next book</h3>
-                <div id="collapse-table">
+                <div id="collapse-table" class="white-background">
                     <div class="container-fluid no-padding">
                         <table class="table table-bordered" style="border-collapse:collapse;">
                             <thead>
@@ -175,7 +175,7 @@
 
                         </tbody>
                     </table>
-                    <div class="border-content d-flex justify-content-center p-2" id="empty-wishlist">
+                    <div class="border-content d-flex justify-content-center p-2 white-background" id="empty-wishlist">
                         Your wishlist is empty !
                     </div>
                 </div>
