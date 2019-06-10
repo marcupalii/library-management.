@@ -1,11 +1,52 @@
 
-#container-content,#content, #about-container-content, #row-content{
+#container-content, #content, #about-container-content, #row-content {
     height: 100% !important;
-    margin-bottom: 0!important;
+    margin-bottom: 0 !important;
 }
-#about-container-content{
-    background-image: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.1)),url("../img/library.jpg");
+
+#about-container-content {
+    background-image: linear-gradient(rgba(230, 230, 255, .2), rgba(255, 255, 255, .2)), url("../img/library.jpg");
+    background-size: cover;
+    background-position: center;
 }
+
+#content-about {
+    color: white;
+    font-size: 15px;
+    font-style: oblique;
+    opacity: 0.7;
+    background-color: #000000 !important;
+    min-height: 250px;
+}
+
+#sub-content {
+    font-size: 15px;
+}
+
+.ml-5-rem {
+    margin-left: 3rem;
+}
+
+@media screen and (max-width: 768px) {
+    #content-about {
+        font-size: 15px;
+    }
+
+    .ml-5-rem {
+        margin-left: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 1025px) {
+    #content-about {
+        font-size: 20px;
+
+    }
+      .ml-5-rem {
+        margin-left: 2.5rem;
+    }
+}
+
 @media screen and (min-width: 1025px) {
     .content {
         margin-left: 0 !important;
@@ -13,6 +54,11 @@
         flex-basis: 0;
         -ms-flex-positive: 1;
         flex-grow: 1;
+
+    }
+
+    #content-about {
+        font-size: 25px;
 
     }
 }

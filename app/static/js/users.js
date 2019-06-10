@@ -24,6 +24,11 @@ $(function () {
     $('#basic-search-change-container').on("click", function () {
         $('#advanced-search-container').addClass("d-none");
         $("#basic-search-container").removeClass("d-none");
+        $('#advanced_user_first_name').removeClass('has-error');
+        $('#advanced_user_last_name').removeClass('has-error');
+        $('#advanced_user_library_card_id').removeClass('has-error');
+        $('#advanced_user_email').removeClass('has-error');
+        $('#advanced_user_first_name_error').css("visibility", "hidden");
     });
 
 
