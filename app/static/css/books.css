@@ -10,7 +10,14 @@
     margin-top: -15px;
     color: #dc3545 !important;
 }
-
+.label-padding{
+    margin-bottom: .2rem!important;
+}
+#basic_search_substring{
+    color:white;
+    height: 15px!important;
+    width: 15px!important;
+}
 #search-author-button {
     cursor: pointer;
 }

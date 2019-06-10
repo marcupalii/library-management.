@@ -3,7 +3,11 @@ html, body {
     height: 100%;
     width: 100%;
     padding-top: 30px;
+    background-color: #e9ebee !important;
     /*background: rgba(203, 203, 210, 0.15);*/
+}
+.white-background {
+    background-color: white !important;
 }
 
 footer {

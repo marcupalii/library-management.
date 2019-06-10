@@ -130,8 +130,8 @@
 {% endblock %}
 
 
-<div class="container-fluid mb-5">
-    <div class="row">
+<div class="container-fluid mb-5" id="container-content">
+    <div class="row" id="row-content">
         {% if current_user.is_authenticated %}
             {% block sidebar %}
                 <div class="position-fixed row-offcanvas-left">

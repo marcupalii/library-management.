@@ -15,9 +15,9 @@
 {% endblock %}
 {% block content %}
     <div class="container-fluid">
-        <div class="container-fluid mt-4 mb-3 p-3 border-content">
+        <div class="container-fluid mt-4 mb-3">
             <h3 class="mt-5 mb-4">Add new user</h3>
-            <form id="new-user" method="POST" action="{{ url_for('add_user') }}"
+            <form class="white-background p-3" id="new-user" method="POST" action="{{ url_for('add_user') }}"
                   enctype="multipart/form-data" novalidate>
                 {{ new_user.hidden_tag() }}
                 <div class="row">
@@ -122,19 +122,19 @@
         </div>
 
 
-        <div class="container-fluid p-3 border-content mt-5 mb-3" id="current-users-container">
-            <div class="container-fluid border-content mt-5">
-                <div class="row m-2">
-                    <div class="col-sm-3 btn border-content search btn btn-secondary"
+        <div class="container-fluid p-3 mt-5 mb-3" id="current-users-container">
+            <div class="container-fluid mt-5">
+                <div class="row">
+                    <div class="col-sm-4 btn border-content search btn btn-secondary"
                          id="basic-search-change-container">
                         Basic Search
                     </div>
-                    <div class="col-sm-3 btn border-content search btn btn-secondary"
+                    <div class="col-sm-4 btn border-content search btn btn-secondary"
                          id="advance-search-change-container">
                         Advanced Search
                     </div>
                 </div>
-                <div class="container-fluid  border-content  m-2 mb-3" id="basic-search-container">
+                <div class="container-fluid m-2 mb-3" id="basic-search-container">
                     <form id="basic-search-form" class="row" method="post" novalidate>
                         {{ basic_search_form.hidden_tag() }}
                         {{ basic_search_form.basic_page_number(class_="d-none") }}
@@ -147,15 +147,15 @@
                         </div>
                         <div class="col-md-5 mt-2 ml-4">
                             <div class="form-group row">
-                                {{ basic_search_form.basic_search_substring.label }}
-                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                {{ basic_search_form.basic_search_substring.label(class_="label-padding mr-3") }}
+                                <div class="d-flex justify-content-center align-items-center">
                                     {{ basic_search_form.basic_search_substring }}
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="container-fluid border-content m-2 mb-3 d-none" id="advanced-search-container">
+                <div class="container-fluid border-content mb-3 d-none white-background" id="advanced-search-container">
 
                     <form id="advanced-search-form" class="row" method="post" novalidate>
                         {{ advanced_search_form.hidden_tag() }}
@@ -190,8 +190,8 @@
                         </div>
                         <div class="col-md mt-4">
                             <div class="form-group row">
-                                {{ advanced_search_form.search_substring.label(class_="col-8 col-form-label") }}
-                                <div class="col-2 d-flex justify-content-center align-items-center">
+                                {{ advanced_search_form.search_substring.label(class_="col-6 ml-md-4") }}
+                                <div class="d-flex justify-content-center align-items-center">
                                     {{ advanced_search_form.search_substring }}
                                 </div>
                             </div>

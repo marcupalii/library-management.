@@ -21,7 +21,7 @@
 
 {% block content %}
     <div class="container-fluid mt-5">
-    <div class="container-fluid p-3 border-content">
+    <div class="container-fluid p-3 border-content white-background">
         <h3 class="mt-5 mb-4">Books log</h3>
         <div id="collapse-table">
             <div class="container-fluid no-padding">
@@ -30,13 +30,12 @@
                     <tr>
                         <th>#</th>
                         <th>Book name</th>
-                        <th>Book type</th>
-                        <th>Author first name</th>
-                        <th>Author last name</th>
+                        <th class="d-none d-sm-table-cell">Book type</th>
+                        <th class="d-none d-lg-block">Author first name</th>
+                        <th class="d-none d-sm-table-cell">Author last name</th>
                         <th class="d-none d-md-block">Period start</th>
                         <th class="d-none d-md-block">Period end</th>
-                        <th class="d-none d-lg-block">Status</th>
-                        <th class="d-none d-lg-block">Period diff</th>
+                        <th>Status</th>
                     </tr>
                     </thead>
                     <tbody id="content-table">
@@ -49,13 +48,13 @@
                             <td id="book-name-row-content-{{ entry[0] }}">
                                 {{ entry[1] }}
                             </td>
-                            <td id="book-type-row-content-{{ entry[0] }}">
+                            <td class="d-none d-sm-table-cell" id="book-type-row-content-{{ entry[0] }}">
                                 {{ entry[2] }}
                             </td>
-                            <td id="author-first-name-row-content-{{ entry[0] }}">
+                            <td class="d-none d-lg-block" id="author-first-name-row-content-{{ entry[0] }}">
                                 {{ entry[3] }}
                             </td>
-                            <td id="author-last-name-row-content-{{ entry[0] }}">
+                            <td class="d-none d-sm-table-cell" id="author-last-name-row-content-{{ entry[0] }}">
                                 {{ entry[4] }}
                             </td>
                             <td class="d-none d-md-block" id="period-start-row-content-{{ entry[0] }}">
@@ -64,29 +63,37 @@
                             <td class="d-none d-md-block" id="period-end-row-content-{{ entry[0] }}">
                                 {{ entry[6] }}
                             </td>
-                            <td class="d-none d-lg-block" id="status-row-content-{{ entry[0] }}">
+                            <td id="status-row-content-{{ entry[0] }}">
                                 {{ entry[7] }}
                             </td>
-                            <td class="d-none d-lg-block" id="period-diff-row-content-{{ entry[0] }}">
-                                {{ entry[8] }}
+                            <td class="last-td">
+                                <button class="btn accordion-toggle table-button no-padding-button"
+                                        data-toggle="collapse"
+                                        data-target="#tr-collapse-id-{{ entry[0] }}"
+                                        aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}"
+                                        type="button">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                </button>
                             </td>
                             <td class="entry-id hidden-content" id="entry-id-row-content-{{ entry[9] }}"></td>
                         </tr>
 
                         <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"
                             id="tr-collapse-id-{{ entry[0] }}">
-                            <td colspan="6" class="hiddenRow">
+                            <td colspan="9" class="hiddenRow">
                                 <div class="accordian-body">
-
+                                    <p class="d-sm-none">Book type : <span>{{ entry[2] }}</span>
+                                    </p>
+                                    <p class="d-lg-none">Author first name: <span>{{ entry[3] }}</span>
+                                    </p>
+                                    <p class="d-sm-none">Author last name: <span>{{ entry[4] }}</span>
+                                    </p>
                                     <p class="d-md-none">Period start: <span>{{ entry[5] }}</span>
                                     </p>
 
                                     <p class="d-md-none">Period end: <span>{{ entry[6] }}</span>
                                     </p>
-
-                                    <p class="d-lg-none">Status: <span>{{ entry[7] }}</span>
-                                    </p>
-                                    <p class="d-lg-none">Period diff: <span> {{ entry[8] }}</span></p>
+                                    <p>Period diff: <span> {{ entry[8] }}</span></p>
                                 </div>
                             </td>
                         </tr>
