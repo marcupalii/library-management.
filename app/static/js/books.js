@@ -826,6 +826,7 @@ $(document).ready(function () {
                     $('#new-book-form').trigger("reset");
                     $('#update-book-modal').modal('hide');
                 }
+                get_data();
             }
         });
     });

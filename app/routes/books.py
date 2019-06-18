@@ -44,9 +44,12 @@ def add_new_book():
 
     if new_book.validate_on_submit():
 
-        book = Book.query.filter_by(name=new_book.name.data).first()
+        book = None
         book_type = None
-        author = None
+        author = author = Author.query.filter_by(
+            first_name=new_book.author_first_name.data,
+            last_name=new_book.author_last_name.data,
+        ).first()
         book_series = None
 
         if new_book.type_exists.data == "1":
@@ -65,11 +68,8 @@ def add_new_book():
                         'type_string_field': 'Type already exists !',
                     }
                 )
+
         if new_book.type_author.data == '1':
-            author = Author.query.filter_by(
-                first_name=new_book.author_first_name.data,
-                last_name=new_book.author_last_name.data,
-            ).first()
             if author:
                 return jsonify(
                     data={
@@ -78,10 +78,6 @@ def add_new_book():
                     }
                 )
         else:
-            author = Author.query.filter_by(
-                first_name=new_book.author_first_name.data,
-                last_name=new_book.author_last_name.data,
-            ).first()
             if not author:
                 return jsonify(
                     data={
@@ -89,9 +85,16 @@ def add_new_book():
                         'author_last_name': 'Author does not exists !',
                     }
                 )
-
+        book = Book.query.filter_by(name=new_book.name.data).first()
         if book:
             author = Author.query.filter_by(id=book.author_id).first()
+            if author.last_name != new_book.author_last_name.data or author.first_name != new_book.author_first_name.data:
+                return jsonify(
+                    data={
+                        'author_first_name': 'Use the book corresponding author !',
+                        'author_last_name': 'Use the book corresponding author !',
+                    }
+                )
             book_series = BookSeries.query.filter_by(
                 book_id=book.id,
                 series=new_book.series.data,
@@ -154,7 +157,11 @@ def add_new_book():
             )
             db.session.add(book)
             db.session.commit()
-        print("new_book=",book)
+        else:
+            book.count_free_books += 1
+            book.count_total += 1
+            db.session.commit()
+
         db.session.refresh(book)
         if not book_series:
             book_series = BookSeries(
@@ -167,7 +174,7 @@ def add_new_book():
             )
         db.session.add(book_series)
         db.session.commit()
-        print("series=",book_series)
+
         return jsonify(data={
             'id': book_series.id,
             'code': 200
@@ -489,8 +496,8 @@ def update_book():
             if not book_new:
                 book_new = Book(
                     name=form.update_book_name.data,
-                    count_total=1,
-                    count_free_books=1,
+                    count_total=book_old.count_total,
+                    count_free_books=book_old.count_free_books,
                     type_id=type_new.id,
                     author_id=new_author.id,
                     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
@@ -551,8 +558,8 @@ def update_book():
             if not book_new:
                 book_new = Book(
                     name=form.update_book_name.data,
-                    count_total=1,
-                    count_free_books=1,
+                    count_total=book_old.count_total,
+                    count_free_books=book_old.count_free_books,
                     type_id=type_old.id,
                     author_id=new_author.id,
                     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
@@ -604,8 +611,8 @@ def update_book():
             if not book_new:
                 book_new = Book(
                     name=form.update_book_name.data,
-                    count_total=1,
-                    count_free_books=1,
+                    count_total=book_old.count_total,
+                    count_free_books=book_old.count_free_books,
                     type_id=type_new.id,
                     author_id=author_old.id,
                     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
@@ -691,8 +698,8 @@ def update_book():
             if not book_new:
                 book_new = Book(
                     name=form.update_book_name.data,
-                    count_total=1,
-                    count_free_books=1,
+                    count_total=book_old.count_total,
+                    count_free_books=book_old.count_free_books,
                     type_id=type_old.id,
                     author_id=author_old.id,
                     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
@@ -783,8 +790,7 @@ def delete_book_series(id):
     book = Book.query.filter_by(id=book_series.book_id).first()
     if not book:
         return render_template("page_404.html")
-    print("book",book)
-    print("book_Series=",book_series)
+
     count_series = book.count_total
     next_books = NextBook.query.filter_by(id_series_book=book_series.id).all()
 
@@ -801,17 +807,19 @@ def delete_book_series(id):
     if count_series == 1:
         EntryWishlist.query.filter_by(id_book=book.id).delete()
 
-        count_type_books = Book.query.filter_by(type_id=book.type_id).count()
-        if count_type_books == 1:
-            BookTypes.query.filter_by(id=book.type_id).delete()
-            db.session.commit()
-
+        type_id = book.type_id
+        author_id = book.author_id
         db.session.delete(book)
         db.session.commit()
 
-        author = Author.query.filter_by(id=book.author_id).first()
+        count_type_books = Book.query.filter_by(type_id=type_id).count()
+        if count_type_books == 1:
+            BookTypes.query.filter_by(id=type_id).delete()
+            db.session.commit()
+
+        author = Author.query.filter_by(id=author_id).first()
         count_author_books = Book.query.filter_by(author_id=author.id).count()
-        if count_author_books == 1:
+        if count_author_books == 0:
             db.session.delete(author)
             db.session.commit()
 
@@ -822,33 +830,6 @@ def delete_book_series(id):
 
         db.session.delete(book_series)
         db.session.commit()
-
-    # db.session.delete(book_series)
-    # db.session.commit()
-    #
-    # if count_series == 1:
-    #     author = Author.query.filter_by(id=book.author_id).first()
-    #     count_author_books = Book.query.filter_by(author_id=author.id).count()
-    #     if count_author_books == 1:
-    #         db.session.delete(author)
-    #
-    #     entry_wishlist = EntryWishlist.query.filter_by(id_book=book.id).all()
-    #
-    #     for entry in entry_wishlist:
-    #         db.session.delete(entry)
-    #         db.session.commit()
-    #
-    #     count_type_books = Book.query.filter_by(type_id=book.type_id).count()
-    #     if count_type_books == 1:
-    #         BookTypes.query.filter_by(id=book.type_id).delete()
-    #         db.session.commit()
-    #
-    #     db.session.delete(book)
-    #     db.session.commit()
-    # else:
-    #     book.count_total -= 1
-    #     book.count_free_books -= 1
-    #     db.session.commit()
 
     return jsonify(
         data={
