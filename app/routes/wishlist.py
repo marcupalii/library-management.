@@ -254,6 +254,8 @@ def update_wishlist_book():
             id=form.update_wishlist_entry_id.data
         ).first()
 
+        if not entry_wishlist:
+            return not_found("book not found")
         if entry_wishlist.rank != form.update_wishlist_rank.data:
             max_rank = EntryWishlist.query.filter_by(id_wishlist=wishlist.id).count()
             if form.update_wishlist_rank.data > max_rank:

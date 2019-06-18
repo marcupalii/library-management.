@@ -62,7 +62,7 @@ class Book(db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False)
     count_total = db.Column(db.Integer, nullable=False)
     count_free_books = db.Column(db.Integer, nullable=False)
-    book_series = db.relationship('BookSeries', backref='book', uselist=True)
+    book_series = db.relationship('BookSeries', backref='book', uselist=True, passive_deletes=True)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
     lazy = "dynamic"
     type_id = db.Column(db.Integer, db.ForeignKey('booktypes.id'), nullable=False)
@@ -107,7 +107,7 @@ class Author(db.Model):
 class BookSeries(db.Model):
     __tablename__ = 'bookseries'
     id = db.Column(db.Integer, primary_key=True)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
     series = db.Column(db.String(100), unique=True, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     updated_at = db.Column(
