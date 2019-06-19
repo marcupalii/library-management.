@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 from app.forms import Wishlist_settings
 import re
 
+
 @app.route("/notifications/page/<page>/focus=<id>/")
 @login_required
 def notifications(page, id):
@@ -31,7 +32,7 @@ def notifications(page, id):
                 index,
                 entry.content,
                 entry.status,
-                re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)",str(entry.created_at)).groups(0)[0],
+                re.search("(\d+-\d+-\d+\s+\d+:\d+:\d+)", str(entry.created_at)).groups(0)[0],
                 entry.id,
             ])
             index += 1
@@ -63,12 +64,27 @@ def notifications(page, id):
     )
 
 
-@app.route("/delete_notification/<int:id>/",methods=['DELETE'])
+@app.route("/delete_notification/<int:id>/", methods=['DELETE'])
 @login_required
 def delete_notification(id):
     Notifications.query.filter_by(id=id).delete()
     db.session.commit()
-    print("id=",id)
+    print("id=", id)
+    return jsonify(
+        data={
+            'id': id
+        }
+    )
+
+
+@app.route("/notification_read/<int:id>/", methods=['GET'])
+@login_required
+def notification_read(id):
+    notification = Notifications.query.filter_by(id=id).first()
+    if notification:
+        notification.status = "read"
+        db.session.commit()
+
     return jsonify(
         data={
             'id': id
