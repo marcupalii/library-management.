@@ -582,7 +582,8 @@ def books_count():
         })
 
     total = EntryLog.query.filter_by(
-        id_log=log.id
+        id_log=log.id,
+        status="Returned"
     ).count()
     failed = EntryLog.query.filter_by(
         id_log=log.id,

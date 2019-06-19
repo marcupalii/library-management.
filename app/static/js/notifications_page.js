@@ -23,7 +23,7 @@ $(function () {
             });
         }
     });
-    $('#close-edit-notifications-modal').on("click", function (e) {
+    $('.close-notification').on("click", function (e) {
         e.preventDefault();
         $('#edit-notifications-modal').modal('hide');
         window.location = $(location).attr('href');

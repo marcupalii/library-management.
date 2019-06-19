@@ -593,9 +593,11 @@ $(function () {
         $('#start_date_error').css("visibility", "hidden");
         if (!$('.wishlist-modal').hasClass("d-none")) {
             $('.wishlist-modal').addClass("d-none");
+            $('#add-to-wishlist-button').addClass("d-none");
         }
         if (!$('.reserved-modal').hasClass("d-none")) {
             $('.reserved-modal').addClass("d-none");
+            $('#add-to-reserved-button').addClass("d-none");
         }
         let id = $(this).attr("id");
 
