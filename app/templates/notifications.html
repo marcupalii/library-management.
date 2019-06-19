@@ -3,7 +3,7 @@
 {% block page_title %}Notifications{% endblock %}
 {% block head %}
     {{ super() }}
-    <meta http-equiv="refresh" content="30"/>
+{#        <meta http-equiv="refresh" content="30"/>#}
 {% endblock %}
 {% block styles %}
     {{ super() }}
@@ -17,6 +17,7 @@
     {{ super() }}
     <script src="{{ url_for('.static', filename='js/notifications.js') }}"></script>
     <script src="{{ url_for('.static', filename='js/sidebar_modal_settings.js') }}"></script>
+    <script src="{{ url_for('.static', filename='js/notifications_page.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -32,64 +33,56 @@
                         <th>#</th>
                         <th>Content</th>
                         <th class="d-none d-md-block">Status</th>
-                        {#                        <th>Author name</th>#}
-                        {#                        <th>Period</th>#}
                         <th class="d-none d-lg-block">Created At</th>
                     </tr>
                     </thead>
                     <tbody id="content-table">
                     {% for entry in notifications %}
-                        <tr colspan="7">
+                        <tr colspan="5">
                             <td class="" id="nr-row-content-{{ entry[0] }}">
                                 {{ entry[0] }}
                             </td>
                             <td id="content-row-content-{{ entry[0] }}">
                                 {{ entry[1] }}
                             </td>
-                            {#                            <td class="d-none d-md-block" id="book-type-row-content-{{ entry[0] }}">#}
-                            {#                                {{ entry[2] }}#}
-                            {#                            </td>#}
-                            <td id="status-row-content-{{ entry[0] }}">
+                            <td class="d-none d-md-block" id="status-row-content-{{ entry[0] }}">
                                 {{ entry[2] }}
                             </td>
-                            <td id="created-at-row-content-{{ entry[0] }}">
+                            <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">
                                 {{ entry[3] }}
                             </td>
-                            {#                            <td class="d-none d-lg-block" id="created-at-row-content-{{ entry[0] }}">#}
-                            {#                                {{ entry[5] }}#}
-                            {#                            </td>#}
                             <td class="hidden-content"
                                 id="id-notification-row-content-{{ entry[0] }}">{{ entry[4] }}</td>
-                            {#                            <td class="last-td">#}
-                            {#                                <button class="btn accordion-toggle d-lg-none" data-toggle="collapse"#}
-                            {#                                        data-target="#tr-collapse-id-{{ entry[0] }}"#}
-                            {#                                        aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}" type="button">#}
-                            {#                                    <i class="fas fa-expand-arrows-alt"></i>#}
-                            {#                                </button>#}
-                            {#                                <button class="btn" type="button">#}
-                            {#                                    <i class="delete-from-wishlist fa fa-times red"#}
-                            {#                                       id="/wishlist_delete_entry/{{ entry[6] }}"></i>#}
-                            {#                                </button>#}
-                            {#                            </td>#}
+                            <td class="last-td">
+                                <button class="btn accordion-toggle d-lg-none" data-toggle="collapse"
+                                        data-target="#tr-collapse-id-{{ entry[0] }}"
+                                        aria-controls="aria-controls{{ entry[0] }}" id="{{ entry[0] }}" type="button">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                </button>
+                                <button class="btn modal-button-edit-notification" id="{{ entry[0] }}" type="button">
+                                    <i class="far fa-edit"></i>
+                                </button>
+                            </td>
                         </tr>
 
-                        {#                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"#}
-                        {#                            id="tr-collapse-id-{{ entry[0] }}">#}
-                        {#                            <td colspan="6" class="hiddenRow">#}
-                        {#                                <div class="accordian-body">#}
-                        {#                                    <p class="d-md-none">Book type: <span>{{ entry[2] }}</span>#}
-                        {#                                    </p>#}
-                        {#                                    <p class="d-lg-none">Created at: <span>{{ entry[5] }}</span>#}
-                        {#                                    </p>#}
-                        {#                                </div>#}
-                        {#                            </td>#}
-                        {#                        </tr>#}
+                        <tr class="sub-table-row p collapse p-3 tr-collapse-{{ entry[0] }}"
+                            id="tr-collapse-id-{{ entry[0] }}">
+                            <td colspan="5" class="hiddenRow">
+                                <div class="accordian-body">
+                                    <p class="d-md-none">Status : <span>{{ entry[2] }}</span>
+                                    </p>
+                                    <p class="d-lg-none">Created at: <span>{{ entry[3] }}</span>
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
                     {% endfor %}
 
                     </tbody>
 
                 </table>
-                <div class="border-content d-flex justify-content-center p-2 white-background" id="empty-notifications">You have 0
+                <div class="border-content d-flex justify-content-center p-2 white-background" id="empty-notifications">
+                    You have 0
                     notifications !
                 </div>
             </div>
@@ -164,5 +157,40 @@
         </div>
     </div>
 
+    </div>
+{% endblock %}
+{% block modal_edit_notification %}
+    <div class="">
+        <div class="modal fade" id="edit-notifications-modal" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="d-flex justify-content-end p-2">
+                        <button type="button" id="close-edit-notifications-modal" class="btn btn-secondary"
+                                data-dismiss="modal">&times;
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <h5> Are you sure you want to delete the notification ?</h5>
+                        <div class="d-none" id="id-notification"></div>
+                        <div class="d-none" id="row-index"></div>
+                        <div class="container-fluid border-content">
+                            <div class="row p-3">
+                                <div class="col" id="content-edit-notification-modal">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col mt-3 mb-2 no-padding">
+                            <button id="delete-notification-button" class="btn btn-secondary"><i
+                                    class="">Yes</i>
+                            </button>
+                            <button type="Submit" class="btn btn-secondary" data-dismiss="modal"><i class="">No</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

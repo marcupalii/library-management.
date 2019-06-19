@@ -1,5 +1,5 @@
-from flask import render_template, url_for
-from app import app
+from flask import render_template, url_for, jsonify
+from app import app, db
 from app.models import User, Notifications
 from flask_login import login_required, current_user
 from app.forms import Wishlist_settings
@@ -60,4 +60,17 @@ def notifications(page, id):
         num_list=num_list,
         nr_of_pages=nr_of_pages,
         wishlist_settings=wishlist_settings
+    )
+
+
+@app.route("/delete_notification/<int:id>/",methods=['DELETE'])
+@login_required
+def delete_notification(id):
+    Notifications.query.filter_by(id=id).delete()
+    db.session.commit()
+    print("id=",id)
+    return jsonify(
+        data={
+            'id': id
+        }
     )

@@ -128,8 +128,10 @@ def clean_unaccepted_books():
 
             book = Book.query.filter_by(id=entry.id_book).first()
             book.count_free_books += 1
+            db.session.commit()
             book_series = BookSeries.query.filter_by(id=entry.id_series_book).first()
             book_series.status = "available"
+            db.session.commit()
 
             rank = entry.rank
             id_user = entry.id_user
@@ -142,7 +144,7 @@ def clean_unaccepted_books():
             entry.period = None
             entry.status = "None"
             entry.rank = 0
-
+            db.session.commit()
             notification = Notifications(
                 id_user=entry.id_user,
                 content="You lost the {} book, because u did not accept within 3hrs ".format(book.name),
