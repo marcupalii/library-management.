@@ -349,26 +349,50 @@ if __name__ == "__main__":
     types_ids = [t.id for t in BookTypes.query.all()]
 
     for i in range(1, 50):
-        book = Book(
-            name="book{}".format(i),
-            author=random.choice(authors),
-            type_id=random.choice(types_ids),
-            count_total=4,
-            count_free_books=4,
-            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-                pytz.timezone('Europe/Bucharest'))
-        )
-        db.session.add(book)
-        for j in range(1, 5):
-            book_series = BookSeries(
-                book=book,
-                series="{}SL{}".format(i, j),
-                status="available",
+        if i == 1:
+            book = Book(
+                name="book{}".format(i),
+                author=random.choice(authors),
+                type_id=random.choice(types_ids),
+                count_total=3,
+                count_free_books=3,
                 created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                     pytz.timezone('Europe/Bucharest'))
             )
-            db.session.add(book_series)
-        db.session.commit()
+            db.session.add(book)
+            db.session.commit()
+            for j in range(1, 4):
+                book_series = BookSeries(
+                    book=book,
+                    series="{}SL{}".format(i, j),
+                    status="available",
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(book_series)
+                db.session.commit()
+        else:
+            book = Book(
+                name="book{}".format(i),
+                author=random.choice(authors),
+                type_id=random.choice(types_ids),
+                count_total=4,
+                count_free_books=4,
+                created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+            )
+            db.session.add(book)
+            db.session.commit()
+            for j in range(1, 5):
+                book_series = BookSeries(
+                    book=book,
+                    series="{}SL{}".format(i, j),
+                    status="available",
+                    created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                        pytz.timezone('Europe/Bucharest'))
+                )
+                db.session.add(book_series)
+                db.session.commit()
 
     #  ---------------------- ------------- ------------------------------------
 

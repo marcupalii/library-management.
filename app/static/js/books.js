@@ -87,7 +87,7 @@ $(document).ready(function () {
         $('#author_first_name').removeClass("has-error");
         $('#author_last_name').removeClass("has-error");
         $('#series').removeClass("has-error");
-
+        $('#type_string_field').removeClass("has-error");
         $('.err-msg').each(function () {
             $(this).css("visibility", "hidden");
         });
