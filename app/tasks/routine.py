@@ -46,8 +46,9 @@ def update_state():
 
 
 def update_ranks(rank, id_wishlist):
-    entryes_wishlist = EntryWishlist.query.filter_by(id_wishlist=id_wishlist)
-
+    entryes_wishlist = EntryWishlist.query.filter_by(id_wishlist=id_wishlist).all()
+    if not entryes_wishlist:
+        return
     for entry in entryes_wishlist:
         if entry.rank > rank:
             entry.rank -= 1
@@ -55,16 +56,18 @@ def update_ranks(rank, id_wishlist):
 
 
 def generate_notification(match, user_id):
-    notification = Notifications(
-        id_user=user_id,
-        content="You received the {} book, you have 3hrs to accept or deny!".format(
-            Book.query.filter_by(id=match['book_id']).first().name),
-        status="unread",
-        created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
-            pytz.timezone('Europe/Bucharest'))
-    )
-    db.session.add(notification)
-    db.session.commit()
+    book = Book.query.filter_by(id=match['book_id']).first()
+    if book:
+        notification = Notifications(
+            id_user=user_id,
+            content="You received the {} book, you have 3hrs to accept or deny!".format(
+                book.name),
+            status="unread",
+            created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
+                pytz.timezone('Europe/Bucharest'))
+        )
+        db.session.add(notification)
+        db.session.commit()
 
 
 def write_result_of_matching(matched):
@@ -80,9 +83,11 @@ def write_result_of_matching(matched):
             id_book=matched[user_id]['book_id'],
             period=matched[user_id]['nr_of_days'],
         ).first()
-
+        if not entry_wishlit:
+            continue
         next_book = NextBook.query.filter_by(id_user=user_id).first()
-
+        if not next_book:
+            continue
         if entry_wishlit:
             rank = entry_wishlit.rank
 
@@ -99,6 +104,8 @@ def write_result_of_matching(matched):
             book_series.status = "taken"
 
             book = Book.query.filter_by(id=matched[user_id]['book_id']).first()
+            if not book:
+                continue
             book.count_free_books -= 1
 
             next_book.id_book = matched[user_id]['book_id']
@@ -109,7 +116,7 @@ def write_result_of_matching(matched):
 
             db.session.commit()
 
-            print("_next_book", next_book.id_book, next_book.period, next_book.status, next_book.id_series_book)
+            print("next_book=", next_book.id_book, next_book.period, next_book.status, next_book.id_series_book)
 
             update_ranks(rank, wishList.id)
             generate_notification(matched[user_id], user_id)
@@ -127,9 +134,13 @@ def clean_unaccepted_books():
         if (time_now - (time_entry + timedelta(seconds=100))) >= timedelta(seconds=0):
 
             book = Book.query.filter_by(id=entry.id_book).first()
+            if not book:
+                continue
             book.count_free_books += 1
             db.session.commit()
             book_series = BookSeries.query.filter_by(id=entry.id_series_book).first()
+            if not book_series:
+                continue
             book_series.status = "available"
             db.session.commit()
 
@@ -159,14 +170,15 @@ def clean_unaccepted_books():
 
             if settings.wishlist_option == 1:
                 id_wishlist = User.query.filter_by(id=id_user).first().wishlist.id
-                entry_wishlist = EntryWishlist.query.filter_by(id_wishlist=id_wishlist).all()
-
-                for entry in entry_wishlist:
+                entry_wishlists = EntryWishlist.query.filter_by(id_wishlist=id_wishlist).all()
+                if not entry_wishlists:
+                    continue
+                for entry in entry_wishlists:
                     if entry.rank >= rank:
                         entry.rank += 1
                         db.session.commit()
 
-                entry_wishlist = EntryWishlist(
+                new_entry_wishlist = EntryWishlist(
                     id_wishlist=id_wishlist,
                     id_book=id_book,
                     rank=rank,
@@ -174,12 +186,15 @@ def clean_unaccepted_books():
                     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                         pytz.timezone('Europe/Bucharest'))
                 )
-                db.session.add(entry_wishlist)
+                db.session.add(new_entry_wishlist)
                 db.session.commit()
             elif settings.wishlist_option == 3:
-                id_wishlist = User.query.filter_by(id=id_user).first().wishlist.id
+                user = User.query.filter_by(id=id_user).first().wishlist.id
+                if not user:
+                    continue
+                id_wishlist = user.wishlist.id
                 last_rank = EntryWishlist.query.filter_by(id_wishlist=id_wishlist).count()
-                entry_wishlist = EntryWishlist(
+                new_entry_wishlist = EntryWishlist(
                     id_wishlist=id_wishlist,
                     id_book=id_book,
                     rank=last_rank + 1,
@@ -187,7 +202,7 @@ def clean_unaccepted_books():
                     created_at=datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(
                         pytz.timezone('Europe/Bucharest'))
                 )
-                db.session.add(entry_wishlist)
+                db.session.add(new_entry_wishlist)
                 db.session.commit()
 
 
@@ -208,10 +223,16 @@ def update_remaining_book_time():
             db.session.commit()
 
             log = Log.query.filter_by(id=entry.id_log).first()
+            if not log:
+                continue
             book_series = BookSeries.query.filter_by(id=entry.id_book_series).first()
+            if not book_series:
+                continue
             book_series.status = "available"
             db.session.commit()
             book = Book.query.filter_by(id=book_series.book_id).first()
+            if not book:
+                continue
             book.count_free_books += 1
             db.session.commit()
 

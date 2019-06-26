@@ -1,6 +1,3 @@
-tr:focus {
-    border: 2px solid blue;
-}
 
 .table {
     background-color: #fff !important;
@@ -44,7 +41,7 @@ tr:focus {
 
 .hiddenRow {
     padding: 0 4px !important;
-    background-color: #eeeeee;
+    background-color: white !important;
     font-size: 13px;
 }
 
@@ -56,13 +53,16 @@ tr:focus {
     margin-right: 0 !important;
     margin-left: 0 !important;
 }
+
 .label-text {
     display: inline-block;
     margin-bottom: .5rem;
 }
-.display-table-cell{
-    display: table-cell!important;
+
+.display-table-cell {
+    display: table-cell !important;
 }
+
 @media (min-width: 768px) {
     .d-md-block {
         display: table-cell !important;;
@@ -80,9 +80,9 @@ tr:focus {
 
 @media screen and (max-width: 1024px) {
     .no-padding-button {
-        padding-left: .3rem!important;
-        padding-right: 0!important;
-        padding-top: 0!important;
+        padding-left: .3rem !important;
+        padding-right: 0 !important;
+        padding-top: 0 !important;
     }
 }
 

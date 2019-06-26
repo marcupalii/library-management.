@@ -349,7 +349,7 @@ if __name__ == "__main__":
     types_ids = [t.id for t in BookTypes.query.all()]
 
     for i in range(1, 50):
-        if i == 1:
+        if i <= 3:
             book = Book(
                 name="book{}".format(i),
                 author=random.choice(authors),

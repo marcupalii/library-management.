@@ -4,20 +4,6 @@ $(document).ready(function () {
     $('.page-link').parent().removeClass("active");
     $('#' + actual_page + '.page_num_link').parent().addClass("active");
 
-    if ($(location).attr('href').match(/focus=0/)) {
-    } else {
-        let matched = $(location).attr('href').match(/focus%3D([0-9]+)/);
-        let rank_id_focus = matched[1].trim();
-        $.each($('.rank'), function () {
-
-            if ($(this).text().trim() === rank_id_focus) {
-                $(this).parent()
-                    .attr("tabindex", -1)
-                    .focus();
-            }
-        });
-
-    }
     $('.page_num_link').click(function () {
         let page = "1";
         if ($(this).attr("id").trim() === "prev") {

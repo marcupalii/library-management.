@@ -603,7 +603,9 @@ $(function () {
 
         if ($("#status-book-row-content-" + id).text() === "Already in wishlist") {
             return redirect_to_wishlist_book($("#book-id-row-content-" + id).text());
-        } else if ($("#status-book-row-content-" + id).text() === "Reserved") {
+        } else if ($("#status-book-row-content-" + id).text() === "Reserved" ||
+            $("#status-book-row-content-" + id).text() === "Unreturned"
+        ) {
             return redirect_to_books_log($("#book-id-row-content-" + id).text());
         } else {
 

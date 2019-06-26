@@ -3,20 +3,6 @@ $(document).ready(function () {
     $('.page-link').parent().removeClass("active");
     $('#' + actual_page + '.page_num_link').parent().addClass("active");
 
-    if ($(location).attr('href').match(/focus=0/)) {
-    } else {
-        let matched = $(location).attr('href').match(/focus%3D([0-9]+)/);
-        let entry_id_focus = matched[1].trim();
-
-        $.each($('.entry-id'), function () {
-            if ($(this).attr("id").match(/([0-9])+/)[0].trim() === entry_id_focus) {
-                $(this).parent()
-                    .attr("tabindex", -1)
-                    .focus();
-            }
-        });
-
-    }
     $('.page_num_link').click(function () {
         let page = "1";
         if ($(this).attr("id").trim() === "prev") {
