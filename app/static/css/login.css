@@ -4,9 +4,12 @@
 }
 
 body {
-    background-color: #e9ebee !important;
+    /*background-color: #e9ebee !important;*/
     /*background: #007bff;*/
     /*background: linear-gradient(to right, #0062E6, #33AEFF);*/
+       background-image: linear-gradient(rgba(230, 230, 255, .2), rgba(255, 255, 255, .2)), url("../img/library.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .card-signin {
