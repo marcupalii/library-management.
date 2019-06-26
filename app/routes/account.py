@@ -533,7 +533,7 @@ def get_notification():
             response.append(
                 {
                     'notification_id': str(notification.id),
-                    'href_': '/notifications',
+                    'href_': url_for('notifications',page=1, id=0),
                     'text_': notification.content,
                     'date_': notification.created_at
 

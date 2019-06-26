@@ -86,15 +86,6 @@ $(function () {
                         });
                         count += 1;
                     }
-                    // $.each(data, function (item) {
-                    //     notifications.push({
-                    //         date: item.date_,
-                    //         href: item.href_,
-                    //         text: item.text_,
-                    //         id_not: item.notification_id,
-                    //     });
-                    //     count += 1;
-                    // });
                 }
             });
 
