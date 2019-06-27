@@ -819,7 +819,7 @@ def delete_book_series(id):
         db.session.commit()
 
         count_type_books = Book.query.filter_by(type_id=type_id).count()
-        if count_type_books == 1:
+        if count_type_books == 0:
             BookTypes.query.filter_by(id=type_id).delete()
             db.session.commit()
 

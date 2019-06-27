@@ -267,6 +267,10 @@ class User_settings(db.Model):
 import random
 
 if __name__ == "__main__":
+    try:
+        db.drop_all()
+    except Exception as e:
+        print(e)
     db.create_all()
 
     # ----------------------       ONE TO MANY model   ------------------------------------
