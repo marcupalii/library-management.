@@ -141,6 +141,7 @@ class New_Book(FlaskForm):
         choices=[(str(type.id), type.type_name) for type in BookTypes.query.order_by('type_name')],
         validators=[Optional()]
     )
+    print(type)
     type_exists = RadioField(choices=[('1', "Type already exists"), ('2', 'New type')], validators=[InputRequired()])
 
     author_first_name = StringField(label='Author first name: ', validators=[InputRequired('Field can not be empty !')])

@@ -109,6 +109,7 @@ $(document).ready(function () {
                         $(this).css("visibility", "hidden");
                     });
                     $('#new-book-form').trigger("reset");
+                    window.location = '/books';
                 }
             }
         });

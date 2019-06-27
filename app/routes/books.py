@@ -21,6 +21,12 @@ def books():
     new_book.type_author.default = '1'
     new_book.type_exists.default = '1'
     new_book.process()
+
+    available_groups = db.session.query(BookTypes).order_by('type_name').all()
+
+    groups_list = [(str(i.id), i.type_name) for i in available_groups]
+    new_book.type.choices = groups_list
+
     choose_author = Choose_Author()
     basic_search_form = Basic_search()
     advanced_search_form = Advanced_search_admnin()
