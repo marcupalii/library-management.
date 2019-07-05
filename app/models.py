@@ -455,7 +455,7 @@ if __name__ == "__main__":
         user = User(
             first_name='first{}'.format(i),
             last_name='last{}'.format(i),
-            address="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09",
+            address="",
             email='user{}@gmail.com'.format(i),
             type='user',
             password=hashlib.sha512("user{}".format(i).encode()).hexdigest(),
