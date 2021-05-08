@@ -15,4 +15,4 @@ Werkzeug==0.12.1
 pypiwin32==223
 psycopg2==2.8.1
 celery==4.2.1
-eventlet==0.24.1
+eventlet==0.31.0
