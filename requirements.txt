@@ -11,7 +11,7 @@ packaging==16.8
 pyparsing==2.2.0
 six==1.10.0
 visitor==0.1.3
-Werkzeug==0.12.1
+Werkzeug==0.15.5
 pypiwin32==223
 psycopg2==2.8.1
 celery==4.2.1
